@@ -1,0 +1,16 @@
+type Player: X or O
+type Square: Empty or Player
+
+state Board: Grid[Square, 3, 3]
+state CurrentPlayer: Player
+
+setup:
+    set CurrentPlayer to Random(Player)
+
+action Play(x, y):
+    change Board[x, y] to CurrentPlayer
+
+win Horizontal(p: Player):
+    InARow(Player, Board, 4, Horizontal)
+    or InARow(Player, Board, 4, Vertical)
+    or InARow(Player, Board, 4, Horizontal)

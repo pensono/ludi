@@ -1,0 +1,17 @@
+state HiddenNumber: Number
+state PreviousGuess: Number
+state RemainingGuesses: Number
+
+setup:
+    set HiddenNumber to RandomNumber(1, 10)
+    set RemainingGuesses to 3
+
+action Guess(number):
+    change PreviousGuess to number
+    decrease RemainingGuesses by 1
+
+win Correct():
+    when PreviousGuess = HiddenNumber
+
+loss OutOfGuesses():
+    when RemainingGuesses = 0
