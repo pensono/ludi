@@ -1,4 +1,4 @@
-import { fromString } from '$lib/lang/ludi';
+import { fromString } from '$lib/ludi';
 import fs from 'fs';
 import { describe, it, expect } from 'vitest';
 

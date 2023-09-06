@@ -1,8 +1,8 @@
 import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
-import type { Action, Game } from '../types'
-import LudiLexer from './LudiLexer';
-import LudiParser, { ActionContext, ChangeStatementContext, DecreaseStatementContext, GameContext, IncreaseStatementContext, NumberExpressionContext, SetStatementContext } from './LudiParser';
-import LudiVisitor from './LudiVisitor';
+import type { Action, Game } from './types'
+import LudiLexer from './gen/LudiLexer';
+import LudiParser, { ActionContext, ChangeStatementContext, DecreaseStatementContext, GameContext, IncreaseStatementContext, NumberExpressionContext, SetStatementContext } from './gen/LudiParser';
+import LudiVisitor from './gen/LudiVisitor';
 import type { ConstantExpression, Expression, Statement } from '$lib/types';
 
 export function fromString(input: string): Game {

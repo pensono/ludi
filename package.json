@@ -13,7 +13,7 @@
 		"format": "prettier --plugin-search-dir . --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
-		"generate-parser": "antlr4 -Dlanguage=TypeScript src/lib/lang/Ludi.g4 -o src/lib/lang/ -visitor"
+		"generate-parser": "antlr4 -Dlanguage=TypeScript src/lib/Ludi.g4 -o src/lib/gen/ -visitor"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
