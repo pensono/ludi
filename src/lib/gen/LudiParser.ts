@@ -1,4 +1,4 @@
-// Generated from src/lib/lang/Ludi.g4 by ANTLR 4.13.1
+// Generated from src/lib/Ludi.g4 by ANTLR 4.13.1
 // noinspection ES6UnusedImports,JSUnusedGlobalSymbols,JSUnusedLocalSymbols
 
 import {

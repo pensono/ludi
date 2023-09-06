@@ -1,4 +1,4 @@
-import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
+import { CharStream, CommonTokenStream, ErrorListener, FileStream }  from 'antlr4';
 import type { Action, Game } from './types'
 import LudiLexer from './gen/LudiLexer';
 import LudiParser, { ActionContext, ChangeStatementContext, DecreaseStatementContext, GameContext, IncreaseStatementContext, NumberExpressionContext, SetStatementContext } from './gen/LudiParser';
@@ -6,8 +6,15 @@ import LudiVisitor from './gen/LudiVisitor';
 import type { ConstantExpression, Expression, Statement } from '$lib/types';
 
 export function fromString(input: string): Game {
-    const chars = new CharStream(input); // replace this with a FileStream as required
-    const lexer = new LudiLexer(chars);
+    return fromStream(new CharStream(input))
+}
+
+export function fromFile(fileName: string): Game {
+    return fromStream(new FileStream(fileName))
+}
+
+function fromStream(input: CharStream): Game {
+    const lexer = new LudiLexer(input);
     const tokens = new CommonTokenStream(lexer);
     const parser = new LudiParser(tokens);
 
