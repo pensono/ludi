@@ -1,4 +1,4 @@
-// Generated from src/lib/lang/Ludi.g4 by ANTLR 4.13.0
+// Generated from src/lib/lang/Ludi.g4 by ANTLR 4.13.1
 
 import {ParseTreeVisitor} from 'antlr4';
 
@@ -21,10 +21,10 @@ import { WhenContext } from "./LudiParser";
 import { NegationContext } from "./LudiParser";
 import { ComparisonContext } from "./LudiParser";
 import { ConjunctionContext } from "./LudiParser";
-import { ParenthizedExpressionContext } from "./LudiParser";
-import { IdentifierExpressionContext } from "./LudiParser";
 import { NumberExpressionContext } from "./LudiParser";
+import { ParenthizedExpressionContext } from "./LudiParser";
 import { FunctionCallExpressionContext } from "./LudiParser";
+import { IdentifierExpressionContext } from "./LudiParser";
 import { LvalueContext } from "./LudiParser";
 import { TypeExpressionContext } from "./LudiParser";
 import { IdentifierContext } from "./LudiParser";
@@ -136,39 +136,25 @@ export default class LudiVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitWhen?: (ctx: WhenContext) => Result;
 	/**
 	 * Visit a parse tree produced by the `Negation`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitNegation?: (ctx: NegationContext) => Result;
 	/**
 	 * Visit a parse tree produced by the `Comparison`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitComparison?: (ctx: ComparisonContext) => Result;
 	/**
 	 * Visit a parse tree produced by the `Conjunction`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitConjunction?: (ctx: ConjunctionContext) => Result;
-	/**
-	 * Visit a parse tree produced by the `ParenthizedExpression`
-	 * labeled alternative in `LudiParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitParenthizedExpression?: (ctx: ParenthizedExpressionContext) => Result;
-	/**
-	 * Visit a parse tree produced by the `IdentifierExpression`
-	 * labeled alternative in `LudiParser.expression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitIdentifierExpression?: (ctx: IdentifierExpressionContext) => Result;
 	/**
 	 * Visit a parse tree produced by the `NumberExpression`
 	 * labeled alternative in `LudiParser.expression`.
@@ -177,12 +163,26 @@ export default class LudiVisitor<Result> extends ParseTreeVisitor<Result> {
 	 */
 	visitNumberExpression?: (ctx: NumberExpressionContext) => Result;
 	/**
+	 * Visit a parse tree produced by the `ParenthizedExpression`
+	 * labeled alternative in `LudiParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParenthizedExpression?: (ctx: ParenthizedExpressionContext) => Result;
+	/**
 	 * Visit a parse tree produced by the `FunctionCallExpression`
 	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitFunctionCallExpression?: (ctx: FunctionCallExpressionContext) => Result;
+	/**
+	 * Visit a parse tree produced by the `IdentifierExpression`
+	 * labeled alternative in `LudiParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIdentifierExpression?: (ctx: IdentifierExpressionContext) => Result;
 	/**
 	 * Visit a parse tree produced by `LudiParser.lvalue`.
 	 * @param ctx the parse tree

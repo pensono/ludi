@@ -1,4 +1,4 @@
-// Generated from src/lib/lang/Ludi.g4 by ANTLR 4.13.0
+// Generated from src/lib/lang/Ludi.g4 by ANTLR 4.13.1
 
 import {ParseTreeListener} from "antlr4";
 
@@ -21,10 +21,10 @@ import { WhenContext } from "./LudiParser";
 import { NegationContext } from "./LudiParser";
 import { ComparisonContext } from "./LudiParser";
 import { ConjunctionContext } from "./LudiParser";
-import { ParenthizedExpressionContext } from "./LudiParser";
-import { IdentifierExpressionContext } from "./LudiParser";
 import { NumberExpressionContext } from "./LudiParser";
+import { ParenthizedExpressionContext } from "./LudiParser";
 import { FunctionCallExpressionContext } from "./LudiParser";
+import { IdentifierExpressionContext } from "./LudiParser";
 import { LvalueContext } from "./LudiParser";
 import { TypeExpressionContext } from "./LudiParser";
 import { IdentifierContext } from "./LudiParser";
@@ -198,64 +198,40 @@ export default class LudiListener extends ParseTreeListener {
 	exitWhen?: (ctx: WhenContext) => void;
 	/**
 	 * Enter a parse tree produced by the `Negation`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 */
 	enterNegation?: (ctx: NegationContext) => void;
 	/**
 	 * Exit a parse tree produced by the `Negation`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 */
 	exitNegation?: (ctx: NegationContext) => void;
 	/**
 	 * Enter a parse tree produced by the `Comparison`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 */
 	enterComparison?: (ctx: ComparisonContext) => void;
 	/**
 	 * Exit a parse tree produced by the `Comparison`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 */
 	exitComparison?: (ctx: ComparisonContext) => void;
 	/**
 	 * Enter a parse tree produced by the `Conjunction`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 */
 	enterConjunction?: (ctx: ConjunctionContext) => void;
 	/**
 	 * Exit a parse tree produced by the `Conjunction`
-	 * labeled alternative in `LudiParser.condition`.
+	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
 	 */
 	exitConjunction?: (ctx: ConjunctionContext) => void;
-	/**
-	 * Enter a parse tree produced by the `ParenthizedExpression`
-	 * labeled alternative in `LudiParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	enterParenthizedExpression?: (ctx: ParenthizedExpressionContext) => void;
-	/**
-	 * Exit a parse tree produced by the `ParenthizedExpression`
-	 * labeled alternative in `LudiParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	exitParenthizedExpression?: (ctx: ParenthizedExpressionContext) => void;
-	/**
-	 * Enter a parse tree produced by the `IdentifierExpression`
-	 * labeled alternative in `LudiParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	enterIdentifierExpression?: (ctx: IdentifierExpressionContext) => void;
-	/**
-	 * Exit a parse tree produced by the `IdentifierExpression`
-	 * labeled alternative in `LudiParser.expression`.
-	 * @param ctx the parse tree
-	 */
-	exitIdentifierExpression?: (ctx: IdentifierExpressionContext) => void;
 	/**
 	 * Enter a parse tree produced by the `NumberExpression`
 	 * labeled alternative in `LudiParser.expression`.
@@ -269,6 +245,18 @@ export default class LudiListener extends ParseTreeListener {
 	 */
 	exitNumberExpression?: (ctx: NumberExpressionContext) => void;
 	/**
+	 * Enter a parse tree produced by the `ParenthizedExpression`
+	 * labeled alternative in `LudiParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterParenthizedExpression?: (ctx: ParenthizedExpressionContext) => void;
+	/**
+	 * Exit a parse tree produced by the `ParenthizedExpression`
+	 * labeled alternative in `LudiParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitParenthizedExpression?: (ctx: ParenthizedExpressionContext) => void;
+	/**
 	 * Enter a parse tree produced by the `FunctionCallExpression`
 	 * labeled alternative in `LudiParser.expression`.
 	 * @param ctx the parse tree
@@ -280,6 +268,18 @@ export default class LudiListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitFunctionCallExpression?: (ctx: FunctionCallExpressionContext) => void;
+	/**
+	 * Enter a parse tree produced by the `IdentifierExpression`
+	 * labeled alternative in `LudiParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterIdentifierExpression?: (ctx: IdentifierExpressionContext) => void;
+	/**
+	 * Exit a parse tree produced by the `IdentifierExpression`
+	 * labeled alternative in `LudiParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitIdentifierExpression?: (ctx: IdentifierExpressionContext) => void;
 	/**
 	 * Enter a parse tree produced by `LudiParser.lvalue`.
 	 * @param ctx the parse tree

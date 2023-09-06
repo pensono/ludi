@@ -1,5 +1,5 @@
-type Player: X or O
-type Square: Empty or Player
+kind Player: X or O
+kind Square: Empty or Player
 
 state Board: Grid[Square, 3, 3]
 state CurrentPlayer: Player
@@ -10,7 +10,7 @@ setup:
 action Play(x, y):
     change Board[x, y] to CurrentPlayer
 
-win Horizontal(p: Player):
-    InARow(Player, Board, 4, Horizontal)
-    or InARow(Player, Board, 4, Vertical)
-    or InARow(Player, Board, 4, Horizontal)
+win Horizontal(player):
+    when InARow(player, Board, 4, Horizontal)
+        or InARow(player, Board, 4, Vertical)
+        or InARow(player, Board, 4, Horizontal)
