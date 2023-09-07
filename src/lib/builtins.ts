@@ -3,7 +3,7 @@ import type { GameState, LudiFunction } from './types';
 
 export const functions: Record<string, LudiFunction> = {
     'RandomNumber': {
-        argument_types: [
+        parameter_types: [
             'number'
         ],
         return_type: 'number',

@@ -11,13 +11,13 @@ definition
     | kind
     | state_definition;
 
-action: 'action' name=identifier '(' (args+=identifier (',' args+=identifier)*)? ')' ':' conditions+=when* statement+;
+action: 'action' name=identifier '(' (parameters+=identifier (',' parameters+=identifier)*)? ')' ':' conditions+=when* statement+;
 
-trigger: 'trigger' name=identifier '(' (args+=identifier (',' args+=identifier)*)? ')' ':' conditions+=when* statement+;
+trigger: 'trigger' name=identifier '(' (parameters+=identifier (',' parameters+=identifier)*)? ')' ':' conditions+=when* statement+;
 
-win: 'win' name=identifier '(' (args+=identifier (',' args+=identifier)*)? ')' ':' conditions+=when*;
+win: 'win' name=identifier '(' (parameters+=identifier (',' parameters+=identifier)*)? ')' ':' conditions+=when*;
     
-loss: 'loss' name=identifier '(' (args+=identifier (',' args+=identifier)*)? ')' ':' conditions+=when*;
+loss: 'loss' name=identifier '(' (parameters+=identifier (',' parameters+=identifier)*)? ')' ':' conditions+=when*;
 
 setup: 'setup' ':' statement+;
 
@@ -41,7 +41,7 @@ expression
     : '(' expression ')' # ParenthizedExpression
     |  lvalue # IdentifierExpression
     | NUMBER # NumberExpression
-    | name=identifier '(' (args+=expression (',' args+=expression)*)? ')' # FunctionCallExpression
+    | name=identifier '(' (parameters+=expression (',' parameters+=expression)*)? ')' # FunctionCallExpression
     | ('not' | '!') expression # Negation // Would be good to settle on some syntax here...
     | left=expression operator='or' right=expression # Conjunction
     | left=expression operator='and' right=expression # Conjunction
@@ -55,14 +55,14 @@ expression
 
 lvalue
     : identifier
-    | identifier '[' (args+=expression (',' args+=expression)*)? ']'; // Not sure about this syntax at all
+    | identifier '[' (parameters+=expression (',' parameters+=expression)*)? ']'; // Not sure about this syntax at all
 
 // Don't let these be recursive, instead force users to write everything out so it's clearer
 typeExpression
     : identifier
     | identifier ('or' identifier)+ // Union
     | '{' name=identifier type=identifier '}' // Record
-    | identifier '[' (args+=expression (',' args+=expression)*)? ']'; // Parameters. Somehow the args must be constants
+    | identifier '[' (parameters+=expression (',' parameters+=expression)*)? ']'; // Parameters. Somehow the args must be constants
 
 identifier: IDENTIFIER;
 

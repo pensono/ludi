@@ -58,7 +58,7 @@ export interface GameState {
 }
 
 export interface LudiFunction {
-    argument_types: string[];
+    parameter_types: string[];
     return_type: string;
     /** Can have "side-effects" on the game state */
     invoke: (state: GameState, args: any[]) => any;
