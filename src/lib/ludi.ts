@@ -1,7 +1,7 @@
 import { CharStream, CommonTokenStream, ErrorListener, FileStream }  from 'antlr4';
-import type { Action, FunctionCallExpression, Game } from './types'
+import type { Action, FunctionCallExpression, Game, LudiType, Parameter } from './types'
 import LudiLexer from './gen/LudiLexer';
-import LudiParser, { ActionContext, ChangeStatementContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IncreaseStatementContext, NumberExpressionContext, SetStatementContext, SetupContext } from './gen/LudiParser';
+import LudiParser, { ActionContext, ChangeStatementContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiVisitor from './gen/LudiVisitor';
 import type { ConstantExpression, Expression, Statement } from '$lib/types';
 
@@ -74,13 +74,34 @@ function handleGame(ctx: GameContext): Game {
 function handleAction(ctx: ActionContext | SetupContext): Action {
     // const conditions = ctx.when_list().map(c => handleCondition(c));
     const statements = ctx.statement_list().map(s => new StatementVisitor().visit(s));
+    let parameters: Parameter[] = [];
+    let name: string | undefined = undefined;
+    
+    if (ctx instanceof ActionContext) {
+        parameters = handleParameterList(ctx.parameterList());
+        name = ctx._name.getText();
+    }
 
     return {
+        name,
         conditions: [],
-        statements: statements
+        statements,
+        parameters
     }
 }
 
+
+function handleParameterList(ctx: ParameterListContext): Parameter[] {
+    const result = [];
+    for (let i = 0; i < ctx._names.length; i++) {
+        result.push({
+            name: ctx._names[i].getText(),
+            type: new TypeExpressionVisitor().visit(ctx._types[i]),
+        });
+    };
+
+    return result;
+}
 
 class StatementVisitor extends LudiVisitor<Statement> {
     visitChangeStatement = (ctx: ChangeStatementContext): Statement => {
@@ -129,6 +150,18 @@ class ExpressionVisitor extends LudiVisitor<Expression> {
             type: 'function-call',
             name: ctx._name.getText(),
             arguments: ctx.expression_list().map(e => this.visit(e))
+        }
+    }
+}
+
+class TypeExpressionVisitor extends LudiVisitor<LudiType> {
+    visitParameterizedTypeExpression = (ctx: ParameterizedTypeExpressionContext): LudiType => {
+        // Hardcode for now
+        // Eventually some sort of second pass will be needed to resolve types (?)
+        return {
+            type: 'number',
+            min: parseInt(ctx._arguments[0].getText()),
+            max: parseInt(ctx._arguments[1].getText()),
         }
     }
 }

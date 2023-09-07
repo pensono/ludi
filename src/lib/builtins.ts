@@ -15,8 +15,8 @@ export const functions: Record<string, LudiFunction> = {
             const max = args[1];
 
             var rng = seedrandom(state.variables.__seed.toString());
-            const result = Math.floor(rng() * (max - min + 1) + min)
-            console.log(`RandomNumber(${min}, ${max}) = ${result}`);
+            const result = Math.floor(rng() * (max - min + 1) + min);
+            
             state.variables.__seed++;
 
             return result;

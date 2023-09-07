@@ -1,4 +1,4 @@
-import type { Action, Expression, Game, GameState, Statement } from './types'
+import type { Action, Expression, Game, GameState, LudiType, Move, Parameter, Statement } from './types'
 import * as builtins from './builtins'
 
 export function initialize(game: Game, seed?: number) : GameState {
@@ -14,6 +14,46 @@ export function initialize(game: Game, seed?: number) : GameState {
     }
 
     return state;
+}
+
+
+export function *enumerateMoves(game: Game, state: GameState) : IterableIterator<Move> {
+    for (const actionName in game.actions) {
+        const action = game.actions[actionName];
+
+        yield* enumerateActionMoves(game, state, action, action.parameters, []);
+    }
+}
+
+function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
+    if (remainingParameters.length === 0) {
+        if (action.name === undefined) {
+            new Error(`Action ${JSON.stringify(action)} has no name`);
+        }
+
+        yield {
+            actionName: action.name!,
+            args
+        };
+        return;
+    }
+
+    const parameter = remainingParameters[0];
+    const newRemainingParameters = remainingParameters.slice(1);
+    for (const value of enumerateValues(parameter.type)) {
+        yield* enumerateActionMoves(game, state, action, newRemainingParameters, [...args, value]);
+    }
+}
+
+function enumerateValues(type: LudiType) {
+    switch (type.type) {
+        case 'number':
+            return new Array(type.max - type.min + 1).fill(null).map((_, i) => i + type.min);
+        case 'enumeration':
+            return type.values;
+        default:
+            throw new Error(`Unknown type ${type}`);
+    }
 }
 
 export function runAction(game: Game, state: GameState, action: Action) : GameState {

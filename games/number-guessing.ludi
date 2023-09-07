@@ -6,7 +6,7 @@ setup:
     set HiddenNumber to RandomNumber(1, 10)
     set RemainingGuesses to 3
 
-action Guess(number):
+action Guess(number: Number<1, 10>):
     change PreviousGuess to number
     decrease RemainingGuesses by 1
 

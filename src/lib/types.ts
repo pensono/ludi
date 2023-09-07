@@ -3,9 +3,16 @@ export interface Game {
     actions: Record<string, Action>;
 }
 
+export interface GameState {
+    variables: Record<string, any>;
+    ply: number;
+}
+
 export interface Action {
+    name?: string;
     conditions: Condition[];
     statements: Statement[];
+    parameters: Parameter[];
 }
 
 export type Statement = ChangeStatement | SetStatement | IncreaseStatement | DecreaseStatement;
@@ -51,10 +58,13 @@ export interface FunctionCallExpression {
     arguments: Expression[];
 }
 
-
-export interface GameState {
-    variables: Record<string, any>;
-    ply: number;
+export interface Parameter {
+    name: string;
+    type: LudiType;
+}
+export interface Move {
+    actionName: string;
+    args: any[];
 }
 
 export interface LudiFunction {
@@ -62,4 +72,17 @@ export interface LudiFunction {
     return_type: string;
     /** Can have "side-effects" on the game state */
     invoke: (state: GameState, args: any[]) => any;
+}
+
+export type LudiType = NumberType | EnumerationType;
+
+export interface NumberType {
+    type: "number";
+    min: number;
+    max: number;
+}
+
+export interface EnumerationType {
+    type: "enumeration";
+    values: string[];
 }

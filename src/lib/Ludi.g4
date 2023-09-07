@@ -1,5 +1,11 @@
 grammar Ludi;
 
+// Philosophy
+// - Be consistent
+// - Don't overload
+// - Don't be implicit
+// - Avoid symbols which are not well known
+
 game: definition* EOF;
 
 definition
@@ -11,13 +17,13 @@ definition
     | kind
     | state_definition;
 
-action: 'action' name=identifier '(' (parameters+=identifier (',' parameters+=identifier)*)? ')' ':' conditions+=when* statement+;
+action: 'action' name=identifier '(' parameterList ')' ':' conditions+=when* statement*;
 
-trigger: 'trigger' name=identifier '(' (parameters+=identifier (',' parameters+=identifier)*)? ')' ':' conditions+=when* statement+;
+trigger: 'trigger' name=identifier '(' parameterList ')' ':' conditions+=when* statement*;
 
-win: 'win' name=identifier '(' (parameters+=identifier (',' parameters+=identifier)*)? ')' ':' conditions+=when*;
+win: 'win' name=identifier '(' parameterList ')' ':' conditions+=when*;
     
-loss: 'loss' name=identifier '(' (parameters+=identifier (',' parameters+=identifier)*)? ')' ':' conditions+=when*;
+loss: 'loss' name=identifier '(' parameterList ')' ':' conditions+=when*;
 
 setup: 'setup' ':' statement+;
 
@@ -37,11 +43,13 @@ statement
 
 when: 'when' expression;
 
+parameterList: (names+=identifier ':' types+=typeExpression (',' names+=identifier ':' types+=typeExpression)*)?;
+
 expression
     : '(' expression ')' # ParenthizedExpression
     |  lvalue # IdentifierExpression
     | NUMBER # NumberExpression
-    | name=identifier '(' (parameters+=expression (',' parameters+=expression)*)? ')' # FunctionCallExpression
+    | name=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' # FunctionCallExpression
     | ('not' | '!') expression # Negation // Would be good to settle on some syntax here...
     | left=expression operator='or' right=expression # Conjunction
     | left=expression operator='and' right=expression # Conjunction
@@ -55,14 +63,14 @@ expression
 
 lvalue
     : identifier
-    | identifier '[' (parameters+=expression (',' parameters+=expression)*)? ']'; // Not sure about this syntax at all
+    | identifier '[' (arguments+=expression (',' arguments+=expression)*)? ']'; // Not sure about this syntax at all
 
 // Don't let these be recursive, instead force users to write everything out so it's clearer
 typeExpression
-    : identifier
-    | identifier ('or' identifier)+ // Union
-    | '{' name=identifier type=identifier '}' // Record
-    | identifier '[' (parameters+=expression (',' parameters+=expression)*)? ']'; // Parameters. Somehow the args must be constants
+    : identifier # TypeIdentifierExpression
+    | identifier ('or' identifier)+ # UnionTypeExpression
+    // | '{' name=identifier type=identifier '}'  // Record
+    | identifier '<' (arguments+=expression (',' arguments+=expression)*)? '>' # ParameterizedTypeExpression; // Somehow the args must be constants
 
 identifier: IDENTIFIER;
 
