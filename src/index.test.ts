@@ -1,5 +1,4 @@
 import { fromFile, fromString } from '$lib/ludi';
-import fs from 'fs';
 import { describe, it, expect } from 'vitest';
 
 describe('games can parse', () => {
@@ -7,6 +6,6 @@ describe('games can parse', () => {
 		fromFile(`./games/number-guessing.ludi`);
 	});
 	it(`tic-tac-toe.ludi parses`, () => {
-		fromString(`./games/tic-tac-toe.ludi`);
+		fromFile(`./games/tic-tac-toe.ludi`);
 	});
 });

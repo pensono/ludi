@@ -41,7 +41,7 @@ expression
     : '(' expression ')' # ParenthizedExpression
     |  lvalue # IdentifierExpression
     | NUMBER # NumberExpression
-    | identifier '(' (args+=expression (',' args+=expression)*)? ')' # FunctionCallExpression
+    | name=identifier '(' (args+=expression (',' args+=expression)*)? ')' # FunctionCallExpression
     | ('not' | '!') expression # Negation // Would be good to settle on some syntax here...
     | left=expression operator='or' right=expression # Conjunction
     | left=expression operator='and' right=expression # Conjunction

@@ -38,14 +38,28 @@ export interface Condition {
     expression: Expression;
 }
 
-export type Expression = ConstantExpression;
+export type Expression = ConstantExpression | FunctionCallExpression;
 
 export interface ConstantExpression {
     type: "constant";
     value: any;
 }
 
+export interface FunctionCallExpression {
+    type: "function-call";
+    name: string;
+    arguments: Expression[];
+}
+
+
 export interface GameState {
-    boardState: Record<string, any>;
+    variables: Record<string, any>;
     ply: number;
+}
+
+export interface LudiFunction {
+    argument_types: string[];
+    return_type: string;
+    /** Can have "side-effects" on the game state */
+    invoke: (state: GameState, args: any[]) => any;
 }

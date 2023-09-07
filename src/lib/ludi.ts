@@ -1,9 +1,22 @@
 import { CharStream, CommonTokenStream, ErrorListener, FileStream }  from 'antlr4';
-import type { Action, Game } from './types'
+import type { Action, FunctionCallExpression, Game } from './types'
 import LudiLexer from './gen/LudiLexer';
-import LudiParser, { ActionContext, ChangeStatementContext, DecreaseStatementContext, GameContext, IncreaseStatementContext, NumberExpressionContext, SetStatementContext } from './gen/LudiParser';
+import LudiParser, { ActionContext, ChangeStatementContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IncreaseStatementContext, NumberExpressionContext, SetStatementContext, SetupContext } from './gen/LudiParser';
 import LudiVisitor from './gen/LudiVisitor';
 import type { ConstantExpression, Expression, Statement } from '$lib/types';
+
+
+export class ParseError extends Error {
+    constructor(message: string, public position: Position) {
+        super(message);
+    }
+}
+
+export interface Position {
+    file?: string;
+    line: number;
+    column: number;
+}
 
 export function fromString(input: string): Game {
     return fromStream(new CharStream(input))
@@ -33,8 +46,19 @@ function fromStream(input: CharStream): Game {
 
 function handleGame(ctx: GameContext): Game {
     let actions: Record<string, Action> = {};
+    let setup: Action | undefined = undefined;
 
     for (const definition of ctx.definition_list()) {
+        if (definition.setup()) {
+            if (setup !== undefined) {
+                // TODO ideally the error only relates to the part which says "setup"
+                // TODO collect errors and continue parsing
+                throw new ParseError('Cannot have more than one setup block', definition.start);
+            }
+
+            setup = handleAction(definition.setup());
+        }
+
         if (definition.action()) {
             const action = definition.action();
             actions[action._name.getText()] = handleAction(definition.action());
@@ -42,11 +66,12 @@ function handleGame(ctx: GameContext): Game {
     }
 
     return {
-        actions: actions
+        setup: setup,
+        actions: actions,
     }
 }
 
-function handleAction(ctx: ActionContext): Action {
+function handleAction(ctx: ActionContext | SetupContext): Action {
     // const conditions = ctx.when_list().map(c => handleCondition(c));
     const statements = ctx.statement_list().map(s => new StatementVisitor().visit(s));
 
@@ -96,6 +121,14 @@ class ExpressionVisitor extends LudiVisitor<Expression> {
         return {
             type: 'constant',
             value: parseInt(ctx.NUMBER().getText())
+        }
+    }
+
+    visitFunctionCallExpression = (ctx: FunctionCallExpressionContext): FunctionCallExpression => {
+        return {
+            type: 'function-call',
+            name: ctx._name.getText(),
+            arguments: ctx.expression_list().map(e => this.visit(e))
         }
     }
 }
