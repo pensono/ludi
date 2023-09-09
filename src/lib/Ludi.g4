@@ -4,7 +4,7 @@ grammar Ludi;
 // - Be consistent
 // - Don't overload
 // - Don't be implicit
-// - Avoid symbols which are not well known
+// - Avoid symbols which are not well known. High school should be enough education
 
 game: definition* EOF;
 
@@ -29,10 +29,10 @@ setup: 'setup' ':' statement+;
 
 // players: 'players' ':' identifier (',' identifier)*; // Need something for unnamed players too, variable number of players etc
 
-kind: 'kind' name=identifier ':' typeExpression;
+kind: 'kind' name=identifier 'a' typeExpression;
     
 // Must name state_definition to avoid conflicts with antlr internals
-state_definition: 'state' name=identifier ':' typeExpression;
+state_definition: 'state' name=identifier 'a' typeExpression;
 
 statement
     : 'change' lvalue 'to' expression # ChangeStatement
@@ -43,7 +43,7 @@ statement
 
 when: 'when' expression;
 
-parameterList: (names+=identifier ':' types+=typeExpression (',' names+=identifier ':' types+=typeExpression)*)?;
+parameterList: (names+=identifier 'a' types+=typeExpression (',' names+=identifier 'a' types+=typeExpression)*)?;
 
 expression
     : '(' expression ')' # ParenthizedExpression
