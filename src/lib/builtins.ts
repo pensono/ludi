@@ -21,5 +21,26 @@ export const functions: Record<string, LudiFunction> = {
 
             return result;
         }
+    },
+    
+    '<': comparison((left, right) => left < right),
+    '>': comparison((left, right) => left > right),
+    '<=': comparison((left, right) => left <= right),
+    '>=': comparison((left, right) => left >= right),
+}
+
+function comparison(operator: (left: number, right: number) => boolean) {
+    return {
+        parameter_types: [
+            'number',
+            'number'
+        ],
+        return_type: 'boolean',
+        invoke: (state: GameState, args: any[]): any => {
+            const left = args[0];
+            const right = args[1];
+
+            return operator(left, right);
+        }
     }
 }

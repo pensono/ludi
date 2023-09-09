@@ -47,18 +47,18 @@ parameterList: (names+=identifier 'a' types+=typeExpression (',' names+=identifi
 
 expression
     : '(' expression ')' # ParenthizedExpression
-    |  lvalue # IdentifierExpression
+    | name=lvalue # IdentifierExpression
     | NUMBER # NumberExpression
     | name=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' # FunctionCallExpression
-    | ('not' | '!') expression # Negation // Would be good to settle on some syntax here...
-    | left=expression operator='or' right=expression # Conjunction
-    | left=expression operator='and' right=expression # Conjunction
-    | left=expression operator='=' right=expression # Comparison
-    | left=expression operator='!=' right=expression # Comparison
-    | left=expression operator='>' right=expression # Comparison
-    | left=expression operator='<' right=expression # Comparison
-    | left=expression operator='>=' right=expression # Comparison
-    | left=expression operator='<=' right=expression # Comparison;
+    | ('not' | '!') expression # NegationExpression // Would be good to settle on some syntax here...
+    | left=expression operator='or' right=expression # ConjunctionExpression
+    | left=expression operator='and' right=expression # ConjunctionExpression
+    | left=expression operator='=' right=expression # ComparisonExpression
+    | left=expression operator='!=' right=expression # ComparisonExpression
+    | left=expression operator='>' right=expression # ComparisonExpression
+    | left=expression operator='<' right=expression # ComparisonExpression
+    | left=expression operator='>=' right=expression # ComparisonExpression
+    | left=expression operator='<=' right=expression # ComparisonExpression;
 
 
 lvalue

@@ -45,11 +45,16 @@ export interface Condition {
     expression: Expression;
 }
 
-export type Expression = ConstantExpression | FunctionCallExpression;
+export type Expression = ConstantExpression | IdentifierExpression | FunctionCallExpression;
 
 export interface ConstantExpression {
     type: "constant";
     value: any;
+}
+
+export interface IdentifierExpression {
+    type: "identifier";
+    name: string;
 }
 
 export interface FunctionCallExpression {

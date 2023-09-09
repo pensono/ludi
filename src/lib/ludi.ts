@@ -1,7 +1,7 @@
 import { CharStream, CommonTokenStream, ErrorListener, FileStream }  from 'antlr4';
-import type { Action, FunctionCallExpression, Game, LudiType, Parameter } from './types'
+import type { Action, Condition, FunctionCallExpression, Game, IdentifierExpression, LudiType, Parameter } from './types'
 import LudiLexer from './gen/LudiLexer';
-import LudiParser, { ActionContext, ChangeStatementContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
+import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiVisitor from './gen/LudiVisitor';
 import type { ConstantExpression, Expression, Statement } from '$lib/types';
 
@@ -74,17 +74,21 @@ function handleGame(ctx: GameContext): Game {
 function handleAction(ctx: ActionContext | SetupContext): Action {
     // const conditions = ctx.when_list().map(c => handleCondition(c));
     const statements = ctx.statement_list().map(s => new StatementVisitor().visit(s));
-    let parameters: Parameter[] = [];
     let name: string | undefined = undefined;
+    let parameters: Parameter[] = [];
+    let conditions: Condition[] = [];
     
     if (ctx instanceof ActionContext) {
-        parameters = handleParameterList(ctx.parameterList());
         name = ctx._name.getText();
+        parameters = handleParameterList(ctx.parameterList());
+        conditions = ctx.when_list().map(c => ({
+            expression: new ExpressionVisitor().visit(c.expression())
+        }));
     }
 
     return {
         name,
-        conditions: [],
+        conditions,
         statements,
         parameters
     }
@@ -145,11 +149,30 @@ class ExpressionVisitor extends LudiVisitor<Expression> {
         }
     }
 
+    visitIdentifierExpression = (ctx: IdentifierExpressionContext): IdentifierExpression => {
+        return {
+            type: 'identifier',
+            name: ctx._name.getText(),
+        }
+    }
+
     visitFunctionCallExpression = (ctx: FunctionCallExpressionContext): FunctionCallExpression => {
         return {
             type: 'function-call',
             name: ctx._name.getText(),
             arguments: ctx.expression_list().map(e => this.visit(e))
+        }
+    }
+
+    visitComparisonExpression = (ctx: ComparisonExpressionContext): FunctionCallExpression => {
+        // Is function-call specific enough? Worth doing binary-operator or similar?
+        return {
+            type: 'function-call',
+            name: ctx._operator.text,
+            arguments: [
+                this.visit(ctx._left),
+                this.visit(ctx._right)
+            ]
         }
     }
 }

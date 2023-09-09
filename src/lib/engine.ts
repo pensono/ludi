@@ -26,15 +26,22 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
 }
 
 function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
+    // There are many faster ways to do this, but this is easy to implement and fast enough for most games
+    // Using something like SMT is ideal
     if (remainingParameters.length === 0) {
         if (action.name === undefined) {
             new Error(`Action ${JSON.stringify(action)} has no name`);
         }
 
-        yield {
-            actionName: action.name!,
-            args
-        };
+        // This extra transformation is sad but fine for now
+        const locals = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: args[i]}), {});
+
+        if (action.conditions.every(condition => evaluateExpression(state, locals, condition.expression))) {
+            yield {
+                actionName: action.name!,
+                args
+            };
+        }
         return;
     }
 
@@ -66,7 +73,7 @@ export function runAction(game: Game, state: GameState, action: Action) : GameSt
     state = {...state}
 
     for (const statement of action.statements) {
-        runStatement(game, state, statement);
+        runStatement(game, state, {}, statement);
     }
 
     state.ply++;
@@ -74,11 +81,11 @@ export function runAction(game: Game, state: GameState, action: Action) : GameSt
     return state;
 }
 
-export function runStatement(game: Game, state: GameState, statement: Statement) {
+export function runStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
     switch (statement.type) {
         case 'change': {
             const oldValue = state.variables[statement.variable];
-            const newValue = evaluateExpression(state, statement.value);
+            const newValue = evaluateExpression(state, locals, statement.value);
 
             if (oldValue === newValue) {
                 // Typechecking should prevent this from happening
@@ -89,7 +96,7 @@ export function runStatement(game: Game, state: GameState, statement: Statement)
             return;
         }
         case 'set': {
-            const newValue = evaluateExpression(state, statement.value);
+            const newValue = evaluateExpression(state, locals, statement.value);
             state.variables[statement.variable] = newValue;
             return;
         }
@@ -100,7 +107,7 @@ export function runStatement(game: Game, state: GameState, statement: Statement)
                 throw new Error(`Cannot increment a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${oldValue}`);
             }
 
-            const amount = evaluateExpression(state, statement.amount);
+            const amount = evaluateExpression(state, locals, statement.amount);
             if (typeof amount !== 'number') {
                 // Typechecking should prevent this from happening
                 throw new Error(`Cannot increment by a non-number. This indicates an error in the engine. Value: ${amount}`);
@@ -116,7 +123,7 @@ export function runStatement(game: Game, state: GameState, statement: Statement)
                 throw new Error(`Cannot decrement a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${oldValue}`);
             }
 
-            const amount = evaluateExpression(state, statement.amount);
+            const amount = evaluateExpression(state, locals, statement.amount);
             if (typeof amount !== 'number') {
                 // Typechecking should prevent this from happening
                 throw new Error(`Cannot decrement by a non-number. This indicates an error in the engine. Value: ${amount}`);
@@ -130,7 +137,7 @@ export function runStatement(game: Game, state: GameState, statement: Statement)
     }
 }
 
-export function evaluateExpression(state: GameState, expression: Expression) : any {
+export function evaluateExpression(state: GameState, locals: Record<string, any>, expression: Expression) : any {
     switch (expression.type) {
         case 'constant':
             return expression.value;
@@ -138,11 +145,25 @@ export function evaluateExpression(state: GameState, expression: Expression) : a
             // Only builtins for now
             const func = builtins.functions[expression.name];
             if (func === undefined) {
-                throw new Error(`Function ${expression.name} not found. This indicates an error in the engine.`);
+                throw new Error(`Function ${expression.name} not found when evaluating ${JSON.stringify(expression)}. This indicates an error in the engine.`);
             }
 
-            const args = expression.arguments.map(arg => evaluateExpression(state, arg));
+            const args = expression.arguments.map(arg => evaluateExpression(state, locals, arg));
             return func.invoke(state, args);
+        }
+        case 'identifier': {
+            const localValue = locals[expression.name];
+            const stateValue = state.variables[expression.name];
+            if (localValue !== undefined && stateValue !== undefined) {
+                throw new Error(`Variable ${expression.name} found in both locals and global state. This indicates an error in the engine.`);
+            }
+
+            const value = localValue ?? stateValue;
+            if (value === undefined) {
+                throw new Error(`Variable ${expression.name} not found. This indicates an error in the engine.`);
+            }
+
+            return value;
         }
         default:
             throw new Error(`Unknown expression ${JSON.stringify(expression)}`);
