@@ -61,26 +61,67 @@ describe('enumerate moves', () => {
         expect(moves).toEqual([]);
     });
 
-	it(`Conditional move`, () => {
-		const game = fromString(`
+    it(`Conditional move`, () => {
+        const game = fromString(`
             state Minimum a Number<1, 10>
 
             setup:
                 set Minimum to 5
 
-			action Action(number a Number<1, 10>):
+            action Action(number a Number<1, 10>):
                 when number > Minimum
-		`);
+        `);
         let state = initialize(game);
 
-		let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(game, state)];
 
-		expect(moves).toEqual([
+        expect(moves).toEqual([
             {actionName: "Action", args: [6]},
             {actionName: "Action", args: [7]},
             {actionName: "Action", args: [8]},
             {actionName: "Action", args: [9]},
             {actionName: "Action", args: [10]},
-		]);
-	});
+        ]);
+    });
+    
+    it(`Change`, () => {
+        const game = fromString(`
+            state LastGuess a Number<1, 3>
+
+            setup:
+                set LastGuess to 2
+
+            action Action(number a Number<1, 3>):
+                change LastGuess to number
+        `);
+        let state = initialize(game);
+
+        let moves = [...enumerateMoves(game, state)];
+
+        expect(moves).toEqual([
+            {actionName: "Action", args: [1]},
+            {actionName: "Action", args: [3]},
+        ]);
+    });
+    
+    it(`Change after mutation`, () => {
+        const game = fromString(`
+            state LastGuess a Number<1, 3>
+
+            setup:
+                set LastGuess to 2
+
+            action Action(number a Number<1, 3>):
+                change LastGuess to 3
+                change LastGuess to number
+        `);
+        let state = initialize(game);
+
+        let moves = [...enumerateMoves(game, state)];
+
+        expect(moves).toEqual([
+            {actionName: "Action", args: [1]},
+            {actionName: "Action", args: [2]},
+        ]);
+    });
 })

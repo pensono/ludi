@@ -10,7 +10,8 @@ export function initialize(game: Game, seed?: number) : GameState {
     }
 
     if (game.setup) {
-        runAction(game, state, game.setup);
+        state = runAction(game, state, game.setup);
+        state.ply = 0; // runAction increments this
     }
 
     return state;
@@ -36,12 +37,24 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
         // This extra transformation is sad but fine for now
         const locals = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: args[i]}), {});
 
-        if (action.conditions.every(condition => evaluateExpression(state, locals, condition.expression))) {
-            yield {
-                actionName: action.name!,
-                args
-            };
+        if (!action.conditions.every(condition => evaluateExpression(state, locals, condition.expression))) {
+            return;
         }
+
+        // Duplication with runAction :(
+        var dummyState = structuredClone(state)
+        for (const statement of action.statements) {
+            if (!checkPreconditions(dummyState, locals, statement)) {
+                return;
+            }
+            runStatement(game, dummyState, locals, statement);
+        }
+        
+        yield {
+            actionName: action.name!,
+            args
+        };
+
         return;
     }
 
@@ -63,14 +76,26 @@ function enumerateValues(type: LudiType) {
     }
 }
 
-export function runAction(game: Game, state: GameState, action: Action) : GameState {
-    // const action = game.actions[actionName];
-    // if (!action) {
-    //     throw new Error(`Action ${actionName} not found`);
-    // }
+function checkPreconditions(state: GameState, locals: Record<string, any>, statement: Statement): boolean {
+    // OPTIMIZE cache this somehow?
+    switch (statement.type) {
+        case 'change':
+            // OPTIMIZE Double evaluation with regular running of the action.
+            return state.variables[statement.variable] !== evaluateExpression(state, locals, statement.value);
+        case 'set':
+            return true;
+        case 'increase':
+        case 'decrease':
+            // Must look at variable types and check that it's in range
+            return true;
+        default:
+            throw new Error(`Unknown statement ${JSON.stringify(statement)}`);
+    }
+}
 
+export function runAction(game: Game, state: GameState, action: Action) : GameState {
     // Don't modify the original- this is useful when simulating alternatives
-    state = {...state}
+    state = structuredClone(state)
 
     for (const statement of action.statements) {
         runStatement(game, state, {}, statement);
