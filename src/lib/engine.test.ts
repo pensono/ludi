@@ -124,4 +124,24 @@ describe('enumerate moves', () => {
             {actionName: "Action", args: [2]},
         ]);
     });
+    
+    it(`Decrements`, () => {
+        const game = fromString(`
+            state Score a Number<0, 100>
+
+            setup:
+                set Score to 0
+
+            action Action(number a Number<1, 3>):
+                decrement Score by 1
+        `);
+        let state = initialize(game);
+
+        let moves = [...enumerateMoves(game, state)];
+
+        expect(moves).toEqual([
+            {actionName: "Action", args: [1]},
+            {actionName: "Action", args: [2]},
+        ]);
+    });
 })

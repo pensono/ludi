@@ -37,8 +37,9 @@ state_definition: 'state' name=identifier 'a' typeExpression;
 statement
     : 'change' lvalue 'to' expression # ChangeStatement
     | 'set' lvalue 'to' expression # SetStatement
-    | 'increase' lvalue 'by' expression # IncreaseStatement
-    | 'decrease' lvalue 'by' expression # DecreaseStatement
+    // Not sure about required/if possible
+    | 'increase' lvalue 'by' expression (mode='required' | mode='if' 'possible') # IncreaseStatement
+    | 'decrease' lvalue 'by' expression (mode='required' | mode='if' 'possible') # DecreaseStatement
     | 'if' expression 'then' statement+ 'end' # IfStatement;
 
 when: 'when' expression;
