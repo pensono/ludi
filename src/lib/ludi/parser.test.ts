@@ -1,4 +1,4 @@
-import { fromFile, fromString } from '$lib/ludi';
+import { fromFile, fromString } from './parser';
 import { describe, it, expect } from 'vitest';
 
 describe('games can parse', () => {

@@ -1,5 +1,5 @@
 {
-	"name": "games",
+	"name": "ludi",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
@@ -13,7 +13,8 @@
 		"format": "prettier --plugin-search-dir . --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
-		"generate-parser": "antlr4 -Dlanguage=TypeScript src/lib/Ludi.g4 -o src/lib/gen/ -visitor"
+		"generate-parser": "antlr4 -Dlanguage=JavaScript src/lib/ludi/Ludi.g4 -o src/lib/ludi/gen/ -visitor",
+		"generate-types-to-get-around-vite-issues": "antlr4 -Dlanguage=TypeScript src/lib/ludi/Ludi.g4 -o tmp -visitor && tsc tmp/LudiParser.ts -d --declarationDir src/lib/ludi/gen --declarationMap --emitDeclarationOnly && rm -rf tmp"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -22,16 +23,19 @@
 		"@types/seedrandom": "^3.0.5",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
+		"antlr4ts": "^0.5.0-alpha.4",
+		"dts-gen": "^0.6.1",
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte": "^2.30.0",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.10.1",
+		"sass": "^1.67.0",
 		"svelte": "^4.0.5",
 		"svelte-check": "^3.4.3",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
-		"vite": "^4.4.2",
+		"vite": "^4.4.9",
 		"vitest": "^0.32.2"
 	},
 	"type": "module",

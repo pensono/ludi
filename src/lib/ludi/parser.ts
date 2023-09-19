@@ -1,9 +1,10 @@
-import { CharStream, CommonTokenStream, ErrorListener, FileStream }  from 'antlr4';
+import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
 import type { Action, Condition, FunctionCallExpression, Game, IdentifierExpression, LudiType, Parameter } from './types'
 import LudiLexer from './gen/LudiLexer';
-import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
+// import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
+import LudiParser from './gen/LudiParser';
 import LudiVisitor from './gen/LudiVisitor';
-import type { ConstantExpression, Expression, Statement } from '$lib/types';
+import type { ConstantExpression, Expression, Statement } from './types';
 
 
 export class ParseError extends Error {
@@ -22,9 +23,9 @@ export function fromString(input: string): Game {
     return fromStream(new CharStream(input))
 }
 
-export function fromFile(fileName: string): Game {
-    return fromStream(new FileStream(fileName))
-}
+// export function fromFile(fileName: string): Game {
+//     return fromStream(new FileStream(fileName))
+// }
 
 function fromStream(input: CharStream): Game {
     const lexer = new LudiLexer(input);
@@ -43,12 +44,11 @@ function fromStream(input: CharStream): Game {
     return handleGame(gameContext);
 }
 
-
-function handleGame(ctx: GameContext): Game {
+function handleGame(ctx: any): Game {
     let actions: Record<string, Action> = {};
     let setup: Action | undefined = undefined;
 
-    for (const definition of ctx.definition_list()) {
+    for (const definition of ctx.definition()) {
         if (definition.setup()) {
             if (setup !== undefined) {
                 // TODO ideally the error only relates to the part which says "setup"
@@ -61,7 +61,7 @@ function handleGame(ctx: GameContext): Game {
 
         if (definition.action()) {
             const action = definition.action();
-            actions[action._name.getText()] = handleAction(definition.action());
+            actions[action.name.getText()] = handleAction(action);
         } 
     }
 
@@ -71,17 +71,17 @@ function handleGame(ctx: GameContext): Game {
     }
 }
 
-function handleAction(ctx: ActionContext | SetupContext): Action {
-    // const conditions = ctx.when_list().map(c => handleCondition(c));
-    const statements = ctx.statement_list().map(s => new StatementVisitor().visit(s));
+function handleAction(ctx: any): Action {
+    // const conditions = ctx.when().map(c => handleCondition(c));
+    const statements = ctx.statement().map(s => new StatementVisitor().visit(s));
     let name: string | undefined = undefined;
     let parameters: Parameter[] = [];
     let conditions: Condition[] = [];
     
-    if (ctx instanceof ActionContext) {
-        name = ctx._name.getText();
+    if (ctx.ruleIndex === LudiParser.RULE_action) {
+        name = ctx.name.getText();
         parameters = handleParameterList(ctx.parameterList());
-        conditions = ctx.when_list().map(c => ({
+        conditions = ctx.when().map(c => ({
             expression: new ExpressionVisitor().visit(c.expression())
         }));
     }
@@ -95,20 +95,20 @@ function handleAction(ctx: ActionContext | SetupContext): Action {
 }
 
 
-function handleParameterList(ctx: ParameterListContext): Parameter[] {
+function handleParameterList(ctx: any): Parameter[] {
     const result = [];
-    for (let i = 0; i < ctx._names.length; i++) {
+    for (let i = 0; i < ctx.names.length; i++) {
         result.push({
-            name: ctx._names[i].getText(),
-            type: new TypeExpressionVisitor().visit(ctx._types[i]),
+            name: ctx.names[i].getText(),
+            type: new TypeExpressionVisitor().visit(ctx.types[i]),
         });
     };
 
     return result;
 }
 
-class StatementVisitor extends LudiVisitor<Statement> {
-    visitChangeStatement = (ctx: ChangeStatementContext): Statement => {
+class StatementVisitor extends LudiVisitor {
+    visitChangeStatement = (ctx: any): Statement => {
         return {
             type: 'change',
             variable: ctx.lvalue().getText(),
@@ -116,7 +116,7 @@ class StatementVisitor extends LudiVisitor<Statement> {
         }
     }
 
-    visitSetStatement = (ctx: SetStatementContext): Statement => {
+    visitSetStatement = (ctx: any): Statement => {
         return {
             type: 'set',
             variable: ctx.lvalue().getText(),
@@ -124,7 +124,7 @@ class StatementVisitor extends LudiVisitor<Statement> {
         }
     }
 
-    visitIncreaseStatement = (ctx: IncreaseStatementContext): Statement => {
+    visitIncreaseStatement = (ctx: any): Statement => {
         return {
             type: 'increase',
             variable: ctx.lvalue().getText(),
@@ -132,7 +132,7 @@ class StatementVisitor extends LudiVisitor<Statement> {
         }
     }
 
-    visitDecreaseStatement = (ctx: DecreaseStatementContext): Statement => {
+    visitDecreaseStatement = (ctx: any): Statement => {
         return {
             type: 'decrease',
             variable: ctx.lvalue().getText(),
@@ -141,37 +141,37 @@ class StatementVisitor extends LudiVisitor<Statement> {
     }
 }
 
-class ExpressionVisitor extends LudiVisitor<Expression> {
-    visitNumberExpression = (ctx: NumberExpressionContext): ConstantExpression => {
+class ExpressionVisitor extends LudiVisitor {
+    visitNumberExpression = (ctx: any): ConstantExpression => {
         return {
             type: 'constant',
             value: parseInt(ctx.NUMBER().getText())
         }
     }
 
-    visitIdentifierExpression = (ctx: IdentifierExpressionContext): IdentifierExpression => {
+    visitIdentifierExpression = (ctx: any): IdentifierExpression => {
         return {
             type: 'identifier',
-            name: ctx._name.getText(),
+            name: ctx.name.getText(),
         }
     }
 
-    visitFunctionCallExpression = (ctx: FunctionCallExpressionContext): FunctionCallExpression => {
+    visitFunctionCallExpression = (ctx: any): FunctionCallExpression => {
         return {
             type: 'function-call',
-            name: ctx._name.getText(),
-            arguments: ctx.expression_list().map(e => this.visit(e))
+            name: ctx.name.getText(),
+            arguments: ctx.expression().map(e => this.visit(e))
         }
     }
 
-    visitComparisonExpression = (ctx: ComparisonExpressionContext): FunctionCallExpression => {
+    visitComparisonExpression = (ctx): FunctionCallExpression => {
         // Is function-call specific enough? Worth doing binary-operator or similar?
         return {
             type: 'function-call',
-            name: ctx._operator.text,
+            name: ctx.operator.text,
             arguments: [
-                this.visit(ctx._left),
-                this.visit(ctx._right)
+                this.visit(ctx.left),
+                this.visit(ctx.right)
             ]
         }
     }
@@ -183,8 +183,8 @@ class TypeExpressionVisitor extends LudiVisitor<LudiType> {
         // Eventually some sort of second pass will be needed to resolve types (?)
         return {
             type: 'number',
-            min: parseInt(ctx._arguments[0].getText()),
-            max: parseInt(ctx._arguments[1].getText()),
+            min: parseInt(ctx.arguments[0].getText()),
+            max: parseInt(ctx.arguments[1].getText()),
         }
     }
 }
@@ -192,7 +192,7 @@ class TypeExpressionVisitor extends LudiVisitor<LudiType> {
 class CollectingErrorListener extends ErrorListener<string> {
     errors: string[] = [];
 
-    syntaxError = (recognizer, offendingSymbol, line, column, msg, e) => {
+    syntaxError = (_recognizer: any, _offendingSymbol: any, line: any, column: any, msg: any, _e: any) => {
         this.errors.push(`${line}:${column} ${msg}`);
     }
 }
