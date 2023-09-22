@@ -1,5 +1,5 @@
 import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
-import type { Action, Condition, FunctionCallExpression, Game, IdentifierExpression, LudiType, Parameter } from './types'
+import type { Action, Condition, FunctionCallExpression, Game, IdentifierExpression, LudiType, Parameter, StateVariable } from './types'
 import LudiLexer from './gen/LudiLexer';
 // import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiParser from './gen/LudiParser';
@@ -23,11 +23,8 @@ export function fromString(input: string): Game {
     return fromStream(new CharStream(input))
 }
 
-// export function fromFile(fileName: string): Game {
-//     return fromStream(new FileStream(fileName))
-// }
-
-function fromStream(input: CharStream): Game {
+/** Internal use only */
+export function fromStream(input: CharStream): Game {
     const lexer = new LudiLexer(input);
     const tokens = new CommonTokenStream(lexer);
     const parser = new LudiParser(tokens);
@@ -47,6 +44,7 @@ function fromStream(input: CharStream): Game {
 function handleGame(ctx: any): Game {
     let actions: Record<string, Action> = {};
     let setup: Action | undefined = undefined;
+    let variables: StateVariable[] = [];
 
     for (const definition of ctx.definition()) {
         if (definition.setup()) {
@@ -57,17 +55,22 @@ function handleGame(ctx: any): Game {
             }
 
             setup = handleAction(definition.setup());
-        }
-
-        if (definition.action()) {
+        } else if (definition.action()) {
             const action = definition.action();
             actions[action.name.getText()] = handleAction(action);
-        } 
+        } else if (definition.state_definition()) {
+            const stateDefinition = definition.state_definition();
+            variables.push({
+                name: stateDefinition.name.getText(),
+                type: new TypeExpressionVisitor().visit(stateDefinition.type)
+            });
+        }
     }
 
     return {
         setup: setup,
         actions: actions,
+        stateVariables: variables
     }
 }
 
@@ -177,8 +180,8 @@ class ExpressionVisitor extends LudiVisitor {
     }
 }
 
-class TypeExpressionVisitor extends LudiVisitor<LudiType> {
-    visitParameterizedTypeExpression = (ctx: ParameterizedTypeExpressionContext): LudiType => {
+class TypeExpressionVisitor extends LudiVisitor {
+    visitParameterizedTypeExpression = (ctx: any): LudiType => {
         // Hardcode for now
         // Eventually some sort of second pass will be needed to resolve types (?)
         return {

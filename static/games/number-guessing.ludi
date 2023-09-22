@@ -1,6 +1,6 @@
-state HiddenNumber a Number
-state PreviousGuess a Number
-state RemainingGuesses a Number
+state HiddenNumber a Number<1, 10>
+state PreviousGuess a Number<1, 10>
+state RemainingGuesses a Number<0, 10>
 
 setup:
     set HiddenNumber to RandomNumber(1, 10)

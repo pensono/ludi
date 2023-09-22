@@ -32,7 +32,7 @@ setup: 'setup' ':' statement+;
 kind: 'kind' name=identifier 'a' typeExpression;
     
 // Must name state_definition to avoid conflicts with antlr internals
-state_definition: 'state' name=identifier 'a' typeExpression;
+state_definition: 'state' name=identifier 'a' type=typeExpression;
 
 statement
     : 'change' lvalue 'to' expression # ChangeStatement

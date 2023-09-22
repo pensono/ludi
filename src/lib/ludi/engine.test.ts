@@ -1,10 +1,11 @@
-import { fromFile, fromString } from './parser';
-import { describe, it, expect, assert } from 'vitest';
+import { fromString } from './parser';
+import { describe, it, expect } from 'vitest';
 import { enumerateMoves, initialize } from './engine';
+import { fromFile } from './parse-from-file';
 
 describe('starting position', () => {
     it(`number-guessing.ludi`, () => {
-        const game = fromFile(`./games/number-guessing.ludi`);
+        const game = fromFile(`./static/games/number-guessing.ludi`);
         const initialState = initialize(game, 0);
 
         expect(initialState).toEqual({
@@ -20,7 +21,7 @@ describe('starting position', () => {
 
 describe('enumerate moves', () => {
     it(`number-guessing.ludi`, () => {
-        const game = fromFile(`./games/number-guessing.ludi`);
+        const game = fromFile(`./static/games/number-guessing.ludi`);
         let state = initialize(game, 0);
 
         let moves = [...enumerateMoves(game, state)];

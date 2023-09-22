@@ -1,6 +1,7 @@
 export interface Game {
     setup?: Action;
     actions: Record<string, Action>;
+    stateVariables: StateVariable[];
 }
 
 export interface GameState {
@@ -67,6 +68,12 @@ export interface Parameter {
     name: string;
     type: LudiType;
 }
+
+export interface StateVariable {
+    name: string;
+    type: LudiType;
+}
+
 export interface Move {
     actionName: string;
     args: any[];
