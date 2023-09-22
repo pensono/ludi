@@ -19,3 +19,9 @@
         <p>{move.actionName}({move.args.join(", ")})</p>
     {/each}
 </div>
+
+<style lang="scss">
+    div {
+        flex-grow: 1;
+    }
+</style>

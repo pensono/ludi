@@ -1,7 +1,3 @@
-<nav>
-    <h1>Ludi</h1>
-</nav>
-
 <slot />
 
 <style lang="scss">
@@ -9,16 +5,11 @@
         margin: 0;
         padding: 0;
         font-family: sans-serif;
-    }
 
-    h1 {
-        margin: .5rem;
+        --border-color: #ccc;
     }
     
-    nav {
-        display: flex;
-        justify-content: space-between;
-        padding: .2rem;
-        border-bottom: 1px solid #ccc;
+    :global(.material-symbols-outlined) {
+        user-select: none;
     }
 </style>
