@@ -2,6 +2,8 @@
 	import { enumerateMoves } from "$lib/ludi/engine";
 	import type { Game, GameState } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
+	import ToolboxItem from "./ToolboxItem.svelte";
+    import TypeEditor from "./TypeEditor.svelte";
 
     export let game: Game;
     export let state: GameState;
@@ -9,15 +11,14 @@
 
 <div>
     <ToolboxSection title="State">
-        {#each Object.entries(game.) as [key, value]}
-            <p>{key}: {value}</p>
+        {#each game.stateVariables as stateVariable}
+            <ToolboxItem title={stateVariable.name}>
+                <TypeEditor type={stateVariable.type} />
+            </ToolboxItem>
         {/each}
     </ToolboxSection>
 
     <ToolboxSection title="Setup">
-        {#each Object.entries(game.) as [key, value]}
-            <p>{key}: {value}</p>
-        {/each}
     </ToolboxSection>
 
     <ToolboxSection title="Actions">
@@ -38,5 +39,9 @@
         width: 25rem;
 
         border-left: 1px var(--border-color) solid;
+    }
+
+    * {
+        --item-name-size: 5rem;
     }
 </style>

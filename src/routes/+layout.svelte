@@ -7,6 +7,7 @@
         font-family: sans-serif;
 
         --border-color: #ccc;
+        --detail-text: #666;
     }
     
     :global(.material-symbols-outlined) {
