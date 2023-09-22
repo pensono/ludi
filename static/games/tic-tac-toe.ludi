@@ -5,7 +5,7 @@ state Board a Grid<Square, 3, 3>
 state CurrentPlayer a Player
 
 setup:
-    set CurrentPlayer to Random(Player)
+    set CurrentPlayer to X
 
 action Play(x a Number<1, 3>, y a Number<1, 3>):
     change Board[x, y] to CurrentPlayer
