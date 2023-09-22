@@ -2,9 +2,9 @@
     export let title: string;
 </script>
 
-<div class="wrap">
+<div {...$$restProps} class:wrap={true} on:click>
     <p>{title}</p>
-    {#if $$slots}
+    {#if $$slots.default}
         <div class="detail">
             <slot />
         </div>
@@ -13,14 +13,16 @@
 
 <style lang="scss">
     p {
-        margin-bottom: 0;
+        margin: 0;
+        user-select: none;
     }
 
     div.wrap {
-        margin: .5rem;
+        margin: 0;
+        padding: .5rem;
     }
 
     div.detail {
-        margin-left: 1rem;
+        padding-left: 1rem;
     }
 </style>

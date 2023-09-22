@@ -26,6 +26,21 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
     }
 }
 
+export function playMove(game: Game, state: GameState, move: Move): GameState {
+    state = structuredClone(state)
+
+    const action = game.actions[move.actionName];
+    const locals = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: move.args[i]}), {});
+
+    for (const statement of action.statements) {
+        runStatement(game, state, locals, statement);
+    }
+
+    state.ply++;
+
+    return state;
+}
+
 function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
     // There are many faster ways to do this, but this is easy to implement and fast enough for most games
     // Using something like SMT is ideal
@@ -93,7 +108,7 @@ function checkPreconditions(state: GameState, locals: Record<string, any>, state
     }
 }
 
-export function runAction(game: Game, state: GameState, action: Action) : GameState {
+function runAction(game: Game, state: GameState, action: Action) : GameState {
     // Don't modify the original- this is useful when simulating alternatives
     state = structuredClone(state)
 
@@ -106,7 +121,7 @@ export function runAction(game: Game, state: GameState, action: Action) : GameSt
     return state;
 }
 
-export function runStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
+function runStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
     switch (statement.type) {
         case 'change': {
             const oldValue = state.variables[statement.variable];
@@ -154,7 +169,7 @@ export function runStatement(game: Game, state: GameState, locals: Record<string
                 throw new Error(`Cannot decrement by a non-number. This indicates an error in the engine. Value: ${amount}`);
             }
 
-            state.variables[statement.variable] = oldValue + amount;
+            state.variables[statement.variable] = oldValue - amount;
             return;
         }
         default:

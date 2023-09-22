@@ -17,9 +17,9 @@
     </nav>
     
     <main>
-        <ViewToolbox game={game} state={state} />
-        <GameScreen game={game} state={state} />
-        <EditToolbox game={game} state={state} />
+        <ViewToolbox bind:game={game} bind:state={state} />
+        <GameScreen bind:game={game} bind:state={state} />
+        <EditToolbox bind:game={game} bind:state={state} />
     </main>
 </div>
 

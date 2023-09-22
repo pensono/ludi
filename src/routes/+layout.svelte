@@ -7,6 +7,7 @@
         font-family: sans-serif;
 
         --border-color: #ccc;
+        --hover-color: #eee;
         --detail-text: #666;
     }
     
