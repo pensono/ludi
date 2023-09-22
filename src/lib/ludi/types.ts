@@ -4,11 +4,6 @@ export interface Game {
     stateVariables: StateVariable[];
 }
 
-export interface GameState {
-    variables: Record<string, any>;
-    ply: number;
-}
-
 export interface Action {
     name?: string;
     conditions: Condition[];
@@ -97,4 +92,16 @@ export interface NumberType {
 export interface EnumerationType {
     type: "enumeration";
     values: string[];
+}
+
+export interface GameState {
+    variables: Record<string, any>;
+    ply: number;
+}
+
+export interface HistoryItem {
+    move: Move;
+
+    /** The state that was obtained after playing `move` */
+    state: GameState;
 }

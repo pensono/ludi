@@ -1,4 +1,4 @@
-import type { Action, Expression, Game, GameState, LudiType, Move, Parameter, Statement } from './types'
+import type { Action, Expression, Game, GameState, HistoryItem, LudiType, Move, Parameter, Statement } from './types'
 import * as builtins from './builtins'
 
 export function initialize(game: Game, seed?: number) : GameState {
@@ -6,12 +6,14 @@ export function initialize(game: Game, seed?: number) : GameState {
         variables: {
             ...(seed !== undefined ? {__seed: seed} : {})
         },
-        ply: 0
+        ply: 0,
+        history: [] as HistoryItem[],
     }
 
     if (game.setup) {
-        state = runAction(game, state, game.setup);
-        state.ply = 0; // runAction increments this
+        for (const statement of game.setup.statements) {
+            runStatement(game, state, {}, statement);
+        }
     }
 
     return state;
@@ -106,19 +108,6 @@ function checkPreconditions(state: GameState, locals: Record<string, any>, state
         default:
             throw new Error(`Unknown statement ${JSON.stringify(statement)}`);
     }
-}
-
-function runAction(game: Game, state: GameState, action: Action) : GameState {
-    // Don't modify the original- this is useful when simulating alternatives
-    state = structuredClone(state)
-
-    for (const statement of action.statements) {
-        runStatement(game, state, {}, statement);
-    }
-
-    state.ply++;
-
-    return state;
 }
 
 function runStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
