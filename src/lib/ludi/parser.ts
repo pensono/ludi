@@ -1,10 +1,11 @@
 import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
-import type { Action, Condition, FunctionCallExpression, Game, IdentifierExpression, LudiType, Parameter, StateVariable } from './types'
+import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, StateVariable } from './types'
 import LudiLexer from './gen/LudiLexer';
 // import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiParser from './gen/LudiParser';
 import LudiVisitor from './gen/LudiVisitor';
 import type { ConstantExpression, Statement } from './types';
+import * as builtins from './builtins'
 
 
 export class ParseError extends Error {
@@ -64,16 +65,32 @@ function handleGame(ctx: any): Game {
             const stateDefinition = definition.state_definition();
             variables.push({
                 name: stateDefinition.name.getText(),
-                type: new TypeExpressionVisitor().visit(stateDefinition.type)
+                type: new TypeExpressionVisitor(constants).visit(stateDefinition.type)
             });
-        } else if (definition.players()) {
-            playerType = new TypeExpressionVisitor().visit(definition.players().type);
+        } else if (definition.kind()) {
+            // Assume for now that types are specified in an order which does not include backreferences            
+            var type = new TypeExpressionVisitor(constants).visit(definition.kind().type);
+            const name = definition.kind().name.getText();
             
-            if (playerType.type === 'enumeration') {
-                for (const value of playerType.values) {
+            if (type.name === 'Enumeration') {
+                for (const value of type.parameters.values) {
                     constants[value] = value;
                 }
             }
+
+            // Would need to combine with kinds
+            constants[name] = type;
+        } else if (definition.players()) {
+            playerType = new TypeExpressionVisitor(constants).visit(definition.players().type);
+            
+            if (playerType.name === 'Enumeration') {
+                for (const value of playerType.parameters.values) {
+                    constants[value] = value;
+                }
+            }
+
+            // Would need to combine with kinds
+            constants['Player'] = playerType;
         }
     }
 
@@ -128,7 +145,7 @@ class StatementVisitor extends LudiVisitor {
     visitChangeStatement = (ctx: any): Statement => {
         return {
             type: 'change',
-            variable: ctx.lvalue().getText(),
+            variable: new LValueVisitor().visit(ctx.lvalue()),
             value: new ExpressionVisitor().visit(ctx.expression())
         }
     }
@@ -136,7 +153,7 @@ class StatementVisitor extends LudiVisitor {
     visitSetStatement = (ctx: any): Statement => {
         return {
             type: 'set',
-            variable: ctx.lvalue().getText(),
+            variable: new LValueVisitor().visit(ctx.lvalue()),
             value: new ExpressionVisitor().visit(ctx.expression())
         }
     }
@@ -144,7 +161,7 @@ class StatementVisitor extends LudiVisitor {
     visitIncreaseStatement = (ctx: any): Statement => {
         return {
             type: 'increase',
-            variable: ctx.lvalue().getText(),
+            variable: new LValueVisitor().visit(ctx.lvalue()),
             amount: new ExpressionVisitor().visit(ctx.expression())
         }
     }
@@ -152,9 +169,25 @@ class StatementVisitor extends LudiVisitor {
     visitDecreaseStatement = (ctx: any): Statement => {
         return {
             type: 'decrease',
-            variable: ctx.lvalue().getText(),
+            variable: new LValueVisitor().visit(ctx.lvalue()),
             amount: new ExpressionVisitor().visit(ctx.expression())
         }
+    }
+}
+
+class LValueVisitor extends LudiVisitor {
+    visitIdentifierLValue = (ctx: any): LValue => {
+        return {
+            name: ctx.identifier().getText(),
+            indexes: []
+        };
+    }
+
+    visitIndexLValue(ctx: any) {
+        return {
+            name: ctx.identifier().getText(),
+            indexes: ctx.arguments.map(i => new ExpressionVisitor().visit(i))
+        };
     }
 }
 
@@ -181,6 +214,14 @@ class ExpressionVisitor extends LudiVisitor {
         }
     }
 
+    visitIndexExpression = (ctx: any): IndexExpression => {
+        return {
+            type: 'index',
+            variable: ctx.identifier().getText(),
+            indexes: ctx.arguments.map(i => this.visit(i))
+        }
+    }
+
     visitComparisonExpression = (ctx): FunctionCallExpression => {
         // Is function-call specific enough? Worth doing binary-operator or similar?
         return {
@@ -195,21 +236,42 @@ class ExpressionVisitor extends LudiVisitor {
 }
 
 class TypeExpressionVisitor extends LudiVisitor {
+    constants: Record<string, any>;
+    
+    constructor(constants: Record<string, any> = {}) {
+        super();
+        this.constants = constants;
+    }
+
     visitParameterizedTypeExpression = (ctx: any): LudiType => {
-        // Hardcode for now
-        // Eventually some sort of second pass will be needed to resolve types (?)
-        return {
-            type: 'number',
-            min: parseInt(ctx.arguments[0].getText()),
-            max: parseInt(ctx.arguments[1].getText()),
-        }
+        var type = builtins.types[ctx.name.getText()];
+        // Assume everything is a constant for now
+        const parameters = ctx.arguments.map((arg: any) => evaluateConstantExpression(new ExpressionVisitor().visit(arg), this.constants));
+        return type.construct(parameters);
     }
 
     visitUnionTypeExpression(ctx: any): LudiType {
         return {
-            type: 'enumeration',
-            values: ctx.values.map((arg: any) => arg.getText())
+            name: 'Enumeration',
+            parameters: {
+                values: ctx.values.map((arg: any) => arg.getText())
+            }
         }
+    }
+}
+
+function evaluateConstantExpression(expression: Expression, variables: Record<string, any>): any {
+    switch (expression.type) {
+        case 'constant':
+            return expression.value;
+        case 'identifier': {
+            if (variables[expression.name] === undefined) {
+                throw new Error(`Unknown constant ${expression.name}`);
+            }
+            return variables[expression.name];
+        }
+        default:
+            throw new Error(`Unknown constant expression type ${JSON.stringify(expression)}`);
     }
 }
 

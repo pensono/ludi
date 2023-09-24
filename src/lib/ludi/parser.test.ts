@@ -6,9 +6,8 @@ describe('games can parse', () => {
 		const game = fromFile(`./static/games/number-guessing.ludi`);
 		
 		expect(game.stateVariables).toEqual(expect.arrayContaining([
-				{ name: "HiddenNumber", type: { type: "number", min: 1, max: 10 } },
-				{ name: "RemainingGuesses", type: { type: "number", min: 0, max: 10 } },
-				{ name: "PreviousGuess", type: { type: "number", min: 1, max: 10} },
+				{ name: "HiddenNumber", type: { name: "Number", parameters: { min: 1, max: 10 } } },
+				{ name: "RemainingGuesses", type: { name: "Number", parameters: {min: 0, max: 10 } } },
 			])
 		);
 	});

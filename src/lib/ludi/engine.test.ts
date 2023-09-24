@@ -1,6 +1,6 @@
 import { fromString } from './parser';
 import { describe, it, expect } from 'vitest';
-import { enumerateMoves, enumerateType, initialize } from './engine';
+import { enumerateMoves, enumerateType, initialize, playMove } from './engine';
 import { fromFile } from './parse-from-file';
 
 describe('starting position', () => {
@@ -27,16 +27,16 @@ describe('enumerate moves', () => {
         let moves = [...enumerateMoves(game, state)];
 
         expect(moves).toEqual([
-            {actionName: "Guess", args: [1]},
-            {actionName: "Guess", args: [2]},
-            {actionName: "Guess", args: [3]},
-            {actionName: "Guess", args: [4]},
-            {actionName: "Guess", args: [5]},
-            {actionName: "Guess", args: [6]},
-            {actionName: "Guess", args: [7]},
-            {actionName: "Guess", args: [8]},
-            {actionName: "Guess", args: [9]},
-            {actionName: "Guess", args: [10]},
+            {actionName: "Guess", args: [1], player: undefined},
+            {actionName: "Guess", args: [2], player: undefined},
+            {actionName: "Guess", args: [3], player: undefined},
+            {actionName: "Guess", args: [4], player: undefined},
+            {actionName: "Guess", args: [5], player: undefined},
+            {actionName: "Guess", args: [6], player: undefined},
+            {actionName: "Guess", args: [7], player: undefined},
+            {actionName: "Guess", args: [8], player: undefined},
+            {actionName: "Guess", args: [9], player: undefined},
+            {actionName: "Guess", args: [10], player: undefined},
         ]);
     });
     
@@ -57,6 +57,39 @@ describe('enumerate moves', () => {
             {actionName: "Choose", args: [8], player: "Chooser"},
             {actionName: "Choose", args: [9], player: "Chooser"},
             {actionName: "Choose", args: [10], player: "Chooser"},
+        ]);
+    });
+    
+    it(`tic-tac-toe.ludi`, () => {
+        const game = fromFile(`./static/games/tic-tac-toe.ludi`);
+        let state = initialize(game, 0);
+
+        let moves = [...enumerateMoves(game, state)];
+
+        expect(moves).toEqual([
+            {actionName: "Play", args: [1, 1], player: "X"},
+            {actionName: "Play", args: [1, 2], player: "X"},
+            {actionName: "Play", args: [1, 3], player: "X"},
+            {actionName: "Play", args: [2, 1], player: "X"},
+            {actionName: "Play", args: [2, 2], player: "X"},
+            {actionName: "Play", args: [2, 3], player: "X"},
+            {actionName: "Play", args: [3, 1], player: "X"},
+            {actionName: "Play", args: [3, 2], player: "X"},
+            {actionName: "Play", args: [3, 3], player: "X"},
+        ]);
+
+        state = playMove(game, state, moves[0]);
+        moves = [...enumerateMoves(game, state)];
+
+        expect(moves).toEqual([
+            {actionName: "Play", args: [1, 2], player: "O"},
+            {actionName: "Play", args: [1, 3], player: "O"},
+            {actionName: "Play", args: [2, 1], player: "O"},
+            {actionName: "Play", args: [2, 2], player: "O"},
+            {actionName: "Play", args: [2, 3], player: "O"},
+            {actionName: "Play", args: [3, 1], player: "O"},
+            {actionName: "Play", args: [3, 2], player: "O"},
+            {actionName: "Play", args: [3, 3], player: "O"},
         ]);
     });
     

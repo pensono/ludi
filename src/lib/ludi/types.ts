@@ -18,25 +18,25 @@ export type Statement = ChangeStatement | SetStatement | IncreaseStatement | Dec
 
 export interface ChangeStatement {
     type: "change";
-    variable: string;
+    variable: LValue;
     value: Expression;
 }
 
 export interface SetStatement {
     type: "set";
-    variable: string;
+    variable: LValue;
     value: Expression;
 }
 
 export interface IncreaseStatement {
     type: "increase";
-    variable: string;
+    variable: LValue;
     amount: Expression;
 }
 
 export interface DecreaseStatement {
     type: "decrease";
-    variable: string;
+    variable: LValue;
     amount: Expression;
 }
 
@@ -44,7 +44,7 @@ export interface Condition {
     expression: Expression;
 }
 
-export type Expression = ConstantExpression | IdentifierExpression | FunctionCallExpression;
+export type Expression = ConstantExpression | IdentifierExpression | FunctionCallExpression | IndexExpression;
 
 export interface ConstantExpression {
     type: "constant";
@@ -60,6 +60,12 @@ export interface FunctionCallExpression {
     type: "function-call";
     name: string;
     arguments: Expression[];
+}
+
+export interface IndexExpression {
+    type: "index";
+    variable: string;
+    indexes: Expression[];
 }
 
 export interface Parameter {
@@ -78,6 +84,12 @@ export interface Move {
     args: any[];
 }
 
+// Combine straight variables and indexes for now
+export interface LValue {
+    name: string;
+    indexes: Expression[];
+}
+
 export interface LudiFunction {
     parameter_types: string[];
     return_type: string;
@@ -85,17 +97,9 @@ export interface LudiFunction {
     invoke: (state: GameState, args: any[]) => any;
 }
 
-export type LudiType = NumberType | EnumerationType;
-
-export interface NumberType {
-    type: "number";
-    min: number;
-    max: number;
-}
-
-export interface EnumerationType {
-    type: "enumeration";
-    values: string[];
+export interface LudiType {
+    name: string;
+    parameters: Record<string, any>;
 }
 
 export interface GameState {

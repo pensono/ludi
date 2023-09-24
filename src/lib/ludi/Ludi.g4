@@ -32,7 +32,7 @@ setup: 'setup' ':' statement+;
 
 // players: 'players' ':' identifier (',' identifier)*; // Need something for unnamed players too, variable number of players etc
 
-kind: 'kind' name=identifier 'a' typeExpression;
+kind: 'kind' name=identifier 'a' type=typeExpression;
     
 // Must name state_definition to avoid conflicts with antlr internals
 state_definition: 'state' name=identifier 'a' type=typeExpression;
@@ -50,8 +50,9 @@ parameterList: (names+=identifier 'a' types+=typeExpression (',' names+=identifi
 
 expression
     : '(' expression ')' # ParenthizedExpression
-    | name=lvalue # IdentifierExpression
     | NUMBER # NumberExpression
+    | name=identifier '[' arguments+=expression (',' arguments+=expression)*']' # IndexExpression
+    | name=lvalue # IdentifierExpression
     | name=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' # FunctionCallExpression
     | ('not' | '!') expression # NegationExpression // Would be good to settle on some syntax here...
     | left=expression operator='or' right=expression # ConjunctionExpression
@@ -65,15 +66,15 @@ expression
 
 
 lvalue
-    : identifier
-    | identifier '[' (arguments+=expression (',' arguments+=expression)*)? ']'; // Not sure about this syntax at all
+    : identifier # IdentifierLValue
+    | identifier '[' (arguments+=expression (',' arguments+=expression)*)? ']' # IndexLValue; // Not sure about this syntax at all
 
 // Don't let these be recursive, instead force users to write everything out so it's clearer
 typeExpression
     : identifier # TypeIdentifierExpression
     | values+=identifier ('or' values+=identifier)+ # UnionTypeExpression
     // | '{' name=identifier type=identifier '}'  // Record
-    | identifier '<' (arguments+=expression (',' arguments+=expression)*)? '>' # ParameterizedTypeExpression; // Somehow the args must be constants
+    | name=identifier '<' (arguments+=expression (',' arguments+=expression)*)? '>' # ParameterizedTypeExpression; // Somehow the args must be constants
 
 identifier: IDENTIFIER;
 

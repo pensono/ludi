@@ -1,12 +1,16 @@
-import type { Action, Expression, Game, GameState, LudiType, Move, Parameter, Statement } from './types'
+import type { Action, Expression, Game, GameState, LValue, LudiType, Move, Parameter, Statement } from './types'
 import * as builtins from './builtins'
 
 export function initialize(game: Game, seed?: number) : GameState {
-    let state = {
+    let state: GameState = {
         variables: {
             ...(seed !== undefined ? {__seed: seed} : {})
         },
         ply: 0,
+    }
+
+    for (const variable of game.stateVariables) {
+        state.variables[variable.name] = defaultValue(variable.type);
     }
 
     if (game.setup) {
@@ -91,22 +95,21 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
 }
 
 export function enumerateType(type: LudiType) {
-    switch (type.type) {
-        case 'number':
-            return new Array(type.max - type.min + 1).fill(null).map((_, i) => i + type.min);
-        case 'enumeration':
-            return type.values;
-        default:
-            throw new Error(`Unknown type ${type}`);
-    }
+    return builtins.types[type.name].enumerate(type);
 }
+
+export function defaultValue(type: LudiType) {
+    return builtins.types[type.name].defaultValue(type);
+}
+
 
 function checkPreconditions(game: Game, state: GameState, locals: Record<string, any>, statement: Statement): boolean {
     // OPTIMIZE cache this somehow?
     switch (statement.type) {
         case 'change':
             // OPTIMIZE Double evaluation with regular running of the action.
-            return state.variables[statement.variable] !== evaluateExpression(game, state, locals, statement.value);
+            const variable = toReference(game, state, locals, statement.variable);
+            return variable.getValue() !== evaluateExpression(game, state, locals, statement.value);
         case 'set':
             return true;
         case 'increase':
@@ -118,30 +121,54 @@ function checkPreconditions(game: Game, state: GameState, locals: Record<string,
     }
 }
 
+interface Reference {
+    getValue: () => any;
+    setValue: (value: any) => void;
+}
+
+function toReference(game: Game, state: GameState, locals: Record<string, any>, lvalue: LValue): Reference {
+    // subtract one to one-index everything
+    let indexValues = lvalue.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
+
+    let target = state.variables;
+    let index = lvalue.name;
+
+    for (const indexValue of indexValues) {
+        target = target[index];
+        index = indexValue;
+    }
+
+    return {
+        getValue: () => target[index],
+        setValue: (value: any) => target[index] = value,
+    };
+}
+
 function runStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
     switch (statement.type) {
         case 'change': {
-            const oldValue = state.variables[statement.variable];
+            const variable = toReference(game, state, locals, statement.variable);
             const newValue = evaluateExpression(game, state, locals, statement.value);
 
-            if (oldValue === newValue) {
+            if (variable.getValue() === newValue) {
                 // Typechecking should prevent this from happening
-                throw new Error(`Change statement would not change anything. This indicates an error in the engine. Old value: ${oldValue}, new value: ${newValue}`);
+                throw new Error(`Change statement would not change anything. This indicates an error in the engine. Old value: ${variable.getValue()}, new value: ${newValue}`);
             }
 
-            state.variables[statement.variable] = newValue;
+            variable.setValue(newValue);
             return;
         }
         case 'set': {
+            const variable = toReference(game, state, locals, statement.variable);
             const newValue = evaluateExpression(game, state, locals, statement.value);
-            state.variables[statement.variable] = newValue;
+            variable.setValue(newValue);
             return;
         }
         case 'increase': {
-            const oldValue = state.variables[statement.variable];
-            if (typeof oldValue !== 'number') {
+            const variable = toReference(game, state, locals, statement.variable);
+            if (typeof variable.getValue() !== 'number') {
                 // Typechecking should prevent this from happening
-                throw new Error(`Cannot increment a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${oldValue}`);
+                throw new Error(`Cannot increment a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${variable.getValue()}`);
             }
 
             const amount = evaluateExpression(game, state, locals, statement.amount);
@@ -150,14 +177,14 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
                 throw new Error(`Cannot increment by a non-number. This indicates an error in the engine. Value: ${amount}`);
             }
 
-            state.variables[statement.variable] = oldValue + amount;
+            variable.setValue(variable.getValue() + amount);
             return;
         }
         case 'decrease': {
-            const oldValue = state.variables[statement.variable];
-            if (typeof oldValue !== 'number') {
+            const variable = toReference(game, state, locals, statement.variable);
+            if (typeof variable.getValue() !== 'number') {
                 // Typechecking should prevent this from happening
-                throw new Error(`Cannot decrement a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${oldValue}`);
+                throw new Error(`Cannot decrement a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${variable.getValue()}`);
             }
 
             const amount = evaluateExpression(game, state, locals, statement.amount);
@@ -166,7 +193,7 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
                 throw new Error(`Cannot decrement by a non-number. This indicates an error in the engine. Value: ${amount}`);
             }
 
-            state.variables[statement.variable] = oldValue - amount;
+            variable.setValue(variable.getValue() - amount);
             return;
         }
         default:
@@ -200,6 +227,16 @@ export function evaluateExpression(game: Game, state: GameState, locals: Record<
             const value = localValue ?? stateValue ?? constantValue;
             if (value === undefined) {
                 throw new Error(`Variable ${expression.name} not found. This indicates an error in the engine.`);
+            }
+
+            return value;
+        }
+        case 'index': {
+            let value = evaluateExpression(game, state, locals, {type: 'identifier', name: expression.variable});
+            const indexes = expression.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
+            
+            for (const index of indexes) {
+                value = value[index];
             }
 
             return value;
