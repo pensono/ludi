@@ -1,5 +1,6 @@
 export interface Game {
     setup?: Action;
+    playerType: LudiType;
     actions: Record<string, Action>;
     stateVariables: StateVariable[];
 }

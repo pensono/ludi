@@ -45,6 +45,7 @@ function handleGame(ctx: any): Game {
     let actions: Record<string, Action> = {};
     let setup: Action | undefined = undefined;
     let variables: StateVariable[] = [];
+    let playerType: LudiType = undefined;
 
     for (const definition of ctx.definition()) {
         if (definition.setup()) {
@@ -64,13 +65,16 @@ function handleGame(ctx: any): Game {
                 name: stateDefinition.name.getText(),
                 type: new TypeExpressionVisitor().visit(stateDefinition.type)
             });
+        } else if (definition.players()) {
+            playerType = new TypeExpressionVisitor().visit(definition.players().type);
         }
     }
 
     return {
         setup: setup,
         actions: actions,
-        stateVariables: variables
+        stateVariables: variables,
+        playerType: playerType,
     }
 }
 
@@ -188,6 +192,13 @@ class TypeExpressionVisitor extends LudiVisitor {
             type: 'number',
             min: parseInt(ctx.arguments[0].getText()),
             max: parseInt(ctx.arguments[1].getText()),
+        }
+    }
+
+    visitUnionTypeExpression(ctx: any): LudiType {
+        return {
+            type: 'enumeration',
+            values: ctx.values.map((arg: any) => arg.getText())
         }
     }
 }

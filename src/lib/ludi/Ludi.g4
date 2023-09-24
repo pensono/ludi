@@ -9,7 +9,8 @@ grammar Ludi;
 game: definition* EOF;
 
 definition
-    : action
+    : players
+    | action
     | setup
     | trigger
     | win
@@ -17,13 +18,15 @@ definition
     | kind
     | state_definition;
 
-action: 'action' name=identifier '(' parameterList ')' ':' conditions+=when* statement*;
+players: 'players' type=typeExpression;
+
+action: 'action' name=identifier '(' parameterList ')' ('for' player=expression)? ':' conditions+=when* statement*;
 
 trigger: 'trigger' name=identifier '(' parameterList ')' ':' conditions+=when* statement*;
 
-win: 'win' name=identifier '(' parameterList ')' ':' conditions+=when*;
+win: 'win' name=identifier '(' parameterList ')' ('for' player=expression)? ':' conditions+=when*;
     
-loss: 'loss' name=identifier '(' parameterList ')' ':' conditions+=when*;
+loss: 'loss' name=identifier '(' parameterList ')' ('for' player=expression)? ':' conditions+=when*;
 
 setup: 'setup' ':' statement+;
 
@@ -68,7 +71,7 @@ lvalue
 // Don't let these be recursive, instead force users to write everything out so it's clearer
 typeExpression
     : identifier # TypeIdentifierExpression
-    | identifier ('or' identifier)+ # UnionTypeExpression
+    | values+=identifier ('or' values+=identifier)+ # UnionTypeExpression
     // | '{' name=identifier type=identifier '}'  // Record
     | identifier '<' (arguments+=expression (',' arguments+=expression)*)? '>' # ParameterizedTypeExpression; // Somehow the args must be constants
 

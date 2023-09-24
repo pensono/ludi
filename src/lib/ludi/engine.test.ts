@@ -1,6 +1,6 @@
 import { fromString } from './parser';
 import { describe, it, expect } from 'vitest';
-import { enumerateMoves, initialize } from './engine';
+import { enumerateMoves, enumerateType, initialize } from './engine';
 import { fromFile } from './parse-from-file';
 
 describe('starting position', () => {
@@ -124,5 +124,12 @@ describe('enumerate moves', () => {
             {actionName: "Action", args: [1]},
             {actionName: "Action", args: [2]},
         ]);
+    });
+})
+
+describe('players', () => {
+    it(`tic-tac-toe.ludi`, () => {
+        const game = fromFile(`./static/games/tic-tac-toe.ludi`);
+        expect(enumerateType(game.playerType)).toEqual(['X', 'O']);
     });
 })

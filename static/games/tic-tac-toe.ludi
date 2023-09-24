@@ -1,16 +1,13 @@
-kind Player a X or O
+players X or O
 kind Square a Empty or Player
 
 state Board a Grid<Square, 3, 3>
-state CurrentPlayer a Player
 
-setup:
-    set CurrentPlayer to X
-
-action Play(x a Number<1, 3>, y a Number<1, 3>):
+action Play(x a Number<1, 3>, y a Number<1, 3>) for CurrentPlayer:
     change Board[x, y] to CurrentPlayer
+    set CurrentPlayer to NextInSequence(CurrentPlayer, Player)
 
-win Horizontal(player a Player):
+win Horizontal() for player:
     when InARow(player, Board, 4, Horizontal)
         or InARow(player, Board, 4, Vertical)
         or InARow(player, Board, 4, Horizontal)

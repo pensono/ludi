@@ -1,0 +1,22 @@
+players Chooser or Guesser
+
+state HiddenNumber a Number<1, 10>
+state RemainingGuesses a Number<0, 3>
+
+setup:
+    set RemainingGuesses to 3
+    set CurrentPlayer to Chooser
+
+action Choose(number a Number<1, 10>) for Chooser:
+    set HiddenNumber to number
+    set CurrentPlayer to Guesser
+
+action Guess(number a Number<1, 10>) for Guesser:
+    change PreviousGuess to number
+    decrease RemainingGuesses by 1
+
+win Correct() for Guesser:
+    when PreviousGuess = HiddenNumber
+
+win OutOfGuesses() for Chooser:
+    when RemainingGuesses = 0

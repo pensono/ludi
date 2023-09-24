@@ -1,4 +1,4 @@
-import type { Action, Expression, Game, GameState, HistoryItem, LudiType, Move, Parameter, Statement } from './types'
+import type { Action, Expression, Game, GameState, LudiType, Move, Parameter, Statement } from './types'
 import * as builtins from './builtins'
 
 export function initialize(game: Game, seed?: number) : GameState {
@@ -7,7 +7,6 @@ export function initialize(game: Game, seed?: number) : GameState {
             ...(seed !== undefined ? {__seed: seed} : {})
         },
         ply: 0,
-        history: [] as HistoryItem[],
     }
 
     if (game.setup) {
@@ -77,12 +76,12 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
 
     const parameter = remainingParameters[0];
     const newRemainingParameters = remainingParameters.slice(1);
-    for (const value of enumerateValues(parameter.type)) {
+    for (const value of enumerateType(parameter.type)) {
         yield* enumerateActionMoves(game, state, action, newRemainingParameters, [...args, value]);
     }
 }
 
-function enumerateValues(type: LudiType) {
+export function enumerateType(type: LudiType) {
     switch (type.type) {
         case 'number':
             return new Array(type.max - type.min + 1).fill(null).map((_, i) => i + type.min);

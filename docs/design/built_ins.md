@@ -15,5 +15,6 @@ Global Variables:
 
 ```
 TurnNumber
-CurrentTurn
+CurrentPlayer
+kind Player
 ```
