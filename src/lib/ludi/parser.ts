@@ -4,7 +4,7 @@ import LudiLexer from './gen/LudiLexer';
 // import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiParser from './gen/LudiParser';
 import LudiVisitor from './gen/LudiVisitor';
-import type { ConstantExpression, Expression, Statement } from './types';
+import type { ConstantExpression, Statement } from './types';
 
 
 export class ParseError extends Error {
@@ -46,6 +46,7 @@ function handleGame(ctx: any): Game {
     let setup: Action | undefined = undefined;
     let variables: StateVariable[] = [];
     let playerType: LudiType = undefined;
+    let constants: Record<string, any> = {};
 
     for (const definition of ctx.definition()) {
         if (definition.setup()) {
@@ -67,6 +68,12 @@ function handleGame(ctx: any): Game {
             });
         } else if (definition.players()) {
             playerType = new TypeExpressionVisitor().visit(definition.players().type);
+            
+            if (playerType.type === 'enumeration') {
+                for (const value of playerType.values) {
+                    constants[value] = value;
+                }
+            }
         }
     }
 
@@ -75,11 +82,13 @@ function handleGame(ctx: any): Game {
         actions: actions,
         stateVariables: variables,
         playerType: playerType,
+        constants
     }
 }
 
 function handleAction(ctx: any): Action {
     // const conditions = ctx.when().map(c => handleCondition(c));
+    const player = ctx.player ? new ExpressionVisitor().visit(ctx.player) : null;
     const statements = ctx.statement().map(s => new StatementVisitor().visit(s));
     let name: string | undefined = undefined;
     let parameters: Parameter[] = [];
@@ -95,6 +104,7 @@ function handleAction(ctx: any): Action {
 
     return {
         name,
+        player,
         conditions,
         statements,
         parameters

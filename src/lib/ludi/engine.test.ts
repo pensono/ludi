@@ -40,6 +40,26 @@ describe('enumerate moves', () => {
         ]);
     });
     
+    it(`number-guessing-2player.ludi`, () => {
+        const game = fromFile(`./static/games/number-guessing-2player.ludi`);
+        let state = initialize(game, 0);
+
+        let moves = [...enumerateMoves(game, state)];
+
+        expect(moves).toEqual([
+            {actionName: "Choose", args: [1], player: "Chooser"},
+            {actionName: "Choose", args: [2], player: "Chooser"},
+            {actionName: "Choose", args: [3], player: "Chooser"},
+            {actionName: "Choose", args: [4], player: "Chooser"},
+            {actionName: "Choose", args: [5], player: "Chooser"},
+            {actionName: "Choose", args: [6], player: "Chooser"},
+            {actionName: "Choose", args: [7], player: "Chooser"},
+            {actionName: "Choose", args: [8], player: "Chooser"},
+            {actionName: "Choose", args: [9], player: "Chooser"},
+            {actionName: "Choose", args: [10], player: "Chooser"},
+        ]);
+    });
+    
     it(`One move`, () => {
         const game = fromString(`
             action OnlyThingToDo():

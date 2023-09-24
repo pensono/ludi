@@ -53,14 +53,22 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
         // This extra transformation is sad but fine for now
         const locals = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: args[i]}), {});
 
-        if (!action.conditions.every(condition => evaluateExpression(state, locals, condition.expression))) {
+        if (!action.conditions.every(condition => evaluateExpression(game, state, locals, condition.expression))) {
             return;
+        }
+
+        var player = undefined;
+        if (action.player) {
+            player = evaluateExpression(game, state, locals, action.player);
+            if (player !== state.variables['CurrentPlayer']) {
+                return;
+            }
         }
 
         // Duplication with runAction :(
         var dummyState = structuredClone(state)
         for (const statement of action.statements) {
-            if (!checkPreconditions(dummyState, locals, statement)) {
+            if (!checkPreconditions(game, dummyState, locals, statement)) {
                 return;
             }
             runStatement(game, dummyState, locals, statement);
@@ -68,7 +76,8 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
         
         yield {
             actionName: action.name!,
-            args
+            player,
+            args,
         };
 
         return;
@@ -92,12 +101,12 @@ export function enumerateType(type: LudiType) {
     }
 }
 
-function checkPreconditions(state: GameState, locals: Record<string, any>, statement: Statement): boolean {
+function checkPreconditions(game: Game, state: GameState, locals: Record<string, any>, statement: Statement): boolean {
     // OPTIMIZE cache this somehow?
     switch (statement.type) {
         case 'change':
             // OPTIMIZE Double evaluation with regular running of the action.
-            return state.variables[statement.variable] !== evaluateExpression(state, locals, statement.value);
+            return state.variables[statement.variable] !== evaluateExpression(game, state, locals, statement.value);
         case 'set':
             return true;
         case 'increase':
@@ -113,7 +122,7 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
     switch (statement.type) {
         case 'change': {
             const oldValue = state.variables[statement.variable];
-            const newValue = evaluateExpression(state, locals, statement.value);
+            const newValue = evaluateExpression(game, state, locals, statement.value);
 
             if (oldValue === newValue) {
                 // Typechecking should prevent this from happening
@@ -124,7 +133,7 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
             return;
         }
         case 'set': {
-            const newValue = evaluateExpression(state, locals, statement.value);
+            const newValue = evaluateExpression(game, state, locals, statement.value);
             state.variables[statement.variable] = newValue;
             return;
         }
@@ -135,7 +144,7 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
                 throw new Error(`Cannot increment a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${oldValue}`);
             }
 
-            const amount = evaluateExpression(state, locals, statement.amount);
+            const amount = evaluateExpression(game, state, locals, statement.amount);
             if (typeof amount !== 'number') {
                 // Typechecking should prevent this from happening
                 throw new Error(`Cannot increment by a non-number. This indicates an error in the engine. Value: ${amount}`);
@@ -151,7 +160,7 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
                 throw new Error(`Cannot decrement a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${oldValue}`);
             }
 
-            const amount = evaluateExpression(state, locals, statement.amount);
+            const amount = evaluateExpression(game, state, locals, statement.amount);
             if (typeof amount !== 'number') {
                 // Typechecking should prevent this from happening
                 throw new Error(`Cannot decrement by a non-number. This indicates an error in the engine. Value: ${amount}`);
@@ -165,7 +174,7 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
     }
 }
 
-export function evaluateExpression(state: GameState, locals: Record<string, any>, expression: Expression) : any {
+export function evaluateExpression(game: Game, state: GameState, locals: Record<string, any>, expression: Expression) : any {
     switch (expression.type) {
         case 'constant':
             return expression.value;
@@ -176,17 +185,19 @@ export function evaluateExpression(state: GameState, locals: Record<string, any>
                 throw new Error(`Function ${expression.name} not found when evaluating ${JSON.stringify(expression)}. This indicates an error in the engine.`);
             }
 
-            const args = expression.arguments.map(arg => evaluateExpression(state, locals, arg));
+            const args = expression.arguments.map(arg => evaluateExpression(game, state, locals, arg));
             return func.invoke(state, args);
         }
         case 'identifier': {
             const localValue = locals[expression.name];
             const stateValue = state.variables[expression.name];
-            if (localValue !== undefined && stateValue !== undefined) {
-                throw new Error(`Variable ${expression.name} found in both locals and global state. This indicates an error in the engine.`);
+            const constantValue = game.constants[expression.name];
+
+            if ([localValue, stateValue, constantValue].filter(v => v !== undefined).length > 1) {
+                throw new Error(`Variable ${expression.name} found in more than one place. This indicates an error in the engine.`);
             }
 
-            const value = localValue ?? stateValue;
+            const value = localValue ?? stateValue ?? constantValue;
             if (value === undefined) {
                 throw new Error(`Variable ${expression.name} not found. This indicates an error in the engine.`);
             }

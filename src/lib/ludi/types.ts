@@ -3,10 +3,12 @@ export interface Game {
     playerType: LudiType;
     actions: Record<string, Action>;
     stateVariables: StateVariable[];
+    constants: Record<string, any>;
 }
 
 export interface Action {
     name?: string;
+    player: Expression;
     conditions: Condition[];
     statements: Statement[];
     parameters: Parameter[];
@@ -72,6 +74,7 @@ export interface StateVariable {
 
 export interface Move {
     actionName: string;
+    player: string;
     args: any[];
 }
 
