@@ -15,7 +15,7 @@
 		"format": "prettier --plugin-search-dir . --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
-		"generate-parser": "antlr4 -Dlanguage=JavaScript src/lib/ludi/Ludi.g4 -o src/lib/ludi/gen/ -visitor",
+		"generate-parser": "cd src/lib/ludi && antlr4 -Dlanguage=JavaScript Ludi.g4 -o gen/ -visitor",
 		"generate-types-to-get-around-vite-issues": "antlr4 -Dlanguage=TypeScript src/lib/ludi/Ludi.g4 -o tmp -visitor && tsc tmp/LudiParser.ts -d --declarationDir src/lib/ludi/gen --declarationMap --emitDeclarationOnly && rm -rf tmp"
 	},
 	"devDependencies": {
