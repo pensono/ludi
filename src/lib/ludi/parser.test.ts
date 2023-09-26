@@ -12,6 +12,6 @@ describe('games can parse', () => {
 		);
 	});
 	it(`tic-tac-toe.ludi parses`, () => {
-		fromFile(`./static/games/tic-tac-toe.ludi`);
+		const game = fromFile(`./static/games/tic-tac-toe.ludi`);
 	});
 });

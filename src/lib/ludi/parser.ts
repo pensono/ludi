@@ -1,5 +1,5 @@
 import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
-import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, StateVariable } from './types'
+import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, StateVariable, ViewElement } from './types'
 import LudiLexer from './gen/LudiLexer';
 // import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiParser from './gen/LudiParser';
@@ -48,6 +48,7 @@ function handleGame(ctx: any): Game {
     let variables: StateVariable[] = [];
     let playerType: LudiType = undefined;
     let constants: Record<string, any> = {};
+    let views: ViewElement[] = [];
 
     for (const definition of ctx.definition()) {
         if (definition.setup()) {
@@ -91,6 +92,8 @@ function handleGame(ctx: any): Game {
 
             // Would need to combine with kinds
             constants['Player'] = playerType;
+        } else if (definition.view()) {
+            views = definition.view().elements.map((v: any) => new ViewVisitor().visit(v));
         }
     }
 
@@ -99,7 +102,8 @@ function handleGame(ctx: any): Game {
         actions: actions,
         stateVariables: variables,
         playerType: playerType,
-        constants
+        constants,
+        views
     }
 }
 
@@ -258,6 +262,31 @@ class TypeExpressionVisitor extends LudiVisitor {
             }
         }
     }
+}
+
+class ViewVisitor extends LudiVisitor {
+    visitLeafView(ctx: any) : ViewElement {
+        return {
+            name: ctx.name.getText(),
+            attributes: Object.fromEntries(new Map(ctx.attributes.map((a: any) => [a.key.getText(), trimQuotes(a.value.text)]))),
+            children: []
+        }
+    }
+    
+    visitStemView(ctx: any) : ViewElement {
+        return {
+            name: ctx.name.getText(),
+            attributes: Object.fromEntries(new Map(ctx.attributes.map((a: any) => [a.key.getText(), trimQuotes(a.value.text)]))),
+            children: ctx.children.map((c: any) => this.visit(c))
+        }
+    }
+}
+
+function trimQuotes(s: string): string {
+    if (s.startsWith('"') && s.endsWith('"')) {
+        return s.slice(1, -1);
+    }
+    return s;
 }
 
 function evaluateConstantExpression(expression: Expression, variables: Record<string, any>): any {

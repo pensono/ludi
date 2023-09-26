@@ -4,6 +4,7 @@ export interface Game {
     actions: Record<string, Action>;
     stateVariables: StateVariable[];
     constants: Record<string, any>;
+    views: ViewElement[];
 }
 
 export interface Action {
@@ -100,6 +101,12 @@ export interface LudiFunction {
 export interface LudiType {
     name: string;
     parameters: Record<string, any>;
+}
+
+export interface ViewElement {
+    name: string;
+    attributes: Record<string, string>;
+    children: ViewElement[];
 }
 
 export interface GameState {

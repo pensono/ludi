@@ -66,6 +66,12 @@ export default class LudiVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by LudiParser#view.
+	visitView(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by LudiParser#ChangeStatement.
 	visitChangeStatement(ctx) {
 	  return this.visitChildren(ctx);
@@ -182,6 +188,24 @@ export default class LudiVisitor extends antlr4.tree.ParseTreeVisitor {
 
 	// Visit a parse tree produced by LudiParser#ParameterizedTypeExpression.
 	visitParameterizedTypeExpression(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by LudiParser#LeafView.
+	visitLeafView(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by LudiParser#StemView.
+	visitStemView(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by LudiParser#viewAttribute.
+	visitViewAttribute(ctx) {
 	  return this.visitChildren(ctx);
 	}
 

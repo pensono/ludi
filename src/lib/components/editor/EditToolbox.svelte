@@ -23,7 +23,7 @@
 
     <ToolboxSection title="Actions">
         {#each Object.entries(game.actions) as [key, value]}
-            <p>{key}: {value}</p>
+            <p>{key}: {JSON.stringify(value)}</p>
         {/each}
     </ToolboxSection>
     
@@ -31,6 +31,17 @@
     </ToolboxSection>
     
     <ToolboxSection title="Losses">
+    </ToolboxSection>
+
+    
+    <ToolboxSection title="Views">
+        {#each game.views as view}
+            <ToolboxItem title={view.name}>
+                {#each Object.entries(view.attributes) as [key, value]}
+                    <p>{key}: {value}</p>
+                {/each}
+            </ToolboxItem>
+        {/each}
     </ToolboxSection>
 </div>
 

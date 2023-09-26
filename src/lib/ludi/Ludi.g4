@@ -38,7 +38,7 @@ kind: 'kind' name=identifier 'a' type=typeExpression;
 // Must name state_definition to avoid conflicts with antlr internals
 state_definition: 'state' name=identifier 'a' type=typeExpression;
 
-view: 'view' ':' children+=viewElement*;
+view: 'view' ':' elements+=viewElement*;
 
 statement
     : 'change' lvalue 'to' expression # ChangeStatement

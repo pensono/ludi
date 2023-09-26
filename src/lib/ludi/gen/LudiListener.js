@@ -95,6 +95,15 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by LudiParser#view.
+	enterView(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#view.
+	exitView(ctx) {
+	}
+
+
 	// Enter a parse tree produced by LudiParser#ChangeStatement.
 	enterChangeStatement(ctx) {
 	}
@@ -272,6 +281,33 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by LudiParser#ParameterizedTypeExpression.
 	exitParameterizedTypeExpression(ctx) {
+	}
+
+
+	// Enter a parse tree produced by LudiParser#LeafView.
+	enterLeafView(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#LeafView.
+	exitLeafView(ctx) {
+	}
+
+
+	// Enter a parse tree produced by LudiParser#StemView.
+	enterStemView(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#StemView.
+	exitStemView(ctx) {
+	}
+
+
+	// Enter a parse tree produced by LudiParser#viewAttribute.
+	enterViewAttribute(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#viewAttribute.
+	exitViewAttribute(ctx) {
 	}
 
 
