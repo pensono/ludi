@@ -15,3 +15,9 @@ win Horizontal() for player:
     when InARow(player, Board, 4, Horizontal)
         or InARow(player, Board, 4, Vertical)
         or InARow(player, Board, 4, Horizontal)
+
+view:
+    <board data="Board" clickSquare="Play(x, y)" align="Screen.Center" size="50%">
+        <image useFor="X" file="x.svg" />
+        <image useFor="O" file="o.svg" />
+    </board>

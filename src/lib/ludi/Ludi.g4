@@ -16,7 +16,8 @@ definition
     | win
     | loss
     | kind
-    | state_definition;
+    | state_definition
+    | view;
 
 players: 'players' type=typeExpression;
 
@@ -36,6 +37,8 @@ kind: 'kind' name=identifier 'a' type=typeExpression;
     
 // Must name state_definition to avoid conflicts with antlr internals
 state_definition: 'state' name=identifier 'a' type=typeExpression;
+
+view: 'view' ':' children+=viewElement*;
 
 statement
     : 'change' lvalue 'to' expression # ChangeStatement
@@ -76,9 +79,17 @@ typeExpression
     // | '{' name=identifier type=identifier '}'  // Record
     | name=identifier '<' (arguments+=expression (',' arguments+=expression)*)? '>' # ParameterizedTypeExpression; // Somehow the args must be constants
 
-identifier: IDENTIFIER;
+viewElement
+    : '<' name=identifier attributes+=viewAttribute* '/' '>' # LeafView
+    | '<' name=identifier attributes+=viewAttribute* '>' children+=viewElement* '<' '/' name2=identifier '>' # StemView;
+
+viewAttribute: key=identifier '=' value=QUOTED_STRING;
+
+identifier: IDENTIFIER | 'for';
 
 number: NUMBER;
+
+QUOTED_STRING: '"' ( '\\"' | ~["] )*? '"';
 
 IDENTIFIER
     // Include numbers too as long as there's at least one letter
@@ -88,4 +99,4 @@ IDENTIFIER
 
 NUMBER: [0-9]+; // No floats! Discrete games ftw! (for now)
 
-WS: [ \t\r\n]+ -> skip;
+WS: [ \t\r\n]+ -> channel(HIDDEN);
