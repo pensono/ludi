@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enumerateMoves, playMove } from "$lib/ludi/engine";
-	import type { Game, GameState } from "$lib/ludi/types";
+	import type { Game, GameState, HistoryItem, Move } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enumerateMoves } from "$lib/ludi/engine";
 	import type { Game, GameState } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
@@ -11,7 +10,7 @@
 
 <div>
     <ToolboxSection title="State">
-        {#each game.stateVariables as stateVariable}
+        {#each Object.entries(game.stateVariables) as [_, stateVariable]}
             <ToolboxItem title={stateVariable.name}>
                 <TypeEditor type={stateVariable.type} />
             </ToolboxItem>

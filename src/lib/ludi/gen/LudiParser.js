@@ -4,123 +4,129 @@ import antlr4 from 'antlr4';
 import LudiListener from './LudiListener.js';
 import LudiVisitor from './LudiVisitor.js';
 
-const serializedATN = [4,1,42,360,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,
+const serializedATN = [4,1,42,378,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,
 4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,
 2,13,7,13,2,14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,
-20,7,20,1,0,5,0,44,8,0,10,0,12,0,47,9,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,3,1,60,8,1,1,2,1,2,1,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,72,8,
-3,1,3,1,3,5,3,76,8,3,10,3,12,3,79,9,3,1,3,5,3,82,8,3,10,3,12,3,85,9,3,1,
-4,1,4,1,4,1,4,1,4,1,4,1,4,5,4,94,8,4,10,4,12,4,97,9,4,1,4,5,4,100,8,4,10,
-4,12,4,103,9,4,1,5,1,5,1,5,1,5,1,5,1,5,1,5,3,5,112,8,5,1,5,1,5,5,5,116,8,
-5,10,5,12,5,119,9,5,1,6,1,6,1,6,1,6,1,6,1,6,1,6,3,6,128,8,6,1,6,1,6,5,6,
-132,8,6,10,6,12,6,135,9,6,1,7,1,7,1,7,4,7,140,8,7,11,7,12,7,141,1,8,1,8,
-1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,10,1,10,1,10,5,10,157,8,10,10,10,12,10,
-160,9,10,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,
-1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,4,11,186,8,11,11,
-11,12,11,187,1,11,1,11,3,11,192,8,11,1,12,1,12,1,12,1,13,1,13,1,13,1,13,
-1,13,1,13,1,13,1,13,5,13,205,8,13,10,13,12,13,208,9,13,3,13,210,8,13,1,14,
-1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,5,14,223,8,14,10,14,12,
-14,226,9,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,5,14,236,8,14,10,14,
-12,14,239,9,14,3,14,241,8,14,1,14,1,14,1,14,1,14,3,14,247,8,14,1,14,1,14,
-1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,
-14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,5,14,273,8,14,10,14,12,14,276,9,14,
-1,15,1,15,1,15,1,15,1,15,1,15,5,15,284,8,15,10,15,12,15,287,9,15,3,15,289,
-8,15,1,15,1,15,3,15,293,8,15,1,16,1,16,1,16,1,16,4,16,299,8,16,11,16,12,
-16,300,1,16,1,16,1,16,1,16,1,16,5,16,308,8,16,10,16,12,16,311,9,16,3,16,
-313,8,16,1,16,1,16,3,16,317,8,16,1,17,1,17,1,17,5,17,322,8,17,10,17,12,17,
-325,9,17,1,17,1,17,1,17,1,17,1,17,1,17,5,17,333,8,17,10,17,12,17,336,9,17,
-1,17,1,17,5,17,340,8,17,10,17,12,17,343,9,17,1,17,1,17,1,17,1,17,1,17,3,
-17,350,8,17,1,18,1,18,1,18,1,18,1,19,1,19,1,20,1,20,1,20,0,1,28,21,0,2,4,
-6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,0,2,1,0,28,29,2,0,5,
-5,40,40,393,0,45,1,0,0,0,2,59,1,0,0,0,4,61,1,0,0,0,6,64,1,0,0,0,8,86,1,0,
-0,0,10,104,1,0,0,0,12,120,1,0,0,0,14,136,1,0,0,0,16,143,1,0,0,0,18,148,1,
-0,0,0,20,153,1,0,0,0,22,191,1,0,0,0,24,193,1,0,0,0,26,209,1,0,0,0,28,246,
-1,0,0,0,30,292,1,0,0,0,32,316,1,0,0,0,34,349,1,0,0,0,36,351,1,0,0,0,38,355,
-1,0,0,0,40,357,1,0,0,0,42,44,3,2,1,0,43,42,1,0,0,0,44,47,1,0,0,0,45,43,1,
-0,0,0,45,46,1,0,0,0,46,48,1,0,0,0,47,45,1,0,0,0,48,49,5,0,0,1,49,1,1,0,0,
-0,50,60,3,4,2,0,51,60,3,6,3,0,52,60,3,14,7,0,53,60,3,8,4,0,54,60,3,10,5,
-0,55,60,3,12,6,0,56,60,3,16,8,0,57,60,3,18,9,0,58,60,3,20,10,0,59,50,1,0,
-0,0,59,51,1,0,0,0,59,52,1,0,0,0,59,53,1,0,0,0,59,54,1,0,0,0,59,55,1,0,0,
-0,59,56,1,0,0,0,59,57,1,0,0,0,59,58,1,0,0,0,60,3,1,0,0,0,61,62,5,1,0,0,62,
-63,3,32,16,0,63,5,1,0,0,0,64,65,5,2,0,0,65,66,3,38,19,0,66,67,5,3,0,0,67,
-68,3,26,13,0,68,71,5,4,0,0,69,70,5,5,0,0,70,72,3,28,14,0,71,69,1,0,0,0,71,
-72,1,0,0,0,72,73,1,0,0,0,73,77,5,6,0,0,74,76,3,24,12,0,75,74,1,0,0,0,76,
-79,1,0,0,0,77,75,1,0,0,0,77,78,1,0,0,0,78,83,1,0,0,0,79,77,1,0,0,0,80,82,
-3,22,11,0,81,80,1,0,0,0,82,85,1,0,0,0,83,81,1,0,0,0,83,84,1,0,0,0,84,7,1,
-0,0,0,85,83,1,0,0,0,86,87,5,7,0,0,87,88,3,38,19,0,88,89,5,3,0,0,89,90,3,
-26,13,0,90,91,5,4,0,0,91,95,5,6,0,0,92,94,3,24,12,0,93,92,1,0,0,0,94,97,
-1,0,0,0,95,93,1,0,0,0,95,96,1,0,0,0,96,101,1,0,0,0,97,95,1,0,0,0,98,100,
-3,22,11,0,99,98,1,0,0,0,100,103,1,0,0,0,101,99,1,0,0,0,101,102,1,0,0,0,102,
-9,1,0,0,0,103,101,1,0,0,0,104,105,5,8,0,0,105,106,3,38,19,0,106,107,5,3,
-0,0,107,108,3,26,13,0,108,111,5,4,0,0,109,110,5,5,0,0,110,112,3,28,14,0,
-111,109,1,0,0,0,111,112,1,0,0,0,112,113,1,0,0,0,113,117,5,6,0,0,114,116,
-3,24,12,0,115,114,1,0,0,0,116,119,1,0,0,0,117,115,1,0,0,0,117,118,1,0,0,
-0,118,11,1,0,0,0,119,117,1,0,0,0,120,121,5,9,0,0,121,122,3,38,19,0,122,123,
-5,3,0,0,123,124,3,26,13,0,124,127,5,4,0,0,125,126,5,5,0,0,126,128,3,28,14,
-0,127,125,1,0,0,0,127,128,1,0,0,0,128,129,1,0,0,0,129,133,5,6,0,0,130,132,
-3,24,12,0,131,130,1,0,0,0,132,135,1,0,0,0,133,131,1,0,0,0,133,134,1,0,0,
-0,134,13,1,0,0,0,135,133,1,0,0,0,136,137,5,10,0,0,137,139,5,6,0,0,138,140,
-3,22,11,0,139,138,1,0,0,0,140,141,1,0,0,0,141,139,1,0,0,0,141,142,1,0,0,
-0,142,15,1,0,0,0,143,144,5,11,0,0,144,145,3,38,19,0,145,146,5,12,0,0,146,
-147,3,32,16,0,147,17,1,0,0,0,148,149,5,13,0,0,149,150,3,38,19,0,150,151,
-5,12,0,0,151,152,3,32,16,0,152,19,1,0,0,0,153,154,5,14,0,0,154,158,5,6,0,
-0,155,157,3,34,17,0,156,155,1,0,0,0,157,160,1,0,0,0,158,156,1,0,0,0,158,
-159,1,0,0,0,159,21,1,0,0,0,160,158,1,0,0,0,161,162,5,15,0,0,162,163,3,30,
-15,0,163,164,5,16,0,0,164,165,3,28,14,0,165,192,1,0,0,0,166,167,5,17,0,0,
-167,168,3,30,15,0,168,169,5,16,0,0,169,170,3,28,14,0,170,192,1,0,0,0,171,
-172,5,18,0,0,172,173,3,30,15,0,173,174,5,19,0,0,174,175,3,28,14,0,175,192,
-1,0,0,0,176,177,5,20,0,0,177,178,3,30,15,0,178,179,5,19,0,0,179,180,3,28,
-14,0,180,192,1,0,0,0,181,182,5,21,0,0,182,183,3,28,14,0,183,185,5,22,0,0,
-184,186,3,22,11,0,185,184,1,0,0,0,186,187,1,0,0,0,187,185,1,0,0,0,187,188,
-1,0,0,0,188,189,1,0,0,0,189,190,5,23,0,0,190,192,1,0,0,0,191,161,1,0,0,0,
-191,166,1,0,0,0,191,171,1,0,0,0,191,176,1,0,0,0,191,181,1,0,0,0,192,23,1,
-0,0,0,193,194,5,24,0,0,194,195,3,28,14,0,195,25,1,0,0,0,196,197,3,38,19,
-0,197,198,5,12,0,0,198,206,3,32,16,0,199,200,5,25,0,0,200,201,3,38,19,0,
-201,202,5,12,0,0,202,203,3,32,16,0,203,205,1,0,0,0,204,199,1,0,0,0,205,208,
-1,0,0,0,206,204,1,0,0,0,206,207,1,0,0,0,207,210,1,0,0,0,208,206,1,0,0,0,
-209,196,1,0,0,0,209,210,1,0,0,0,210,27,1,0,0,0,211,212,6,14,-1,0,212,213,
-5,3,0,0,213,214,3,28,14,0,214,215,5,4,0,0,215,247,1,0,0,0,216,247,5,41,0,
-0,217,218,3,38,19,0,218,219,5,26,0,0,219,224,3,28,14,0,220,221,5,25,0,0,
-221,223,3,28,14,0,222,220,1,0,0,0,223,226,1,0,0,0,224,222,1,0,0,0,224,225,
-1,0,0,0,225,227,1,0,0,0,226,224,1,0,0,0,227,228,5,27,0,0,228,247,1,0,0,0,
-229,247,3,30,15,0,230,231,3,38,19,0,231,240,5,3,0,0,232,237,3,28,14,0,233,
-234,5,25,0,0,234,236,3,28,14,0,235,233,1,0,0,0,236,239,1,0,0,0,237,235,1,
-0,0,0,237,238,1,0,0,0,238,241,1,0,0,0,239,237,1,0,0,0,240,232,1,0,0,0,240,
-241,1,0,0,0,241,242,1,0,0,0,242,243,5,4,0,0,243,247,1,0,0,0,244,245,7,0,
-0,0,245,247,3,28,14,9,246,211,1,0,0,0,246,216,1,0,0,0,246,217,1,0,0,0,246,
-229,1,0,0,0,246,230,1,0,0,0,246,244,1,0,0,0,247,274,1,0,0,0,248,249,10,8,
-0,0,249,250,5,30,0,0,250,273,3,28,14,9,251,252,10,7,0,0,252,253,5,31,0,0,
-253,273,3,28,14,8,254,255,10,6,0,0,255,256,5,32,0,0,256,273,3,28,14,7,257,
-258,10,5,0,0,258,259,5,33,0,0,259,273,3,28,14,6,260,261,10,4,0,0,261,262,
-5,34,0,0,262,273,3,28,14,5,263,264,10,3,0,0,264,265,5,35,0,0,265,273,3,28,
-14,4,266,267,10,2,0,0,267,268,5,36,0,0,268,273,3,28,14,3,269,270,10,1,0,
-0,270,271,5,37,0,0,271,273,3,28,14,2,272,248,1,0,0,0,272,251,1,0,0,0,272,
-254,1,0,0,0,272,257,1,0,0,0,272,260,1,0,0,0,272,263,1,0,0,0,272,266,1,0,
-0,0,272,269,1,0,0,0,273,276,1,0,0,0,274,272,1,0,0,0,274,275,1,0,0,0,275,
-29,1,0,0,0,276,274,1,0,0,0,277,293,3,38,19,0,278,279,3,38,19,0,279,288,5,
-26,0,0,280,285,3,28,14,0,281,282,5,25,0,0,282,284,3,28,14,0,283,281,1,0,
-0,0,284,287,1,0,0,0,285,283,1,0,0,0,285,286,1,0,0,0,286,289,1,0,0,0,287,
-285,1,0,0,0,288,280,1,0,0,0,288,289,1,0,0,0,289,290,1,0,0,0,290,291,5,27,
-0,0,291,293,1,0,0,0,292,277,1,0,0,0,292,278,1,0,0,0,293,31,1,0,0,0,294,317,
-3,38,19,0,295,298,3,38,19,0,296,297,5,30,0,0,297,299,3,38,19,0,298,296,1,
-0,0,0,299,300,1,0,0,0,300,298,1,0,0,0,300,301,1,0,0,0,301,317,1,0,0,0,302,
-303,3,38,19,0,303,312,5,35,0,0,304,309,3,28,14,0,305,306,5,25,0,0,306,308,
-3,28,14,0,307,305,1,0,0,0,308,311,1,0,0,0,309,307,1,0,0,0,309,310,1,0,0,
-0,310,313,1,0,0,0,311,309,1,0,0,0,312,304,1,0,0,0,312,313,1,0,0,0,313,314,
-1,0,0,0,314,315,5,34,0,0,315,317,1,0,0,0,316,294,1,0,0,0,316,295,1,0,0,0,
-316,302,1,0,0,0,317,33,1,0,0,0,318,319,5,35,0,0,319,323,3,38,19,0,320,322,
-3,36,18,0,321,320,1,0,0,0,322,325,1,0,0,0,323,321,1,0,0,0,323,324,1,0,0,
-0,324,326,1,0,0,0,325,323,1,0,0,0,326,327,5,38,0,0,327,328,5,34,0,0,328,
-350,1,0,0,0,329,330,5,35,0,0,330,334,3,38,19,0,331,333,3,36,18,0,332,331,
-1,0,0,0,333,336,1,0,0,0,334,332,1,0,0,0,334,335,1,0,0,0,335,337,1,0,0,0,
-336,334,1,0,0,0,337,341,5,34,0,0,338,340,3,34,17,0,339,338,1,0,0,0,340,343,
-1,0,0,0,341,339,1,0,0,0,341,342,1,0,0,0,342,344,1,0,0,0,343,341,1,0,0,0,
-344,345,5,35,0,0,345,346,5,38,0,0,346,347,3,38,19,0,347,348,5,34,0,0,348,
-350,1,0,0,0,349,318,1,0,0,0,349,329,1,0,0,0,350,35,1,0,0,0,351,352,3,38,
-19,0,352,353,5,32,0,0,353,354,5,39,0,0,354,37,1,0,0,0,355,356,7,1,0,0,356,
-39,1,0,0,0,357,358,5,41,0,0,358,41,1,0,0,0,34,45,59,71,77,83,95,101,111,
-117,127,133,141,158,187,191,206,209,224,237,240,246,272,274,285,288,292,
-300,309,312,316,323,334,341,349];
+20,7,20,2,21,7,21,1,0,5,0,46,8,0,10,0,12,0,49,9,0,1,0,1,0,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,3,1,62,8,1,1,2,1,2,1,2,1,3,1,3,1,3,1,3,1,3,1,3,1,3,
+3,3,74,8,3,1,3,1,3,5,3,78,8,3,10,3,12,3,81,9,3,1,3,5,3,84,8,3,10,3,12,3,
+87,9,3,1,4,1,4,1,4,1,4,1,4,1,4,1,4,5,4,96,8,4,10,4,12,4,99,9,4,1,4,5,4,102,
+8,4,10,4,12,4,105,9,4,1,5,1,5,1,5,1,5,1,5,1,5,1,5,3,5,114,8,5,1,5,1,5,5,
+5,118,8,5,10,5,12,5,121,9,5,1,6,1,6,1,6,1,6,1,6,1,6,1,6,3,6,130,8,6,1,6,
+1,6,5,6,134,8,6,10,6,12,6,137,9,6,1,7,1,7,1,7,4,7,142,8,7,11,7,12,7,143,
+1,8,1,8,1,8,1,8,1,8,1,9,1,9,1,9,1,9,1,9,1,10,1,10,1,10,5,10,159,8,10,10,
+10,12,10,162,9,10,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,
+1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,4,11,188,
+8,11,11,11,12,11,189,1,11,1,11,3,11,194,8,11,1,12,1,12,1,12,1,13,1,13,1,
+13,1,13,1,13,5,13,204,8,13,10,13,12,13,207,9,13,3,13,209,8,13,1,13,1,13,
+1,13,1,13,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,5,14,223,8,14,10,14,12,
+14,226,9,14,3,14,228,8,14,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,
+15,1,15,5,15,241,8,15,10,15,12,15,244,9,15,1,15,1,15,1,15,1,15,1,15,1,15,
+1,15,1,15,5,15,254,8,15,10,15,12,15,257,9,15,3,15,259,8,15,1,15,1,15,1,15,
+1,15,3,15,265,8,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,
+1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,5,15,291,
+8,15,10,15,12,15,294,9,15,1,16,1,16,1,16,1,16,1,16,1,16,5,16,302,8,16,10,
+16,12,16,305,9,16,3,16,307,8,16,1,16,1,16,3,16,311,8,16,1,17,1,17,1,17,1,
+17,4,17,317,8,17,11,17,12,17,318,1,17,1,17,1,17,1,17,1,17,5,17,326,8,17,
+10,17,12,17,329,9,17,3,17,331,8,17,1,17,1,17,3,17,335,8,17,1,18,1,18,1,18,
+5,18,340,8,18,10,18,12,18,343,9,18,1,18,1,18,1,18,1,18,1,18,1,18,5,18,351,
+8,18,10,18,12,18,354,9,18,1,18,1,18,5,18,358,8,18,10,18,12,18,361,9,18,1,
+18,1,18,1,18,1,18,1,18,3,18,368,8,18,1,19,1,19,1,19,1,19,1,20,1,20,1,21,
+1,21,1,21,0,1,30,22,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,
+38,40,42,0,2,1,0,28,29,2,0,5,5,40,40,412,0,47,1,0,0,0,2,61,1,0,0,0,4,63,
+1,0,0,0,6,66,1,0,0,0,8,88,1,0,0,0,10,106,1,0,0,0,12,122,1,0,0,0,14,138,1,
+0,0,0,16,145,1,0,0,0,18,150,1,0,0,0,20,155,1,0,0,0,22,193,1,0,0,0,24,195,
+1,0,0,0,26,198,1,0,0,0,28,227,1,0,0,0,30,264,1,0,0,0,32,310,1,0,0,0,34,334,
+1,0,0,0,36,367,1,0,0,0,38,369,1,0,0,0,40,373,1,0,0,0,42,375,1,0,0,0,44,46,
+3,2,1,0,45,44,1,0,0,0,46,49,1,0,0,0,47,45,1,0,0,0,47,48,1,0,0,0,48,50,1,
+0,0,0,49,47,1,0,0,0,50,51,5,0,0,1,51,1,1,0,0,0,52,62,3,4,2,0,53,62,3,6,3,
+0,54,62,3,14,7,0,55,62,3,8,4,0,56,62,3,10,5,0,57,62,3,12,6,0,58,62,3,16,
+8,0,59,62,3,18,9,0,60,62,3,20,10,0,61,52,1,0,0,0,61,53,1,0,0,0,61,54,1,0,
+0,0,61,55,1,0,0,0,61,56,1,0,0,0,61,57,1,0,0,0,61,58,1,0,0,0,61,59,1,0,0,
+0,61,60,1,0,0,0,62,3,1,0,0,0,63,64,5,1,0,0,64,65,3,34,17,0,65,5,1,0,0,0,
+66,67,5,2,0,0,67,68,3,40,20,0,68,69,5,3,0,0,69,70,3,28,14,0,70,73,5,4,0,
+0,71,72,5,5,0,0,72,74,3,30,15,0,73,71,1,0,0,0,73,74,1,0,0,0,74,75,1,0,0,
+0,75,79,5,6,0,0,76,78,3,24,12,0,77,76,1,0,0,0,78,81,1,0,0,0,79,77,1,0,0,
+0,79,80,1,0,0,0,80,85,1,0,0,0,81,79,1,0,0,0,82,84,3,22,11,0,83,82,1,0,0,
+0,84,87,1,0,0,0,85,83,1,0,0,0,85,86,1,0,0,0,86,7,1,0,0,0,87,85,1,0,0,0,88,
+89,5,7,0,0,89,90,3,40,20,0,90,91,5,3,0,0,91,92,3,28,14,0,92,93,5,4,0,0,93,
+97,5,6,0,0,94,96,3,24,12,0,95,94,1,0,0,0,96,99,1,0,0,0,97,95,1,0,0,0,97,
+98,1,0,0,0,98,103,1,0,0,0,99,97,1,0,0,0,100,102,3,22,11,0,101,100,1,0,0,
+0,102,105,1,0,0,0,103,101,1,0,0,0,103,104,1,0,0,0,104,9,1,0,0,0,105,103,
+1,0,0,0,106,107,5,8,0,0,107,108,3,40,20,0,108,109,5,3,0,0,109,110,3,28,14,
+0,110,113,5,4,0,0,111,112,5,5,0,0,112,114,3,30,15,0,113,111,1,0,0,0,113,
+114,1,0,0,0,114,115,1,0,0,0,115,119,5,6,0,0,116,118,3,24,12,0,117,116,1,
+0,0,0,118,121,1,0,0,0,119,117,1,0,0,0,119,120,1,0,0,0,120,11,1,0,0,0,121,
+119,1,0,0,0,122,123,5,9,0,0,123,124,3,40,20,0,124,125,5,3,0,0,125,126,3,
+28,14,0,126,129,5,4,0,0,127,128,5,5,0,0,128,130,3,30,15,0,129,127,1,0,0,
+0,129,130,1,0,0,0,130,131,1,0,0,0,131,135,5,6,0,0,132,134,3,24,12,0,133,
+132,1,0,0,0,134,137,1,0,0,0,135,133,1,0,0,0,135,136,1,0,0,0,136,13,1,0,0,
+0,137,135,1,0,0,0,138,139,5,10,0,0,139,141,5,6,0,0,140,142,3,22,11,0,141,
+140,1,0,0,0,142,143,1,0,0,0,143,141,1,0,0,0,143,144,1,0,0,0,144,15,1,0,0,
+0,145,146,5,11,0,0,146,147,3,40,20,0,147,148,5,12,0,0,148,149,3,34,17,0,
+149,17,1,0,0,0,150,151,5,13,0,0,151,152,3,40,20,0,152,153,5,12,0,0,153,154,
+3,34,17,0,154,19,1,0,0,0,155,156,5,14,0,0,156,160,5,6,0,0,157,159,3,36,18,
+0,158,157,1,0,0,0,159,162,1,0,0,0,160,158,1,0,0,0,160,161,1,0,0,0,161,21,
+1,0,0,0,162,160,1,0,0,0,163,164,5,15,0,0,164,165,3,32,16,0,165,166,5,16,
+0,0,166,167,3,30,15,0,167,194,1,0,0,0,168,169,5,17,0,0,169,170,3,32,16,0,
+170,171,5,16,0,0,171,172,3,30,15,0,172,194,1,0,0,0,173,174,5,18,0,0,174,
+175,3,32,16,0,175,176,5,19,0,0,176,177,3,30,15,0,177,194,1,0,0,0,178,179,
+5,20,0,0,179,180,3,32,16,0,180,181,5,19,0,0,181,182,3,30,15,0,182,194,1,
+0,0,0,183,184,5,21,0,0,184,185,3,30,15,0,185,187,5,22,0,0,186,188,3,22,11,
+0,187,186,1,0,0,0,188,189,1,0,0,0,189,187,1,0,0,0,189,190,1,0,0,0,190,191,
+1,0,0,0,191,192,5,23,0,0,192,194,1,0,0,0,193,163,1,0,0,0,193,168,1,0,0,0,
+193,173,1,0,0,0,193,178,1,0,0,0,193,183,1,0,0,0,194,23,1,0,0,0,195,196,5,
+24,0,0,196,197,3,30,15,0,197,25,1,0,0,0,198,199,3,40,20,0,199,208,5,3,0,
+0,200,205,3,30,15,0,201,202,5,25,0,0,202,204,3,30,15,0,203,201,1,0,0,0,204,
+207,1,0,0,0,205,203,1,0,0,0,205,206,1,0,0,0,206,209,1,0,0,0,207,205,1,0,
+0,0,208,200,1,0,0,0,208,209,1,0,0,0,209,210,1,0,0,0,210,211,5,4,0,0,211,
+212,5,5,0,0,212,213,3,30,15,0,213,27,1,0,0,0,214,215,3,40,20,0,215,216,5,
+12,0,0,216,224,3,34,17,0,217,218,5,25,0,0,218,219,3,40,20,0,219,220,5,12,
+0,0,220,221,3,34,17,0,221,223,1,0,0,0,222,217,1,0,0,0,223,226,1,0,0,0,224,
+222,1,0,0,0,224,225,1,0,0,0,225,228,1,0,0,0,226,224,1,0,0,0,227,214,1,0,
+0,0,227,228,1,0,0,0,228,29,1,0,0,0,229,230,6,15,-1,0,230,231,5,3,0,0,231,
+232,3,30,15,0,232,233,5,4,0,0,233,265,1,0,0,0,234,265,5,41,0,0,235,236,3,
+40,20,0,236,237,5,26,0,0,237,242,3,30,15,0,238,239,5,25,0,0,239,241,3,30,
+15,0,240,238,1,0,0,0,241,244,1,0,0,0,242,240,1,0,0,0,242,243,1,0,0,0,243,
+245,1,0,0,0,244,242,1,0,0,0,245,246,5,27,0,0,246,265,1,0,0,0,247,265,3,32,
+16,0,248,249,3,40,20,0,249,258,5,3,0,0,250,255,3,30,15,0,251,252,5,25,0,
+0,252,254,3,30,15,0,253,251,1,0,0,0,254,257,1,0,0,0,255,253,1,0,0,0,255,
+256,1,0,0,0,256,259,1,0,0,0,257,255,1,0,0,0,258,250,1,0,0,0,258,259,1,0,
+0,0,259,260,1,0,0,0,260,261,5,4,0,0,261,265,1,0,0,0,262,263,7,0,0,0,263,
+265,3,30,15,9,264,229,1,0,0,0,264,234,1,0,0,0,264,235,1,0,0,0,264,247,1,
+0,0,0,264,248,1,0,0,0,264,262,1,0,0,0,265,292,1,0,0,0,266,267,10,8,0,0,267,
+268,5,30,0,0,268,291,3,30,15,9,269,270,10,7,0,0,270,271,5,31,0,0,271,291,
+3,30,15,8,272,273,10,6,0,0,273,274,5,32,0,0,274,291,3,30,15,7,275,276,10,
+5,0,0,276,277,5,33,0,0,277,291,3,30,15,6,278,279,10,4,0,0,279,280,5,34,0,
+0,280,291,3,30,15,5,281,282,10,3,0,0,282,283,5,35,0,0,283,291,3,30,15,4,
+284,285,10,2,0,0,285,286,5,36,0,0,286,291,3,30,15,3,287,288,10,1,0,0,288,
+289,5,37,0,0,289,291,3,30,15,2,290,266,1,0,0,0,290,269,1,0,0,0,290,272,1,
+0,0,0,290,275,1,0,0,0,290,278,1,0,0,0,290,281,1,0,0,0,290,284,1,0,0,0,290,
+287,1,0,0,0,291,294,1,0,0,0,292,290,1,0,0,0,292,293,1,0,0,0,293,31,1,0,0,
+0,294,292,1,0,0,0,295,311,3,40,20,0,296,297,3,40,20,0,297,306,5,26,0,0,298,
+303,3,30,15,0,299,300,5,25,0,0,300,302,3,30,15,0,301,299,1,0,0,0,302,305,
+1,0,0,0,303,301,1,0,0,0,303,304,1,0,0,0,304,307,1,0,0,0,305,303,1,0,0,0,
+306,298,1,0,0,0,306,307,1,0,0,0,307,308,1,0,0,0,308,309,5,27,0,0,309,311,
+1,0,0,0,310,295,1,0,0,0,310,296,1,0,0,0,311,33,1,0,0,0,312,335,3,40,20,0,
+313,316,3,40,20,0,314,315,5,30,0,0,315,317,3,40,20,0,316,314,1,0,0,0,317,
+318,1,0,0,0,318,316,1,0,0,0,318,319,1,0,0,0,319,335,1,0,0,0,320,321,3,40,
+20,0,321,330,5,35,0,0,322,327,3,30,15,0,323,324,5,25,0,0,324,326,3,30,15,
+0,325,323,1,0,0,0,326,329,1,0,0,0,327,325,1,0,0,0,327,328,1,0,0,0,328,331,
+1,0,0,0,329,327,1,0,0,0,330,322,1,0,0,0,330,331,1,0,0,0,331,332,1,0,0,0,
+332,333,5,34,0,0,333,335,1,0,0,0,334,312,1,0,0,0,334,313,1,0,0,0,334,320,
+1,0,0,0,335,35,1,0,0,0,336,337,5,35,0,0,337,341,3,40,20,0,338,340,3,38,19,
+0,339,338,1,0,0,0,340,343,1,0,0,0,341,339,1,0,0,0,341,342,1,0,0,0,342,344,
+1,0,0,0,343,341,1,0,0,0,344,345,5,38,0,0,345,346,5,34,0,0,346,368,1,0,0,
+0,347,348,5,35,0,0,348,352,3,40,20,0,349,351,3,38,19,0,350,349,1,0,0,0,351,
+354,1,0,0,0,352,350,1,0,0,0,352,353,1,0,0,0,353,355,1,0,0,0,354,352,1,0,
+0,0,355,359,5,34,0,0,356,358,3,36,18,0,357,356,1,0,0,0,358,361,1,0,0,0,359,
+357,1,0,0,0,359,360,1,0,0,0,360,362,1,0,0,0,361,359,1,0,0,0,362,363,5,35,
+0,0,363,364,5,38,0,0,364,365,3,40,20,0,365,366,5,34,0,0,366,368,1,0,0,0,
+367,336,1,0,0,0,367,347,1,0,0,0,368,37,1,0,0,0,369,370,3,40,20,0,370,371,
+5,32,0,0,371,372,5,39,0,0,372,39,1,0,0,0,373,374,7,1,0,0,374,41,1,0,0,0,
+375,376,5,41,0,0,376,43,1,0,0,0,36,47,61,73,79,85,97,103,113,119,129,135,
+143,160,189,193,205,208,224,227,242,255,258,264,290,292,303,306,310,318,
+327,330,334,341,352,359,367];
 
 
 const atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
@@ -148,9 +154,9 @@ export default class LudiParser extends antlr4.Parser {
                              "IDENTIFIER", "NUMBER", "WS" ];
     static ruleNames = [ "game", "definition", "players", "action", "trigger", 
                          "win", "loss", "setup", "kind", "state_definition", 
-                         "view", "statement", "when", "parameterList", "expression", 
-                         "lvalue", "typeExpression", "viewElement", "viewAttribute", 
-                         "identifier", "number" ];
+                         "view", "statement", "when", "moveExpression", 
+                         "parameterList", "expression", "lvalue", "typeExpression", 
+                         "viewElement", "viewAttribute", "identifier", "number" ];
 
     constructor(input) {
         super(input);
@@ -162,7 +168,7 @@ export default class LudiParser extends antlr4.Parser {
 
     sempred(localctx, ruleIndex, predIndex) {
     	switch(ruleIndex) {
-    	case 14:
+    	case 15:
     	    		return this.expression_sempred(localctx, predIndex);
         default:
             throw "No predicate with index:" + ruleIndex;
@@ -201,17 +207,17 @@ export default class LudiParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 45;
+	        this.state = 47;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 28550) !== 0)) {
-	            this.state = 42;
+	            this.state = 44;
 	            this.definition();
-	            this.state = 47;
+	            this.state = 49;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 48;
+	        this.state = 50;
 	        this.match(LudiParser.EOF);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -233,52 +239,52 @@ export default class LudiParser extends antlr4.Parser {
 	    let localctx = new DefinitionContext(this, this._ctx, this.state);
 	    this.enterRule(localctx, 2, LudiParser.RULE_definition);
 	    try {
-	        this.state = 59;
+	        this.state = 61;
 	        this._errHandler.sync(this);
 	        switch(this._input.LA(1)) {
 	        case 1:
 	            this.enterOuterAlt(localctx, 1);
-	            this.state = 50;
+	            this.state = 52;
 	            this.players();
 	            break;
 	        case 2:
 	            this.enterOuterAlt(localctx, 2);
-	            this.state = 51;
+	            this.state = 53;
 	            this.action();
 	            break;
 	        case 10:
 	            this.enterOuterAlt(localctx, 3);
-	            this.state = 52;
+	            this.state = 54;
 	            this.setup();
 	            break;
 	        case 7:
 	            this.enterOuterAlt(localctx, 4);
-	            this.state = 53;
+	            this.state = 55;
 	            this.trigger();
 	            break;
 	        case 8:
 	            this.enterOuterAlt(localctx, 5);
-	            this.state = 54;
+	            this.state = 56;
 	            this.win();
 	            break;
 	        case 9:
 	            this.enterOuterAlt(localctx, 6);
-	            this.state = 55;
+	            this.state = 57;
 	            this.loss();
 	            break;
 	        case 11:
 	            this.enterOuterAlt(localctx, 7);
-	            this.state = 56;
+	            this.state = 58;
 	            this.kind();
 	            break;
 	        case 13:
 	            this.enterOuterAlt(localctx, 8);
-	            this.state = 57;
+	            this.state = 59;
 	            this.state_definition();
 	            break;
 	        case 14:
 	            this.enterOuterAlt(localctx, 9);
-	            this.state = 58;
+	            this.state = 60;
 	            this.view();
 	            break;
 	        default:
@@ -305,9 +311,9 @@ export default class LudiParser extends antlr4.Parser {
 	    this.enterRule(localctx, 4, LudiParser.RULE_players);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 61;
+	        this.state = 63;
 	        this.match(LudiParser.T__0);
-	        this.state = 62;
+	        this.state = 64;
 	        localctx.type = this.typeExpression();
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -331,46 +337,46 @@ export default class LudiParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 64;
-	        this.match(LudiParser.T__1);
-	        this.state = 65;
-	        localctx.name = this.identifier();
 	        this.state = 66;
-	        this.match(LudiParser.T__2);
+	        this.match(LudiParser.T__1);
 	        this.state = 67;
-	        this.parameterList();
+	        localctx.name = this.identifier();
 	        this.state = 68;
+	        this.match(LudiParser.T__2);
+	        this.state = 69;
+	        this.parameterList();
+	        this.state = 70;
 	        this.match(LudiParser.T__3);
-	        this.state = 71;
+	        this.state = 73;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        if(_la===5) {
-	            this.state = 69;
+	            this.state = 71;
 	            this.match(LudiParser.T__4);
-	            this.state = 70;
+	            this.state = 72;
 	            localctx.player = this.expression(0);
 	        }
 
-	        this.state = 73;
+	        this.state = 75;
 	        this.match(LudiParser.T__5);
-	        this.state = 77;
+	        this.state = 79;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while(_la===24) {
-	            this.state = 74;
+	            this.state = 76;
 	            localctx._when = this.when();
 	            localctx.conditions.push(localctx._when);
-	            this.state = 79;
+	            this.state = 81;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 83;
+	        this.state = 85;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3571712) !== 0)) {
-	            this.state = 80;
+	            this.state = 82;
 	            this.statement();
-	            this.state = 85;
+	            this.state = 87;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
@@ -396,36 +402,36 @@ export default class LudiParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 86;
-	        this.match(LudiParser.T__6);
-	        this.state = 87;
-	        localctx.name = this.identifier();
 	        this.state = 88;
-	        this.match(LudiParser.T__2);
+	        this.match(LudiParser.T__6);
 	        this.state = 89;
-	        this.parameterList();
+	        localctx.name = this.identifier();
 	        this.state = 90;
-	        this.match(LudiParser.T__3);
+	        this.match(LudiParser.T__2);
 	        this.state = 91;
+	        this.parameterList();
+	        this.state = 92;
+	        this.match(LudiParser.T__3);
+	        this.state = 93;
 	        this.match(LudiParser.T__5);
-	        this.state = 95;
+	        this.state = 97;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while(_la===24) {
-	            this.state = 92;
+	            this.state = 94;
 	            localctx._when = this.when();
 	            localctx.conditions.push(localctx._when);
-	            this.state = 97;
+	            this.state = 99;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 101;
+	        this.state = 103;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3571712) !== 0)) {
-	            this.state = 98;
+	            this.state = 100;
 	            this.statement();
-	            this.state = 103;
+	            this.state = 105;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
@@ -451,36 +457,36 @@ export default class LudiParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 104;
-	        this.match(LudiParser.T__7);
-	        this.state = 105;
-	        localctx.name = this.identifier();
 	        this.state = 106;
-	        this.match(LudiParser.T__2);
+	        this.match(LudiParser.T__7);
 	        this.state = 107;
-	        this.parameterList();
+	        localctx.name = this.identifier();
 	        this.state = 108;
+	        this.match(LudiParser.T__2);
+	        this.state = 109;
+	        this.parameterList();
+	        this.state = 110;
 	        this.match(LudiParser.T__3);
-	        this.state = 111;
+	        this.state = 113;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        if(_la===5) {
-	            this.state = 109;
+	            this.state = 111;
 	            this.match(LudiParser.T__4);
-	            this.state = 110;
+	            this.state = 112;
 	            localctx.player = this.expression(0);
 	        }
 
-	        this.state = 113;
+	        this.state = 115;
 	        this.match(LudiParser.T__5);
-	        this.state = 117;
+	        this.state = 119;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while(_la===24) {
-	            this.state = 114;
+	            this.state = 116;
 	            localctx._when = this.when();
 	            localctx.conditions.push(localctx._when);
-	            this.state = 119;
+	            this.state = 121;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
@@ -506,36 +512,36 @@ export default class LudiParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 120;
-	        this.match(LudiParser.T__8);
-	        this.state = 121;
-	        localctx.name = this.identifier();
 	        this.state = 122;
-	        this.match(LudiParser.T__2);
+	        this.match(LudiParser.T__8);
 	        this.state = 123;
-	        this.parameterList();
+	        localctx.name = this.identifier();
 	        this.state = 124;
+	        this.match(LudiParser.T__2);
+	        this.state = 125;
+	        this.parameterList();
+	        this.state = 126;
 	        this.match(LudiParser.T__3);
-	        this.state = 127;
+	        this.state = 129;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        if(_la===5) {
-	            this.state = 125;
+	            this.state = 127;
 	            this.match(LudiParser.T__4);
-	            this.state = 126;
+	            this.state = 128;
 	            localctx.player = this.expression(0);
 	        }
 
-	        this.state = 129;
+	        this.state = 131;
 	        this.match(LudiParser.T__5);
-	        this.state = 133;
+	        this.state = 135;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while(_la===24) {
-	            this.state = 130;
+	            this.state = 132;
 	            localctx._when = this.when();
 	            localctx.conditions.push(localctx._when);
-	            this.state = 135;
+	            this.state = 137;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
@@ -561,17 +567,17 @@ export default class LudiParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 136;
+	        this.state = 138;
 	        this.match(LudiParser.T__9);
-	        this.state = 137;
+	        this.state = 139;
 	        this.match(LudiParser.T__5);
-	        this.state = 139; 
+	        this.state = 141; 
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        do {
-	            this.state = 138;
+	            this.state = 140;
 	            this.statement();
-	            this.state = 141; 
+	            this.state = 143; 
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        } while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3571712) !== 0));
@@ -596,13 +602,13 @@ export default class LudiParser extends antlr4.Parser {
 	    this.enterRule(localctx, 16, LudiParser.RULE_kind);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 143;
-	        this.match(LudiParser.T__10);
-	        this.state = 144;
-	        localctx.name = this.identifier();
 	        this.state = 145;
-	        this.match(LudiParser.T__11);
+	        this.match(LudiParser.T__10);
 	        this.state = 146;
+	        localctx.name = this.identifier();
+	        this.state = 147;
+	        this.match(LudiParser.T__11);
+	        this.state = 148;
 	        localctx.type = this.typeExpression();
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -625,13 +631,13 @@ export default class LudiParser extends antlr4.Parser {
 	    this.enterRule(localctx, 18, LudiParser.RULE_state_definition);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 148;
-	        this.match(LudiParser.T__12);
-	        this.state = 149;
-	        localctx.name = this.identifier();
 	        this.state = 150;
-	        this.match(LudiParser.T__11);
+	        this.match(LudiParser.T__12);
 	        this.state = 151;
+	        localctx.name = this.identifier();
+	        this.state = 152;
+	        this.match(LudiParser.T__11);
+	        this.state = 153;
 	        localctx.type = this.typeExpression();
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -655,18 +661,18 @@ export default class LudiParser extends antlr4.Parser {
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 153;
+	        this.state = 155;
 	        this.match(LudiParser.T__13);
-	        this.state = 154;
+	        this.state = 156;
 	        this.match(LudiParser.T__5);
-	        this.state = 158;
+	        this.state = 160;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while(_la===35) {
-	            this.state = 155;
+	            this.state = 157;
 	            localctx._viewElement = this.viewElement();
 	            localctx.elements.push(localctx._viewElement);
-	            this.state = 160;
+	            this.state = 162;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
@@ -691,77 +697,77 @@ export default class LudiParser extends antlr4.Parser {
 	    this.enterRule(localctx, 22, LudiParser.RULE_statement);
 	    var _la = 0;
 	    try {
-	        this.state = 191;
+	        this.state = 193;
 	        this._errHandler.sync(this);
 	        switch(this._input.LA(1)) {
 	        case 15:
 	            localctx = new ChangeStatementContext(this, localctx);
 	            this.enterOuterAlt(localctx, 1);
-	            this.state = 161;
-	            this.match(LudiParser.T__14);
-	            this.state = 162;
-	            this.lvalue();
 	            this.state = 163;
-	            this.match(LudiParser.T__15);
+	            this.match(LudiParser.T__14);
 	            this.state = 164;
+	            this.lvalue();
+	            this.state = 165;
+	            this.match(LudiParser.T__15);
+	            this.state = 166;
 	            this.expression(0);
 	            break;
 	        case 17:
 	            localctx = new SetStatementContext(this, localctx);
 	            this.enterOuterAlt(localctx, 2);
-	            this.state = 166;
-	            this.match(LudiParser.T__16);
-	            this.state = 167;
-	            this.lvalue();
 	            this.state = 168;
-	            this.match(LudiParser.T__15);
+	            this.match(LudiParser.T__16);
 	            this.state = 169;
+	            this.lvalue();
+	            this.state = 170;
+	            this.match(LudiParser.T__15);
+	            this.state = 171;
 	            this.expression(0);
 	            break;
 	        case 18:
 	            localctx = new IncreaseStatementContext(this, localctx);
 	            this.enterOuterAlt(localctx, 3);
-	            this.state = 171;
-	            this.match(LudiParser.T__17);
-	            this.state = 172;
-	            this.lvalue();
 	            this.state = 173;
-	            this.match(LudiParser.T__18);
+	            this.match(LudiParser.T__17);
 	            this.state = 174;
+	            this.lvalue();
+	            this.state = 175;
+	            this.match(LudiParser.T__18);
+	            this.state = 176;
 	            this.expression(0);
 	            break;
 	        case 20:
 	            localctx = new DecreaseStatementContext(this, localctx);
 	            this.enterOuterAlt(localctx, 4);
-	            this.state = 176;
-	            this.match(LudiParser.T__19);
-	            this.state = 177;
-	            this.lvalue();
 	            this.state = 178;
-	            this.match(LudiParser.T__18);
+	            this.match(LudiParser.T__19);
 	            this.state = 179;
+	            this.lvalue();
+	            this.state = 180;
+	            this.match(LudiParser.T__18);
+	            this.state = 181;
 	            this.expression(0);
 	            break;
 	        case 21:
 	            localctx = new IfStatementContext(this, localctx);
 	            this.enterOuterAlt(localctx, 5);
-	            this.state = 181;
-	            this.match(LudiParser.T__20);
-	            this.state = 182;
-	            this.expression(0);
 	            this.state = 183;
+	            this.match(LudiParser.T__20);
+	            this.state = 184;
+	            this.expression(0);
+	            this.state = 185;
 	            this.match(LudiParser.T__21);
-	            this.state = 185; 
+	            this.state = 187; 
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            do {
-	                this.state = 184;
+	                this.state = 186;
 	                this.statement();
-	                this.state = 187; 
+	                this.state = 189; 
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	            } while((((_la) & ~0x1f) === 0 && ((1 << _la) & 3571712) !== 0));
-	            this.state = 189;
+	            this.state = 191;
 	            this.match(LudiParser.T__22);
 	            break;
 	        default:
@@ -788,10 +794,64 @@ export default class LudiParser extends antlr4.Parser {
 	    this.enterRule(localctx, 24, LudiParser.RULE_when);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 193;
+	        this.state = 195;
 	        this.match(LudiParser.T__23);
-	        this.state = 194;
+	        this.state = 196;
 	        this.expression(0);
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	moveExpression() {
+	    let localctx = new MoveExpressionContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 26, LudiParser.RULE_moveExpression);
+	    var _la = 0;
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 198;
+	        localctx.actionName = this.identifier();
+	        this.state = 199;
+	        this.match(LudiParser.T__2);
+	        this.state = 208;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        if((((_la) & ~0x1f) === 0 && ((1 << _la) & 805306408) !== 0) || _la===40 || _la===41) {
+	            this.state = 200;
+	            localctx._expression = this.expression(0);
+	            localctx.arguments.push(localctx._expression);
+	            this.state = 205;
+	            this._errHandler.sync(this);
+	            _la = this._input.LA(1);
+	            while(_la===25) {
+	                this.state = 201;
+	                this.match(LudiParser.T__24);
+	                this.state = 202;
+	                localctx._expression = this.expression(0);
+	                localctx.arguments.push(localctx._expression);
+	                this.state = 207;
+	                this._errHandler.sync(this);
+	                _la = this._input.LA(1);
+	            }
+	        }
+
+	        this.state = 210;
+	        this.match(LudiParser.T__3);
+	        this.state = 211;
+	        this.match(LudiParser.T__4);
+	        this.state = 212;
+	        localctx.playerExpression = this.expression(0);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
 		        localctx.exception = re;
@@ -810,37 +870,37 @@ export default class LudiParser extends antlr4.Parser {
 
 	parameterList() {
 	    let localctx = new ParameterListContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 26, LudiParser.RULE_parameterList);
+	    this.enterRule(localctx, 28, LudiParser.RULE_parameterList);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 209;
+	        this.state = 227;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        if(_la===5 || _la===40) {
-	            this.state = 196;
+	            this.state = 214;
 	            localctx._identifier = this.identifier();
 	            localctx.names.push(localctx._identifier);
-	            this.state = 197;
+	            this.state = 215;
 	            this.match(LudiParser.T__11);
-	            this.state = 198;
+	            this.state = 216;
 	            localctx._typeExpression = this.typeExpression();
 	            localctx.types.push(localctx._typeExpression);
-	            this.state = 206;
+	            this.state = 224;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            while(_la===25) {
-	                this.state = 199;
+	                this.state = 217;
 	                this.match(LudiParser.T__24);
-	                this.state = 200;
+	                this.state = 218;
 	                localctx._identifier = this.identifier();
 	                localctx.names.push(localctx._identifier);
-	                this.state = 201;
+	                this.state = 219;
 	                this.match(LudiParser.T__11);
-	                this.state = 202;
+	                this.state = 220;
 	                localctx._typeExpression = this.typeExpression();
 	                localctx.types.push(localctx._typeExpression);
-	                this.state = 208;
+	                this.state = 226;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	            }
@@ -869,25 +929,25 @@ export default class LudiParser extends antlr4.Parser {
 	    const _parentState = this.state;
 	    let localctx = new ExpressionContext(this, this._ctx, _parentState);
 	    let _prevctx = localctx;
-	    const _startState = 28;
-	    this.enterRecursionRule(localctx, 28, LudiParser.RULE_expression, _p);
+	    const _startState = 30;
+	    this.enterRecursionRule(localctx, 30, LudiParser.RULE_expression, _p);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 246;
+	        this.state = 264;
 	        this._errHandler.sync(this);
-	        var la_ = this._interp.adaptivePredict(this._input,20,this._ctx);
+	        var la_ = this._interp.adaptivePredict(this._input,22,this._ctx);
 	        switch(la_) {
 	        case 1:
 	            localctx = new ParenthizedExpressionContext(this, localctx);
 	            this._ctx = localctx;
 	            _prevctx = localctx;
 
-	            this.state = 212;
+	            this.state = 230;
 	            this.match(LudiParser.T__2);
-	            this.state = 213;
+	            this.state = 231;
 	            this.expression(0);
-	            this.state = 214;
+	            this.state = 232;
 	            this.match(LudiParser.T__3);
 	            break;
 
@@ -895,7 +955,7 @@ export default class LudiParser extends antlr4.Parser {
 	            localctx = new NumberExpressionContext(this, localctx);
 	            this._ctx = localctx;
 	            _prevctx = localctx;
-	            this.state = 216;
+	            this.state = 234;
 	            this.match(LudiParser.NUMBER);
 	            break;
 
@@ -903,27 +963,27 @@ export default class LudiParser extends antlr4.Parser {
 	            localctx = new IndexExpressionContext(this, localctx);
 	            this._ctx = localctx;
 	            _prevctx = localctx;
-	            this.state = 217;
+	            this.state = 235;
 	            localctx.name = this.identifier();
-	            this.state = 218;
+	            this.state = 236;
 	            this.match(LudiParser.T__25);
-	            this.state = 219;
+	            this.state = 237;
 	            localctx._expression = this.expression(0);
 	            localctx.arguments.push(localctx._expression);
-	            this.state = 224;
+	            this.state = 242;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            while(_la===25) {
-	                this.state = 220;
+	                this.state = 238;
 	                this.match(LudiParser.T__24);
-	                this.state = 221;
+	                this.state = 239;
 	                localctx._expression = this.expression(0);
 	                localctx.arguments.push(localctx._expression);
-	                this.state = 226;
+	                this.state = 244;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	            }
-	            this.state = 227;
+	            this.state = 245;
 	            this.match(LudiParser.T__26);
 	            break;
 
@@ -931,7 +991,7 @@ export default class LudiParser extends antlr4.Parser {
 	            localctx = new IdentifierExpressionContext(this, localctx);
 	            this._ctx = localctx;
 	            _prevctx = localctx;
-	            this.state = 229;
+	            this.state = 247;
 	            localctx.name = this.lvalue();
 	            break;
 
@@ -939,33 +999,33 @@ export default class LudiParser extends antlr4.Parser {
 	            localctx = new FunctionCallExpressionContext(this, localctx);
 	            this._ctx = localctx;
 	            _prevctx = localctx;
-	            this.state = 230;
+	            this.state = 248;
 	            localctx.name = this.identifier();
-	            this.state = 231;
+	            this.state = 249;
 	            this.match(LudiParser.T__2);
-	            this.state = 240;
+	            this.state = 258;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            if((((_la) & ~0x1f) === 0 && ((1 << _la) & 805306408) !== 0) || _la===40 || _la===41) {
-	                this.state = 232;
+	                this.state = 250;
 	                localctx._expression = this.expression(0);
 	                localctx.arguments.push(localctx._expression);
-	                this.state = 237;
+	                this.state = 255;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	                while(_la===25) {
-	                    this.state = 233;
+	                    this.state = 251;
 	                    this.match(LudiParser.T__24);
-	                    this.state = 234;
+	                    this.state = 252;
 	                    localctx._expression = this.expression(0);
 	                    localctx.arguments.push(localctx._expression);
-	                    this.state = 239;
+	                    this.state = 257;
 	                    this._errHandler.sync(this);
 	                    _la = this._input.LA(1);
 	                }
 	            }
 
-	            this.state = 242;
+	            this.state = 260;
 	            this.match(LudiParser.T__3);
 	            break;
 
@@ -973,7 +1033,7 @@ export default class LudiParser extends antlr4.Parser {
 	            localctx = new NegationExpressionContext(this, localctx);
 	            this._ctx = localctx;
 	            _prevctx = localctx;
-	            this.state = 244;
+	            this.state = 262;
 	            _la = this._input.LA(1);
 	            if(!(_la===28 || _la===29)) {
 	            this._errHandler.recoverInline(this);
@@ -982,36 +1042,36 @@ export default class LudiParser extends antlr4.Parser {
 	            	this._errHandler.reportMatch(this);
 	                this.consume();
 	            }
-	            this.state = 245;
+	            this.state = 263;
 	            this.expression(9);
 	            break;
 
 	        }
 	        this._ctx.stop = this._input.LT(-1);
-	        this.state = 274;
+	        this.state = 292;
 	        this._errHandler.sync(this);
-	        var _alt = this._interp.adaptivePredict(this._input,22,this._ctx)
+	        var _alt = this._interp.adaptivePredict(this._input,24,this._ctx)
 	        while(_alt!=2 && _alt!=antlr4.atn.ATN.INVALID_ALT_NUMBER) {
 	            if(_alt===1) {
 	                if(this._parseListeners!==null) {
 	                    this.triggerExitRuleEvent();
 	                }
 	                _prevctx = localctx;
-	                this.state = 272;
+	                this.state = 290;
 	                this._errHandler.sync(this);
-	                var la_ = this._interp.adaptivePredict(this._input,21,this._ctx);
+	                var la_ = this._interp.adaptivePredict(this._input,23,this._ctx);
 	                switch(la_) {
 	                case 1:
 	                    localctx = new ConjunctionExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
 	                    localctx.left = _prevctx;
 	                    this.pushNewRecursionContext(localctx, _startState, LudiParser.RULE_expression);
-	                    this.state = 248;
+	                    this.state = 266;
 	                    if (!( this.precpred(this._ctx, 8))) {
 	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 8)");
 	                    }
-	                    this.state = 249;
+	                    this.state = 267;
 	                    localctx.operator = this.match(LudiParser.T__29);
-	                    this.state = 250;
+	                    this.state = 268;
 	                    localctx.right = this.expression(9);
 	                    break;
 
@@ -1019,13 +1079,13 @@ export default class LudiParser extends antlr4.Parser {
 	                    localctx = new ConjunctionExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
 	                    localctx.left = _prevctx;
 	                    this.pushNewRecursionContext(localctx, _startState, LudiParser.RULE_expression);
-	                    this.state = 251;
+	                    this.state = 269;
 	                    if (!( this.precpred(this._ctx, 7))) {
 	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 7)");
 	                    }
-	                    this.state = 252;
+	                    this.state = 270;
 	                    localctx.operator = this.match(LudiParser.T__30);
-	                    this.state = 253;
+	                    this.state = 271;
 	                    localctx.right = this.expression(8);
 	                    break;
 
@@ -1033,13 +1093,13 @@ export default class LudiParser extends antlr4.Parser {
 	                    localctx = new ComparisonExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
 	                    localctx.left = _prevctx;
 	                    this.pushNewRecursionContext(localctx, _startState, LudiParser.RULE_expression);
-	                    this.state = 254;
+	                    this.state = 272;
 	                    if (!( this.precpred(this._ctx, 6))) {
 	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 6)");
 	                    }
-	                    this.state = 255;
+	                    this.state = 273;
 	                    localctx.operator = this.match(LudiParser.T__31);
-	                    this.state = 256;
+	                    this.state = 274;
 	                    localctx.right = this.expression(7);
 	                    break;
 
@@ -1047,13 +1107,13 @@ export default class LudiParser extends antlr4.Parser {
 	                    localctx = new ComparisonExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
 	                    localctx.left = _prevctx;
 	                    this.pushNewRecursionContext(localctx, _startState, LudiParser.RULE_expression);
-	                    this.state = 257;
+	                    this.state = 275;
 	                    if (!( this.precpred(this._ctx, 5))) {
 	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 5)");
 	                    }
-	                    this.state = 258;
+	                    this.state = 276;
 	                    localctx.operator = this.match(LudiParser.T__32);
-	                    this.state = 259;
+	                    this.state = 277;
 	                    localctx.right = this.expression(6);
 	                    break;
 
@@ -1061,13 +1121,13 @@ export default class LudiParser extends antlr4.Parser {
 	                    localctx = new ComparisonExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
 	                    localctx.left = _prevctx;
 	                    this.pushNewRecursionContext(localctx, _startState, LudiParser.RULE_expression);
-	                    this.state = 260;
+	                    this.state = 278;
 	                    if (!( this.precpred(this._ctx, 4))) {
 	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 4)");
 	                    }
-	                    this.state = 261;
+	                    this.state = 279;
 	                    localctx.operator = this.match(LudiParser.T__33);
-	                    this.state = 262;
+	                    this.state = 280;
 	                    localctx.right = this.expression(5);
 	                    break;
 
@@ -1075,13 +1135,13 @@ export default class LudiParser extends antlr4.Parser {
 	                    localctx = new ComparisonExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
 	                    localctx.left = _prevctx;
 	                    this.pushNewRecursionContext(localctx, _startState, LudiParser.RULE_expression);
-	                    this.state = 263;
+	                    this.state = 281;
 	                    if (!( this.precpred(this._ctx, 3))) {
 	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 3)");
 	                    }
-	                    this.state = 264;
+	                    this.state = 282;
 	                    localctx.operator = this.match(LudiParser.T__34);
-	                    this.state = 265;
+	                    this.state = 283;
 	                    localctx.right = this.expression(4);
 	                    break;
 
@@ -1089,13 +1149,13 @@ export default class LudiParser extends antlr4.Parser {
 	                    localctx = new ComparisonExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
 	                    localctx.left = _prevctx;
 	                    this.pushNewRecursionContext(localctx, _startState, LudiParser.RULE_expression);
-	                    this.state = 266;
+	                    this.state = 284;
 	                    if (!( this.precpred(this._ctx, 2))) {
 	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 2)");
 	                    }
-	                    this.state = 267;
+	                    this.state = 285;
 	                    localctx.operator = this.match(LudiParser.T__35);
-	                    this.state = 268;
+	                    this.state = 286;
 	                    localctx.right = this.expression(3);
 	                    break;
 
@@ -1103,21 +1163,21 @@ export default class LudiParser extends antlr4.Parser {
 	                    localctx = new ComparisonExpressionContext(this, new ExpressionContext(this, _parentctx, _parentState));
 	                    localctx.left = _prevctx;
 	                    this.pushNewRecursionContext(localctx, _startState, LudiParser.RULE_expression);
-	                    this.state = 269;
+	                    this.state = 287;
 	                    if (!( this.precpred(this._ctx, 1))) {
 	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 1)");
 	                    }
-	                    this.state = 270;
+	                    this.state = 288;
 	                    localctx.operator = this.match(LudiParser.T__36);
-	                    this.state = 271;
+	                    this.state = 289;
 	                    localctx.right = this.expression(2);
 	                    break;
 
 	                } 
 	            }
-	            this.state = 276;
+	            this.state = 294;
 	            this._errHandler.sync(this);
-	            _alt = this._interp.adaptivePredict(this._input,22,this._ctx);
+	            _alt = this._interp.adaptivePredict(this._input,24,this._ctx);
 	        }
 
 	    } catch( error) {
@@ -1138,50 +1198,50 @@ export default class LudiParser extends antlr4.Parser {
 
 	lvalue() {
 	    let localctx = new LvalueContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 30, LudiParser.RULE_lvalue);
+	    this.enterRule(localctx, 32, LudiParser.RULE_lvalue);
 	    var _la = 0;
 	    try {
-	        this.state = 292;
+	        this.state = 310;
 	        this._errHandler.sync(this);
-	        var la_ = this._interp.adaptivePredict(this._input,25,this._ctx);
+	        var la_ = this._interp.adaptivePredict(this._input,27,this._ctx);
 	        switch(la_) {
 	        case 1:
 	            localctx = new IdentifierLValueContext(this, localctx);
 	            this.enterOuterAlt(localctx, 1);
-	            this.state = 277;
+	            this.state = 295;
 	            this.identifier();
 	            break;
 
 	        case 2:
 	            localctx = new IndexLValueContext(this, localctx);
 	            this.enterOuterAlt(localctx, 2);
-	            this.state = 278;
+	            this.state = 296;
 	            this.identifier();
-	            this.state = 279;
+	            this.state = 297;
 	            this.match(LudiParser.T__25);
-	            this.state = 288;
+	            this.state = 306;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            if((((_la) & ~0x1f) === 0 && ((1 << _la) & 805306408) !== 0) || _la===40 || _la===41) {
-	                this.state = 280;
+	                this.state = 298;
 	                localctx._expression = this.expression(0);
 	                localctx.arguments.push(localctx._expression);
-	                this.state = 285;
+	                this.state = 303;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	                while(_la===25) {
-	                    this.state = 281;
+	                    this.state = 299;
 	                    this.match(LudiParser.T__24);
-	                    this.state = 282;
+	                    this.state = 300;
 	                    localctx._expression = this.expression(0);
 	                    localctx.arguments.push(localctx._expression);
-	                    this.state = 287;
+	                    this.state = 305;
 	                    this._errHandler.sync(this);
 	                    _la = this._input.LA(1);
 	                }
 	            }
 
-	            this.state = 290;
+	            this.state = 308;
 	            this.match(LudiParser.T__26);
 	            break;
 
@@ -1204,36 +1264,36 @@ export default class LudiParser extends antlr4.Parser {
 
 	typeExpression() {
 	    let localctx = new TypeExpressionContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 32, LudiParser.RULE_typeExpression);
+	    this.enterRule(localctx, 34, LudiParser.RULE_typeExpression);
 	    var _la = 0;
 	    try {
-	        this.state = 316;
+	        this.state = 334;
 	        this._errHandler.sync(this);
-	        var la_ = this._interp.adaptivePredict(this._input,29,this._ctx);
+	        var la_ = this._interp.adaptivePredict(this._input,31,this._ctx);
 	        switch(la_) {
 	        case 1:
 	            localctx = new TypeIdentifierExpressionContext(this, localctx);
 	            this.enterOuterAlt(localctx, 1);
-	            this.state = 294;
+	            this.state = 312;
 	            this.identifier();
 	            break;
 
 	        case 2:
 	            localctx = new UnionTypeExpressionContext(this, localctx);
 	            this.enterOuterAlt(localctx, 2);
-	            this.state = 295;
+	            this.state = 313;
 	            localctx._identifier = this.identifier();
 	            localctx.values.push(localctx._identifier);
-	            this.state = 298; 
+	            this.state = 316; 
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            do {
-	                this.state = 296;
+	                this.state = 314;
 	                this.match(LudiParser.T__29);
-	                this.state = 297;
+	                this.state = 315;
 	                localctx._identifier = this.identifier();
 	                localctx.values.push(localctx._identifier);
-	                this.state = 300; 
+	                this.state = 318; 
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	            } while(_la===30);
@@ -1242,33 +1302,33 @@ export default class LudiParser extends antlr4.Parser {
 	        case 3:
 	            localctx = new ParameterizedTypeExpressionContext(this, localctx);
 	            this.enterOuterAlt(localctx, 3);
-	            this.state = 302;
+	            this.state = 320;
 	            localctx.name = this.identifier();
-	            this.state = 303;
+	            this.state = 321;
 	            this.match(LudiParser.T__34);
-	            this.state = 312;
+	            this.state = 330;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            if((((_la) & ~0x1f) === 0 && ((1 << _la) & 805306408) !== 0) || _la===40 || _la===41) {
-	                this.state = 304;
+	                this.state = 322;
 	                localctx._expression = this.expression(0);
 	                localctx.arguments.push(localctx._expression);
-	                this.state = 309;
+	                this.state = 327;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	                while(_la===25) {
-	                    this.state = 305;
+	                    this.state = 323;
 	                    this.match(LudiParser.T__24);
-	                    this.state = 306;
+	                    this.state = 324;
 	                    localctx._expression = this.expression(0);
 	                    localctx.arguments.push(localctx._expression);
-	                    this.state = 311;
+	                    this.state = 329;
 	                    this._errHandler.sync(this);
 	                    _la = this._input.LA(1);
 	                }
 	            }
 
-	            this.state = 314;
+	            this.state = 332;
 	            this.match(LudiParser.T__33);
 	            break;
 
@@ -1291,78 +1351,78 @@ export default class LudiParser extends antlr4.Parser {
 
 	viewElement() {
 	    let localctx = new ViewElementContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 34, LudiParser.RULE_viewElement);
+	    this.enterRule(localctx, 36, LudiParser.RULE_viewElement);
 	    var _la = 0;
 	    try {
-	        this.state = 349;
+	        this.state = 367;
 	        this._errHandler.sync(this);
-	        var la_ = this._interp.adaptivePredict(this._input,33,this._ctx);
+	        var la_ = this._interp.adaptivePredict(this._input,35,this._ctx);
 	        switch(la_) {
 	        case 1:
 	            localctx = new LeafViewContext(this, localctx);
 	            this.enterOuterAlt(localctx, 1);
-	            this.state = 318;
+	            this.state = 336;
 	            this.match(LudiParser.T__34);
-	            this.state = 319;
+	            this.state = 337;
 	            localctx.name = this.identifier();
-	            this.state = 323;
+	            this.state = 341;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            while(_la===5 || _la===40) {
-	                this.state = 320;
+	                this.state = 338;
 	                localctx._viewAttribute = this.viewAttribute();
 	                localctx.attributes.push(localctx._viewAttribute);
-	                this.state = 325;
+	                this.state = 343;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	            }
-	            this.state = 326;
+	            this.state = 344;
 	            this.match(LudiParser.T__37);
-	            this.state = 327;
+	            this.state = 345;
 	            this.match(LudiParser.T__33);
 	            break;
 
 	        case 2:
 	            localctx = new StemViewContext(this, localctx);
 	            this.enterOuterAlt(localctx, 2);
-	            this.state = 329;
+	            this.state = 347;
 	            this.match(LudiParser.T__34);
-	            this.state = 330;
+	            this.state = 348;
 	            localctx.name = this.identifier();
-	            this.state = 334;
+	            this.state = 352;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            while(_la===5 || _la===40) {
-	                this.state = 331;
+	                this.state = 349;
 	                localctx._viewAttribute = this.viewAttribute();
 	                localctx.attributes.push(localctx._viewAttribute);
-	                this.state = 336;
+	                this.state = 354;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	            }
-	            this.state = 337;
+	            this.state = 355;
 	            this.match(LudiParser.T__33);
-	            this.state = 341;
+	            this.state = 359;
 	            this._errHandler.sync(this);
-	            var _alt = this._interp.adaptivePredict(this._input,32,this._ctx)
+	            var _alt = this._interp.adaptivePredict(this._input,34,this._ctx)
 	            while(_alt!=2 && _alt!=antlr4.atn.ATN.INVALID_ALT_NUMBER) {
 	                if(_alt===1) {
-	                    this.state = 338;
+	                    this.state = 356;
 	                    localctx._viewElement = this.viewElement();
 	                    localctx.children.push(localctx._viewElement); 
 	                }
-	                this.state = 343;
+	                this.state = 361;
 	                this._errHandler.sync(this);
-	                _alt = this._interp.adaptivePredict(this._input,32,this._ctx);
+	                _alt = this._interp.adaptivePredict(this._input,34,this._ctx);
 	            }
 
-	            this.state = 344;
+	            this.state = 362;
 	            this.match(LudiParser.T__34);
-	            this.state = 345;
+	            this.state = 363;
 	            this.match(LudiParser.T__37);
-	            this.state = 346;
+	            this.state = 364;
 	            localctx.name2 = this.identifier();
-	            this.state = 347;
+	            this.state = 365;
 	            this.match(LudiParser.T__33);
 	            break;
 
@@ -1385,14 +1445,14 @@ export default class LudiParser extends antlr4.Parser {
 
 	viewAttribute() {
 	    let localctx = new ViewAttributeContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 36, LudiParser.RULE_viewAttribute);
+	    this.enterRule(localctx, 38, LudiParser.RULE_viewAttribute);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 351;
+	        this.state = 369;
 	        localctx.key = this.identifier();
-	        this.state = 352;
+	        this.state = 370;
 	        this.match(LudiParser.T__31);
-	        this.state = 353;
+	        this.state = 371;
 	        localctx.value = this.match(LudiParser.QUOTED_STRING);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -1412,11 +1472,11 @@ export default class LudiParser extends antlr4.Parser {
 
 	identifier() {
 	    let localctx = new IdentifierContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 38, LudiParser.RULE_identifier);
+	    this.enterRule(localctx, 40, LudiParser.RULE_identifier);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 355;
+	        this.state = 373;
 	        _la = this._input.LA(1);
 	        if(!(_la===5 || _la===40)) {
 	        this._errHandler.recoverInline(this);
@@ -1443,10 +1503,10 @@ export default class LudiParser extends antlr4.Parser {
 
 	number() {
 	    let localctx = new NumberContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 40, LudiParser.RULE_number);
+	    this.enterRule(localctx, 42, LudiParser.RULE_number);
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 357;
+	        this.state = 375;
 	        this.match(LudiParser.NUMBER);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -1522,14 +1582,15 @@ LudiParser.RULE_state_definition = 9;
 LudiParser.RULE_view = 10;
 LudiParser.RULE_statement = 11;
 LudiParser.RULE_when = 12;
-LudiParser.RULE_parameterList = 13;
-LudiParser.RULE_expression = 14;
-LudiParser.RULE_lvalue = 15;
-LudiParser.RULE_typeExpression = 16;
-LudiParser.RULE_viewElement = 17;
-LudiParser.RULE_viewAttribute = 18;
-LudiParser.RULE_identifier = 19;
-LudiParser.RULE_number = 20;
+LudiParser.RULE_moveExpression = 13;
+LudiParser.RULE_parameterList = 14;
+LudiParser.RULE_expression = 15;
+LudiParser.RULE_lvalue = 16;
+LudiParser.RULE_typeExpression = 17;
+LudiParser.RULE_viewElement = 18;
+LudiParser.RULE_viewAttribute = 19;
+LudiParser.RULE_identifier = 20;
+LudiParser.RULE_number = 21;
 
 class GameContext extends antlr4.ParserRuleContext {
 
@@ -2448,6 +2509,64 @@ class WhenContext extends antlr4.ParserRuleContext {
 	accept(visitor) {
 	    if ( visitor instanceof LudiVisitor ) {
 	        return visitor.visitWhen(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
+class MoveExpressionContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = LudiParser.RULE_moveExpression;
+        this.actionName = null;
+        this._expression = null;
+        this.arguments = [];
+        this.playerExpression = null;
+    }
+
+	identifier() {
+	    return this.getTypedRuleContext(IdentifierContext,0);
+	};
+
+	expression = function(i) {
+	    if(i===undefined) {
+	        i = null;
+	    }
+	    if(i===null) {
+	        return this.getTypedRuleContexts(ExpressionContext);
+	    } else {
+	        return this.getTypedRuleContext(ExpressionContext,i);
+	    }
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof LudiListener ) {
+	        listener.enterMoveExpression(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof LudiListener ) {
+	        listener.exitMoveExpression(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof LudiVisitor ) {
+	        return visitor.visitMoveExpression(this);
 	    } else {
 	        return visitor.visitChildren(this);
 	    }
@@ -3438,6 +3557,7 @@ LudiParser.State_definitionContext = State_definitionContext;
 LudiParser.ViewContext = ViewContext; 
 LudiParser.StatementContext = StatementContext; 
 LudiParser.WhenContext = WhenContext; 
+LudiParser.MoveExpressionContext = MoveExpressionContext; 
 LudiParser.ParameterListContext = ParameterListContext; 
 LudiParser.ExpressionContext = ExpressionContext; 
 LudiParser.LvalueContext = LvalueContext; 

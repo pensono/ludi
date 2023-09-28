@@ -49,6 +49,8 @@ statement
 
 when: 'when' expression;
 
+moveExpression: actionName=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' 'for' playerExpression=expression;
+
 parameterList: (names+=identifier 'a' types+=typeExpression (',' names+=identifier 'a' types+=typeExpression)*)?;
 
 expression

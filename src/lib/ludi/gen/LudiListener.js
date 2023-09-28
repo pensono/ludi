@@ -158,6 +158,15 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by LudiParser#moveExpression.
+	enterMoveExpression(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#moveExpression.
+	exitMoveExpression(ctx) {
+	}
+
+
 	// Enter a parse tree produced by LudiParser#parameterList.
 	enterParameterList(ctx) {
 	}

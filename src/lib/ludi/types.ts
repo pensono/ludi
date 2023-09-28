@@ -2,7 +2,7 @@ export interface Game {
     setup?: Action;
     playerType: LudiType;
     actions: Record<string, Action>;
-    stateVariables: StateVariable[];
+    stateVariables: Record<string, StateVariable>;
     constants: Record<string, any>;
     views: ViewElement[];
 }

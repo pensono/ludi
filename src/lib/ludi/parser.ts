@@ -42,10 +42,37 @@ export function fromStream(input: CharStream): Game {
     return handleGame(gameContext);
 }
 
+export interface MoveExpression {
+    actionName: string;
+    arguments: Expression[];
+    player: Expression;
+}
+export function parseMoveExpression(input: string): MoveExpression {
+    const inputStream = new CharStream(input);
+    const lexer = new LudiLexer(inputStream);
+    const tokens = new CommonTokenStream(lexer);
+    const parser = new LudiParser(tokens);
+
+    const errorListener = new CollectingErrorListener();
+    parser.addErrorListener(errorListener);
+
+    var moveExpression = parser.moveExpression();
+
+    if (errorListener.errors.length > 0) {
+        throw new Error(errorListener.errors.join('\n'));
+    }
+    
+    return {
+        actionName: moveExpression.actionName.getText(),
+        arguments: moveExpression.arguments.map((a: any) => new ExpressionVisitor().visit(a)),
+        player: new ExpressionVisitor().visit(moveExpression.playerExpression)
+    };
+}
+
 function handleGame(ctx: any): Game {
     let actions: Record<string, Action> = {};
     let setup: Action | undefined = undefined;
-    let variables: StateVariable[] = [];
+    let variables: Record<string, StateVariable> = {};
     let playerType: LudiType = undefined;
     let constants: Record<string, any> = {};
     let views: ViewElement[] = [];
@@ -64,10 +91,11 @@ function handleGame(ctx: any): Game {
             actions[action.name.getText()] = handleAction(action);
         } else if (definition.state_definition()) {
             const stateDefinition = definition.state_definition();
-            variables.push({
-                name: stateDefinition.name.getText(),
+            const name = stateDefinition.name.getText();
+            variables[name]  = {
+                name: name,
                 type: new TypeExpressionVisitor(constants).visit(stateDefinition.type)
-            });
+            };
         } else if (definition.kind()) {
             // Assume for now that types are specified in an order which does not include backreferences            
             var type = new TypeExpressionVisitor(constants).visit(definition.kind().type);

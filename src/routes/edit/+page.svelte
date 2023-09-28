@@ -1,21 +1,21 @@
-<script>
+<script lang="ts">
     import { onMount } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
 	import EditToolbox from "$lib/components/editor/EditToolbox.svelte";
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
 	import { initialize } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
+	import type { Game, GameState } from '$lib/ludi/types';
 
-    let selectedGame = "/games/number-guessing.ludi";
-    let game = null;
-    let state = null;
+    let selectedGame = "/games/tic-tac-toe.ludi";
+    let game: Game | undefined;
+    let state: GameState | undefined;
 
     onMount(() => {
         loadGame();
     });
 
     async function loadGame() {
-        console.log(selectedGame);
         let gameText = await fetch(selectedGame).then(r => r.text());
         game = fromString(gameText);
         state = initialize(game);
@@ -32,7 +32,7 @@
     </nav>
     
     <main>
-        {#if game}
+        {#if game && state}
             <ViewToolbox bind:game={game} bind:state={state} />
             <GameScreen bind:game={game} bind:state={state} />
             <EditToolbox bind:game={game} bind:state={state} />

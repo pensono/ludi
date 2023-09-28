@@ -1,5 +1,6 @@
 import type { Action, Expression, Game, GameState, LValue, LudiType, Move, Parameter, Statement } from './types'
 import * as builtins from './builtins'
+import { parseMoveExpression } from './parser';
 
 export function initialize(game: Game, seed?: number) : GameState {
     let state: GameState = {
@@ -9,8 +10,9 @@ export function initialize(game: Game, seed?: number) : GameState {
         ply: 0,
     }
 
-    for (const variable of game.stateVariables) {
-        state.variables[variable.name] = defaultValue(variable.type);
+    // Default all state variables
+    for (const variableName in game.stateVariables) {
+        state.variables[variableName] = defaultValue(game.stateVariables[variableName].type);
     }
 
     if (game.setup) {
@@ -46,6 +48,27 @@ export function playMove(game: Game, state: GameState, move: Move): GameState {
     return state;
 }
 
+/** Returns null if the move is not possible with the given game state. Parse errors/etc will throw */
+export function parseAndEvaluateMove(game: Game, state: GameState, moveText: string, locals: Record<string, any>): Move | null {
+    // TODO Somehow this should be either embedded into the game, or better split between the parser?
+    // Very hacky to have this "just do it" sort of method in the engine which is only used by the UI
+    const moveExpression = parseMoveExpression(moveText);
+    const args = moveExpression.arguments.map(arg => evaluateExpression(game, state, locals, arg));
+    const player = evaluateExpression(game, state, locals, moveExpression.player);
+
+    const move: Move = {
+        actionName: moveExpression.actionName,
+        player: player,
+        args: args,
+    }
+
+    if (!checkMove(game, state, locals, move)) {
+        return null;
+    }
+
+    return move;
+}
+
 function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
     // There are many faster ways to do this, but this is easy to implement and fast enough for most games
     // Using something like SMT is ideal
@@ -56,34 +79,18 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
 
         // This extra transformation is sad but fine for now
         const locals = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: args[i]}), {});
-
-        if (!action.conditions.every(condition => evaluateExpression(game, state, locals, condition.expression))) {
-            return;
-        }
-
-        var player = undefined;
-        if (action.player) {
-            player = evaluateExpression(game, state, locals, action.player);
-            if (player !== state.variables['CurrentPlayer']) {
-                return;
-            }
-        }
-
-        // Duplication with runAction :(
-        var dummyState = structuredClone(state)
-        for (const statement of action.statements) {
-            if (!checkPreconditions(game, dummyState, locals, statement)) {
-                return;
-            }
-            runStatement(game, dummyState, locals, statement);
-        }
-        
-        yield {
+        const player = evaluateExpression(game, state, locals, action.player);
+        const move = {
             actionName: action.name!,
             player,
             args,
         };
 
+        if (!checkMove(game, state, locals, move)) {
+            return;
+        }
+
+        yield move;
         return;
     }
 
@@ -92,6 +99,28 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
     for (const value of enumerateType(parameter.type)) {
         yield* enumerateActionMoves(game, state, action, newRemainingParameters, [...args, value]);
     }
+}
+
+function checkMove(game: Game, state: GameState, locals: Record<string, any>, move: Move): boolean {
+    const action = game.actions[move.actionName];
+    if (!action.conditions.every(condition => evaluateExpression(game, state, locals, condition.expression))) {
+        return false;
+    }
+
+    if (move.player !== state.variables['CurrentPlayer']) {
+        return false;
+    }
+
+    // Duplication with runAction :(
+    var dummyState = structuredClone(state)
+    for (const statement of action.statements) {
+        if (!checkPreconditions(game, dummyState, locals, statement)) {
+            return false;
+        }
+        runStatement(game, dummyState, locals, statement);
+    }
+
+    return true;
 }
 
 export function enumerateType(type: LudiType) {
@@ -131,7 +160,7 @@ function toReference(game: Game, state: GameState, locals: Record<string, any>, 
     let indexValues = lvalue.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
 
     let target = state.variables;
-    let index = lvalue.name;
+    let index: any = lvalue.name;
 
     for (const indexValue of indexValues) {
         target = target[index];

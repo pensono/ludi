@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { enumerateMoves } from "$lib/ludi/engine";
 	import type { Game, GameState } from "$lib/ludi/types";
+	import ViewElement from "$lib/components/views/ViewElement.svelte";
 
     export let game: Game;
     export let state: GameState;
@@ -8,7 +8,7 @@
 
 <div>
     {#each game.views as view}
-        <p>{view.name}</p>
+        <ViewElement bind:game={game} bind:state={state} bind:element={view} />
     {/each}
 </div>
 
