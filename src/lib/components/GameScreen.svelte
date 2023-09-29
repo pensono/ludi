@@ -6,14 +6,15 @@
     export let state: GameState;
 </script>
 
-<div>
+<div class="container">
     {#each game.views as view}
         <ViewElement bind:game={game} bind:state={state} bind:element={view} />
     {/each}
 </div>
 
 <style lang="scss">
-    div {
+    div.container {
         flex-grow: 1;
+        container: game / size;
     }
 </style>

@@ -3,6 +3,7 @@
 	import type { Game, GameState, ViewElement } from "$lib/ludi/types";
 	import vars from "../util/vars";
 
+    export let positionStyle: string;
     export let game: Game;
     export let state: GameState;
     export let element: ViewElement;
@@ -16,7 +17,6 @@
         const moveExpression = element.attributes["clickSquare"];
         const move = parseAndEvaluateMove(game, state, moveExpression, { x, y });
 
-        console.log(move);
         // TODO use some sort of disabled state instead?
         if (move != null) {
             state = playMove(game, state, move);
@@ -24,7 +24,7 @@
     }
 </script>
 
-<div class="wrapper" use:vars={{ width, height}}>
+<div class="wrapper" style={positionStyle} use:vars={{ width, height}}>
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each [...Array(height).keys()].reverse() as y}
         {#each [...Array(width).keys()] as x}
