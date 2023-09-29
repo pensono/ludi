@@ -56,19 +56,20 @@
 	}
 </script>
 
-<p style={positionStyle + fontSizeStyle + horizontalAlignStyle}>
+<div style={positionStyle + fontSizeStyle + horizontalAlignStyle}>
     <span style={verticalAlignStyle}>{element.attributes["show"]}</span>
-</p>
+</div>
 
 <style lang="scss">
-    p {
+    div {
         padding: 0;
         margin: 0;
         user-select: none;
+        display: table;
     }
 
     span {
-        display: inline-block;
+        display: table-cell;
         line-height: normal;
     }
 </style>
