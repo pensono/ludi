@@ -22,11 +22,14 @@
             height: ${size.vertical ? toSize(size.vertical) : 'unset'};
             overflow: hidden;
         `
+        //         left: ${toAlignment('horizontal', alignment.horizontal, size.horizontal)};
     }
 
     function toSize(sizeExpression: string): string {
         if (sizeExpression.endsWith("%")) {
-            return `${sizeExpression.substring(0, sizeExpression.length - 1)}cqmin`;
+            // Can't use cqmin because of strange webkit bug
+            const amount = sizeExpression.substring(0, sizeExpression.length - 1);
+            return `calc(min(${amount}cqw, ${amount}cqh))`;
         }
 
         return "0"

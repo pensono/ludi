@@ -9,7 +9,6 @@
     export let state: GameState;
     export let element: View;
     $: variable = element.attributes["data"];
-    $: data = state.variables[variable];
 
     function click() {
         // TODO Sad to do so much eval here, will need to fix this eventually
