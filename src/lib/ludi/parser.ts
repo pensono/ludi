@@ -1,5 +1,5 @@
 import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
-import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, StateVariable, ViewElement } from './types'
+import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, StateVariable, View } from './types'
 import LudiLexer from './gen/LudiLexer';
 // import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiParser from './gen/LudiParser';
@@ -75,7 +75,7 @@ function handleGame(ctx: any): Game {
     let variables: Record<string, StateVariable> = {};
     let playerType: LudiType = undefined;
     let constants: Record<string, any> = {};
-    let views: ViewElement[] = [];
+    let views: View[] = [];
 
     for (const definition of ctx.definition()) {
         if (definition.setup()) {
@@ -293,7 +293,7 @@ class TypeExpressionVisitor extends LudiVisitor {
 }
 
 class ViewVisitor extends LudiVisitor {
-    visitLeafView(ctx: any) : ViewElement {
+    visitLeafView(ctx: any) : View {
         return {
             name: ctx.name.getText(),
             attributes: Object.fromEntries(new Map(ctx.attributes.map((a: any) => [a.key.getText(), trimQuotes(a.value.text)]))),
@@ -301,11 +301,11 @@ class ViewVisitor extends LudiVisitor {
         }
     }
     
-    visitStemView(ctx: any) : ViewElement {
+    visitStemView(ctx: any) : View {
         return {
             name: ctx.name.getText(),
             attributes: Object.fromEntries(new Map(ctx.attributes.map((a: any) => [a.key.getText(), trimQuotes(a.value.text)]))),
-            children: ctx.children.map((c: any) => this.visit(c))
+            children: ctx.childViews.map((c: any) => this.visit(c))
         }
     }
 }

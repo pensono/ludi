@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { parseAndEvaluateMove, playMove } from "$lib/ludi/engine";
-	import type { Game, GameState, ViewElement } from "$lib/ludi/types";
+	import type { Game, GameState, View } from "$lib/ludi/types";
 	import vars from "../util/vars";
+	import ViewElement from "./ViewElement.svelte";
 
     export let positionStyle: string;
     export let game: Game;
     export let state: GameState;
-    export let element: ViewElement;
-    $: variable = element.attributes["data"];
+    export let element: View;
+    $: variable = element.attributes["show"];
     $: data = state.variables[variable];
     $: width = game.stateVariables[variable].type.parameters.width;
     $: height = game.stateVariables[variable].type.parameters.height;
@@ -22,16 +23,23 @@
             state = playMove(game, state, move);
         }
     }
+
+    function elementFor(value: any): View | undefined {
+        return element.children.find(c => c.attributes["useFor"] == value);
+    }
 </script>
 
 <div class="wrapper" style={positionStyle} use:vars={{ width, height}}>
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each [...Array(height).keys()].reverse() as y}
         {#each [...Array(width).keys()] as x}
+            {@const element=elementFor(data[x][y])}
             <!-- Map back into 1-index coordinates -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="cell" on:click={() => clickSquare(x+1, y+1)}>
-                {data[x][y] == 'Empty' ? '' : data[x][y]}
+                {#if element}
+                    <ViewElement bind:game={game} bind:state={state} element={element} />
+                {/if}
             </div>
         {/each}
     {/each}
@@ -48,8 +56,6 @@
 
     div.cell {
         border: 2px solid black;
-        font-size: 10em;
-        text-align: center;
-        vertical-align: center;
+        container-type: size;
     }
 </style>

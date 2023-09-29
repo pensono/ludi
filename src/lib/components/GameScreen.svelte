@@ -16,5 +16,6 @@
     div.container {
         flex-grow: 1;
         container: game / size;
+        position: relative;
     }
 </style>

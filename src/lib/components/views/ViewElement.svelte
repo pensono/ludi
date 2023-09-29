@@ -1,18 +1,28 @@
 <script lang="ts">
-	import type { Game, GameState, ViewElement } from "$lib/ludi/types";
+	import type { Game, GameState, View } from "$lib/ludi/types";
+    import { parseParts } from "./utils";
 	import BoardView from "./BoardView.svelte";
+	import TextView from "./TextView.svelte";
 
     export let game: Game;
     export let state: GameState;
-    export let element: ViewElement;
+    export let element: View;
 
-    $: positionStyle = `
-        position: relative;
-        left: ${toAlignment('horizontal', element.attributes.align, toSize(element.attributes.size))};
-        top: ${toAlignment('vertical', element.attributes.align, toSize(element.attributes.size))};
-        width: ${toSize(element.attributes.size)};
-        height: ${toSize(element.attributes.size)};
-    `;
+    $: positionStyle = calculatePositionStyle(element);
+
+    function calculatePositionStyle(element: View) : string {
+        const size = parseParts(element.attributes.size);
+        const alignment = parseParts(element.attributes.align);
+
+        return `
+            position: absolute;
+            left: ${toAlignment('horizontal', alignment.horizontal, size.horizontal)};
+            top: ${toAlignment('vertical', alignment.vertical, size.vertical)};
+            width: ${size.horizontal ? toSize(size.horizontal) : 'unset'};
+            height: ${size.vertical ? toSize(size.vertical) : 'unset'};
+            overflow: hidden;
+        `
+    }
 
     function toSize(sizeExpression: string): string {
         if (sizeExpression.endsWith("%")) {
@@ -22,12 +32,18 @@
         return "0"
     }
 
-    function toAlignment(orientation: 'vertical' | 'horizontal', alignExpression: string, size: string): string {
+    function toAlignment(axis: 'vertical' | 'horizontal', alignExpression: string, sizeExpression: string): string {
         switch (alignExpression) {
             case "Center":
-                return orientation == 'horizontal'
-                    ? `calc((100cqw - ${size}) / 2)`
-                    : `calc((100cqh - ${size}) / 2)`;
+                return axis == 'horizontal'
+                    ? `calc((100cqw - ${toSize(sizeExpression)}) / 2)`
+                    : `calc((100cqh - ${toSize(sizeExpression)}) / 2)`;
+            case "Bottom":
+                return axis == 'horizontal'
+                    ? `0`
+                    : `calc(100cqh - ${toSize(sizeExpression)})`;
+            case "Left":
+                return `0`;
         }
         return '0';
     }
@@ -35,4 +51,6 @@
 
 {#if element.name == 'board'}
     <BoardView bind:game={game} bind:state={state} bind:element={element} positionStyle={positionStyle} />
+{:else if element.name == 'text'}
+    <TextView bind:game={game} bind:state={state} bind:element={element} positionStyle={positionStyle} />
 {/if}

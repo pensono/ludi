@@ -17,7 +17,7 @@ win Horizontal() for player:
         or InARow(player, Board, 4, Horizontal)
 
 view:
-    <board data="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Screen.Center" size="50%">
-        <image useFor="X" file="x.svg" />
-        <image useFor="O" file="o.svg" />
+    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="50%">
+        <text useFor="X" show="X" align="Center" size="100%" fontSize="48pt" />
+        <text useFor="O" show="O" align="Center" size="100%" fontSize="48pt" />
     </board>

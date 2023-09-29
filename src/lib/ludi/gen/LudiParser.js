@@ -1409,7 +1409,7 @@ export default class LudiParser extends antlr4.Parser {
 	                if(_alt===1) {
 	                    this.state = 356;
 	                    localctx._viewElement = this.viewElement();
-	                    localctx.children.push(localctx._viewElement); 
+	                    localctx.childViews.push(localctx._viewElement); 
 	                }
 	                this.state = 361;
 	                this._errHandler.sync(this);
@@ -3295,7 +3295,7 @@ class StemViewContext extends ViewElementContext {
         this._viewAttribute = null;;
         this.attributes = [];;
         this._viewElement = null;;
-        this.children = [];;
+        this.childViews = [];;
         this.name2 = null;;
         super.copyFrom(ctx);
     }

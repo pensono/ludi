@@ -83,7 +83,7 @@ typeExpression
 
 viewElement
     : '<' name=identifier attributes+=viewAttribute* '/' '>' # LeafView
-    | '<' name=identifier attributes+=viewAttribute* '>' children+=viewElement* '<' '/' name2=identifier '>' # StemView;
+    | '<' name=identifier attributes+=viewAttribute* '>' childViews+=viewElement* '<' '/' name2=identifier '>' # StemView;
 
 viewAttribute: key=identifier '=' value=QUOTED_STRING;
 
