@@ -13,7 +13,8 @@ export default defineConfig({
 	},
 	build: {
 		commonjsOptions: {
-		  include: [/antlr4/, /node_modules/]
+			include: [/antlr4/, /node_modules/]
 		}
-	  }
+	},
+	assetsInclude: ['static/games/*.ludi']
 });
