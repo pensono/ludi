@@ -28,6 +28,7 @@
         <select bind:value={selectedGame} on:change={loadGame}>
             <option value="/games/number-guessing.ludi">Number Guessing</option>
             <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
+            <option value="/games/checkers.ludi">Checkers</option>
         </select>
     </nav>
     

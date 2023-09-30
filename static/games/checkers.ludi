@@ -1,0 +1,46 @@
+players Black or White
+kind Square a Empty or Black or White
+
+state Board a Grid<Square, 8, 8>
+
+setup:
+    set CurrentPlayer to Black
+    set Board[1, 1] to Black
+    set Board[3, 1] to Black
+    set Board[5, 1] to Black
+    set Board[7, 1] to Black
+    set Board[2, 2] to Black
+    set Board[4, 2] to Black
+    set Board[6, 2] to Black
+    set Board[8, 2] to Black
+    set Board[1, 3] to Black
+    set Board[3, 3] to Black
+    set Board[5, 3] to Black
+    set Board[7, 3] to Black
+
+    set Board[2, 6] to White
+    set Board[4, 6] to White
+    set Board[6, 6] to White
+    set Board[8, 6] to White
+    set Board[1, 7] to White
+    set Board[3, 7] to White
+    set Board[5, 7] to White
+    set Board[7, 7] to White
+    set Board[2, 8] to White
+    set Board[4, 8] to White
+    set Board[6, 8] to White
+    set Board[8, 8] to White
+
+action Play(x a Number<1, 3>, y a Number<1, 3>) for CurrentPlayer:
+    when Board[x, y] = Empty
+    change Board[x, y] to CurrentPlayer
+    change CurrentPlayer to NextInSequence(CurrentPlayer, Player)
+
+loss NoMorePieces() for player:
+    when Count(Board, player) = 0
+
+view:
+    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="90%">
+        <image useFor="Black" file="black-token.svg" align="Center" size="90%" />
+        <image useFor="White" file="white-token.svg" align="Center" size="90%" />
+    </board>

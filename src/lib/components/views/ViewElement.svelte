@@ -3,6 +3,7 @@
     import { parseParts } from "./utils";
 	import BoardView from "./BoardView.svelte";
 	import TextView from "./TextView.svelte";
+	import ImageView from "./ImageView.svelte";
 
     export let game: Game;
     export let state: GameState;
@@ -56,4 +57,6 @@
     <BoardView bind:game={game} bind:state={state} bind:element={element} positionStyle={positionStyle} />
 {:else if element.name == 'text'}
     <TextView bind:game={game} bind:state={state} bind:element={element} positionStyle={positionStyle} />
+{:else if element.name == 'image'}
+    <ImageView bind:game={game} bind:state={state} bind:element={element} positionStyle={positionStyle} />
 {/if}
