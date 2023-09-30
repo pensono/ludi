@@ -57,7 +57,8 @@
         flex-grow: 1;
 
         display: flex;
-        flex-direction: row;
+        flex-direction: row; 
+        overflow: hidden;
     }
     
 

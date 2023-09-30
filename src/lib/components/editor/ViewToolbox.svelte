@@ -53,6 +53,8 @@
         width: 25rem;
 
         border-right: 1px var(--border-color) solid;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     :global(.move:hover) {

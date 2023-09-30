@@ -49,6 +49,8 @@
         width: 25rem;
 
         border-left: 1px var(--border-color) solid;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     * {
