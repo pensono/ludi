@@ -3,6 +3,7 @@
 	import type { Game, GameState, HistoryItem, Move } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
+	import GridDisplay from "./GridDisplay.svelte";
 
     export let game: Game;
     export let state: GameState;
@@ -21,9 +22,16 @@
 </script>
 
 <div>
-    <ToolboxSection title="State">
+    <ToolboxSection title="Current State">
         {#each Object.entries(state.variables) as [key, value]}
-            <ToolboxItem title="{key}: {value}" />
+            {@const type = game.stateVariables[key].type.name}
+            {#if type == 'Grid'}
+                <ToolboxItem title="{key}">
+                    <GridDisplay value={value} />
+                </ToolboxItem>
+            {:else}
+                <ToolboxItem title="{key}: {value}" />
+            {/if}
         {/each}
     </ToolboxSection>
     

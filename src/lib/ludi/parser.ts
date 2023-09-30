@@ -120,6 +120,12 @@ function handleGame(ctx: any): Game {
 
             // Would need to combine with kinds
             constants['Player'] = playerType;
+
+            // Built-in
+            variables['CurrentPlayer'] = {
+                name: 'CurrentPlayer',
+                type: playerType
+            }
         } else if (definition.view()) {
             views = definition.view().elements.map((v: any) => new ViewVisitor().visit(v));
         }

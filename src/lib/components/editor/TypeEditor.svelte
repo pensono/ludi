@@ -5,11 +5,11 @@
     export let type: LudiType;
 </script>
 
-<p>{type.type}</p>
+<p>{type.name}</p>
 
-{#if type.type === "number"}
-    <p><span class="name">Min</span><Input type="number" bind:value={type.min} /></p>
-    <p><span class="name">Max</span><Input type="number" bind:value={type.max} /></p>
+{#if type.name === "number"}
+    <p><span class="name">Min</span><Input type="number" bind:value={type.parameters.min} /></p>
+    <p><span class="name">Max</span><Input type="number" bind:value={type.parameters.max} /></p>
 {/if}
 
 <style lang="scss">
