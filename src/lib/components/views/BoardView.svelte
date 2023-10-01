@@ -3,6 +3,7 @@
 	import type { Game, GameState, View } from "$lib/ludi/types";
 	import vars from "../util/vars";
 	import ViewElement from "./ViewElement.svelte";
+	import { toSize } from "./utils";
 
     export let positionStyle: string;
     export let game: Game;
@@ -27,16 +28,50 @@
     function elementFor(value: any): View | undefined {
         return element.children.find(c => c.attributes["useFor"] == value);
     }
+
+    function styleCell(x: number, y: number) {
+        const background = element.attributes["background"];
+        if (!background) {
+            return '';
+        }
+
+        const parts = background.split(" ");
+        if (parts[0] == "Checker") {
+            const color1 = parts[1];
+            const color2 = parts[2];
+            const color = ((x + y) % 2) ? color1 : color2;
+            return `background-color: ${color};`;
+        }
+        
+        if (element.attributes["innerLines"]) {
+            // Since innerLines was specified, a background color must be used so the lines render correctly
+            return `background-color: #fff;`;
+        }
+
+        return `background-color: ${background}`;
+    }
+
+    function styleWrapper() {
+        const innerLines = element.attributes["innerLines"];
+        if (!innerLines) {
+            return '';
+        }
+        
+        const parts = innerLines.split(" ");
+        const color = parts[0];
+        const size = parts[1];
+        return `background-color: ${color}; gap: ${toSize(size)};`;
+    }
 </script>
 
-<div class="wrapper" style={positionStyle} use:vars={{ width, height}}>
+<div class="wrapper" style={positionStyle+styleWrapper()} use:vars={{ width, height}}>
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each [...Array(height).keys()].reverse() as y}
         {#each [...Array(width).keys()] as x}
             {@const element=elementFor(data[x][y])}
             <!-- Map back into 1-index coordinates -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div class="cell" on:click={() => clickSquare(x+1, y+1)}>
+            <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)}>
                 {#if element}
                     <ViewElement bind:game={game} bind:state={state} element={element} />
                 {/if}
@@ -55,7 +90,6 @@
     }
 
     div.cell {
-        border: 2px solid black;
         container-type: size;
     }
 </style>

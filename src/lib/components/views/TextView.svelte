@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { parseAndEvaluateMove, playMove } from "$lib/ludi/engine";
-	import type { Game, GameState, View } from "$lib/ludi/types";
-	import vars from "../util/vars";
-	import { parseParts } from "./utils";
+    import { parseAndEvaluateMove, playMove } from "$lib/ludi/engine";
+    import type { Game, GameState, View } from "$lib/ludi/types";
+    import vars from "../util/vars";
+    import { parseParts, toSize } from "./utils";
 
     export let positionStyle: string;
     export let game: Game;
@@ -25,25 +25,11 @@
         return element.children.find(child => child.attributes["useFor"] == value);
     }
 
-    $: fontSizeStyle = `font-size: ${toFontSize(element.attributes["fontSize"])};`
+    $: fontSizeStyle = `font-size: ${toSize(element.attributes["fontSize"])};`
     $: horizontalAlignStyle = `text-align: ${parseParts(element.attributes["align"]).horizontal.toLowerCase()};`
     $: verticalAlignStyle = `vertical-align: ${toVerticalAlignment(parseParts(element.attributes["align"]).vertical)};`
 
-    function toFontSize(size: string | undefined) {
-        if (!size) {
-            return "1rem";
-        }
-
-        if (size.endsWith("pt")) {
-            var sizePt = parseInt(size.substring(0, size.length - 2))
-            return `${sizePt / 8}rem`;
-        }
-
-        return "1rem";
-    }
-
-
-	function toVerticalAlignment(vertical: string) {
+    function toVerticalAlignment(vertical: string) {
         switch (vertical) {
             case "Top":
                 return "top";
@@ -52,7 +38,7 @@
             case "Bottom":
                 return "bottom";
         }
-	}
+    }
 </script>
 
 <div style={positionStyle + fontSizeStyle + horizontalAlignStyle}>

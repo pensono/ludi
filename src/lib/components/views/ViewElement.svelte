@@ -23,7 +23,6 @@
             height: ${size.vertical ? toSize(size.vertical) : 'unset'};
             overflow: hidden;
         `
-        //         left: ${toAlignment('horizontal', alignment.horizontal, size.horizontal)};
     }
 
     function toSize(sizeExpression: string): string {

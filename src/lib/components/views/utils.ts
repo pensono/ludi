@@ -6,3 +6,16 @@ export function parseParts(expression: string): {horizontal: string, vertical: s
         vertical: parts[1] || parts[0]
     };
 }
+
+export function toSize(size: string | undefined) {
+    if (!size) {
+        return "1rem";
+    }
+
+    if (size.endsWith("pt")) {
+        var sizePt = parseInt(size.substring(0, size.length - 2))
+        return `${sizePt / 8}rem`;
+    }
+
+    return "1rem";
+}

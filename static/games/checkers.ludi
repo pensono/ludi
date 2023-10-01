@@ -31,16 +31,15 @@ setup:
     set Board[6, 8] to White
     set Board[8, 8] to White
 
-action Play(x a Number<1, 3>, y a Number<1, 3>) for CurrentPlayer:
-    when Board[x, y] = Empty
-    change Board[x, y] to CurrentPlayer
+action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for CurrentPlayer:
+    when Board[x1, y1] = CurrentPlayer
     change CurrentPlayer to NextInSequence(CurrentPlayer, Player)
 
 loss NoMorePieces() for player:
     when Count(Board, player) = 0
 
 view:
-    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="90%">
+    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">
         <image useFor="Black" file="black-token.svg" align="Center" size="90%" />
         <image useFor="White" file="white-token.svg" align="Center" size="90%" />
     </board>
