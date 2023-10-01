@@ -18,6 +18,6 @@ win 3InARow() for player:
 
 view:
     <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="75%" innerLines="#000 2pt" background="#fff">
-        <text useFor="X" show="X" align="Center" size="100%" fontSize="24pt" />
-        <text useFor="O" show="O" align="Center" size="100%" fontSize="24pt" />
+        <image useFor="X" file="x.svg" align="Center" size="100%" />
+        <image useFor="O" file="o.svg" align="Center" size="100%" />
     </board>
