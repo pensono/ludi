@@ -18,10 +18,10 @@
         UI becomes unresponsive because the game has ended. This can be customizable,
         but showing this screen should be the default.
     -->
-    {#if state.winner}
+    {#if state.position.winner}
         <div transition:fade class="gray-out" />
         <div transition:slide class="banner top">
-            {state.winner} Wins!
+            {state.position.winner} Wins!
         </div>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div transition:slide class="banner bottom" on:click={() => state = initialize(game)}>

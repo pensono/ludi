@@ -10,7 +10,7 @@
     export let state: GameState;
     export let element: View;
     $: variable = element.attributes["show"];
-    $: data = state.variables[variable];
+    $: data = state.position.variables[variable];
     $: width = game.stateVariables[variable].type.parameters.width;
     $: height = game.stateVariables[variable].type.parameters.height;
 

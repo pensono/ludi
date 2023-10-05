@@ -111,14 +111,22 @@ export interface View {
 }
 
 export interface GameState {
+    position: GamePosition;
+    history: HistoryItem[];
+    ply: number;
+}
+
+export interface GamePosition {
     variables: Record<string, any>;
     winner: string | null;
-    ply: number;
 }
 
 export interface HistoryItem {
     move: Move;
 
-    /** The state that was obtained after playing `move` */
-    state: GameState;
+    /** The position that was obtained after playing `move` */
+    position: GamePosition;
+
+    /** The ply that was obtained after playing `move` */
+    ply: number;
 }

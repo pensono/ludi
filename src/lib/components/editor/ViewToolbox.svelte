@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enumerateMoves, playMove } from "$lib/ludi/engine";
+	import { enumerateMoves, playMove, rewindTo } from "$lib/ludi/engine";
 	import type { Game, GameState, HistoryItem, Move } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
@@ -7,23 +7,19 @@
 
     export let game: Game;
     export let state: GameState;
-    let history = [] as HistoryItem[];
 
     function advanceState(move: Move) {
         state = playMove(game, state, move);
-        history = [...history, { move, state }];
-        console.log(history);
     }
 
     function rewindState(ply: number) {
-        state = history[ply-1].state;
-        history = history.slice(0, ply);
+        state = rewindTo(state, ply);
     }
 </script>
 
 <div>
     <ToolboxSection title="Current State">
-        {#each Object.entries(state.variables) as [key, value]}
+        {#each Object.entries(state.position.variables) as [key, value]}
             {@const type = game.stateVariables[key].type.name}
             {#if type == 'Grid'}
                 <ToolboxItem title="{key}">
@@ -33,7 +29,7 @@
                 <ToolboxItem title="{key}: {value}" />
             {/if}
         {/each}
-        <ToolboxItem title="Winner: {state.winner ? state.winner : "None"}" />
+        <ToolboxItem title="Winner: {state.position.winner ? state.position.winner : "None"}" />
     </ToolboxSection>
     
     <ToolboxSection title="Available Moves">
@@ -43,8 +39,8 @@
     </ToolboxSection>
 
     <ToolboxSection title="Played Moves">
-        {#each history as historyItem}
-            <ToolboxItem class="move" title="{historyItem.state.ply}. {historyItem.move.actionName}({historyItem.move.args.join(", ")})" on:click={() => rewindState(historyItem.state.ply)} />
+        {#each state.history as historyItem}
+            <ToolboxItem class="move" title="{historyItem.ply}. {historyItem.move.actionName}({historyItem.move.args.join(", ")})" on:click={() => rewindState(historyItem.ply)} />
         {/each}
     </ToolboxSection>
 </div>

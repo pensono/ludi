@@ -10,6 +10,7 @@
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <h2 on:click={toggleExpanded}>{title}<span class="expand-symbol material-symbols-outlined">{expanded ? "expand_less" : "expand_more"}</span></h2>
 
 {#if expanded}

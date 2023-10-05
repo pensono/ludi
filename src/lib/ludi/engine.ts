@@ -4,15 +4,19 @@ import { parseMoveExpression } from './parser';
 
 export function initialize(game: Game, seed?: number) : GameState {
     let state: GameState = {
-        variables: {
-            ...(seed !== undefined ? {__seed: seed} : {})
+        position: {
+            winner: null,
+            variables: {
+                ...(seed !== undefined ? {__seed: seed} : {})
+            },
         },
         ply: 0,
+        history: [],
     }
 
     // Default all state variables
     for (const variableName in game.stateVariables) {
-        state.variables[variableName] = defaultValue(game.stateVariables[variableName].type);
+        state.position.variables[variableName] = defaultValue(game.stateVariables[variableName].type);
     }
 
     if (game.setup) {
@@ -21,11 +25,17 @@ export function initialize(game: Game, seed?: number) : GameState {
         }
     }
 
+    state.history.push({
+        position: structuredClone(state.position),
+        move: { actionName: 'setup', player: 'system', args: [] },
+        ply: 0,
+    });
+
     return state;
 }
 
 export function *enumerateMoves(game: Game, state: GameState) : IterableIterator<Move> {
-    if (state.winner) {
+    if (state.position.winner) {
         return;
     }
 
@@ -37,13 +47,13 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
 }
 
 export function playMove(game: Game, state: GameState, move: Move): GameState {
-    state = structuredClone(state)
+    const newState = structuredClone(state)
 
     const action = game.actions[move.actionName];
     const locals = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: move.args[i]}), {});
 
     for (const statement of action.statements) {
-        runStatement(game, state, locals, statement);
+        runStatement(game, newState, locals, statement);
     }
 
     for (const winConditionName in game.winConditions) {
@@ -51,16 +61,34 @@ export function playMove(game: Game, state: GameState, move: Move): GameState {
         
         // Just enumerate all players for now
         for (const player of enumerateType(game.constants["Player"])){
-            if (winCondition.conditions.every(c => evaluateExpression(game, state, {...locals, player}, c.expression))) {
-                state.winner = player;
+            if (winCondition.conditions.every(c => evaluateExpression(game, newState, {...locals, player}, c.expression))) {
+                newState.position.winner = player;
                 break;
             }
         }
     }
 
-    state.ply++;
+    newState.ply++;
+    newState.history.push({
+        move: move,
+        position: structuredClone(newState.position),
+        ply: newState.ply,
+    });
 
-    return state;
+    return newState;
+}
+
+export function rewindTo(state: GameState, ply: number) {
+    state = structuredClone(state);
+
+    const historyItem = state.history[ply]
+
+    return {
+        ...state,
+        ply: ply,
+        position: structuredClone(historyItem.position),
+        history: state.history.slice(0, ply+1),
+    }
 }
 
 /** Returns null if the move is not possible with the given game state. Parse errors/etc will throw */
@@ -117,7 +145,7 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
 }
 
 function checkMove(game: Game, state: GameState, locals: Record<string, any>, move: Move): boolean {
-    if (state.winner) {
+    if (state.position.winner) {
         return false;
     }
 
@@ -126,7 +154,7 @@ function checkMove(game: Game, state: GameState, locals: Record<string, any>, mo
         return false;
     }
 
-    if (move.player !== state.variables['CurrentPlayer']) {
+    if (move.player !== state.position.variables['CurrentPlayer']) {
         return false;
     }
 
@@ -177,7 +205,7 @@ function toReference(game: Game, state: GameState, locals: Record<string, any>, 
     // subtract one to one-index everything
     let indexValues = lvalue.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
 
-    let target = state.variables;
+    let target = state.position.variables;
     let index: any = lvalue.name;
 
     for (const indexValue of indexValues) {
@@ -264,7 +292,7 @@ export function evaluateExpression(game: Game, state: GameState, locals: Record<
         }
         case 'identifier': {
             const localValue = locals[expression.name];
-            const stateValue = state.variables[expression.name];
+            const stateValue = state.position.variables[expression.name];
             const constantValue = game.constants[expression.name];
 
             if ([localValue, stateValue, constantValue].filter(v => v !== undefined).length > 1) {
