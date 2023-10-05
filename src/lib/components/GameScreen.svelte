@@ -64,7 +64,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(#000, .3);
+        background-color: rgba(#000, .4);
     }
 
     div.container {
