@@ -47,6 +47,7 @@ export interface MoveExpression {
     arguments: Expression[];
     player: Expression;
 }
+
 export function parseMoveExpression(input: string): MoveExpression {
     const inputStream = new CharStream(input);
     const lexer = new LudiLexer(inputStream);
@@ -70,9 +71,10 @@ export function parseMoveExpression(input: string): MoveExpression {
 }
 
 function handleGame(ctx: any): Game {
-    let actions: Record<string, Action> = {};
     let setup: Action | undefined = undefined;
-    let variables: Record<string, StateVariable> = {};
+    let actions: Record<string, Action> = {};
+    let winConditions: Record<string, Action> = {};
+    let stateVariables: Record<string, StateVariable> = {};
     let playerType: LudiType = undefined;
     let constants: Record<string, any> = {};
     let views: View[] = [];
@@ -85,14 +87,17 @@ function handleGame(ctx: any): Game {
                 throw new ParseError('Cannot have more than one setup block', definition.start);
             }
 
-            setup = handleAction(definition.setup());
+            setup = handleBlock(definition.setup());
         } else if (definition.action()) {
             const action = definition.action();
-            actions[action.name.getText()] = handleAction(action);
+            actions[action.name.getText()] = handleBlock(action);
+        } else if (definition.win()) {
+            const win = definition.win();
+            winConditions[win.name.getText()] = handleBlock(win);
         } else if (definition.state_definition()) {
             const stateDefinition = definition.state_definition();
             const name = stateDefinition.name.getText();
-            variables[name]  = {
+            stateVariables[name]  = {
                 name: name,
                 type: new TypeExpressionVisitor(constants).visit(stateDefinition.type)
             };
@@ -122,7 +127,7 @@ function handleGame(ctx: any): Game {
             constants['Player'] = playerType;
 
             // Built-in
-            variables['CurrentPlayer'] = {
+            stateVariables['CurrentPlayer'] = {
                 name: 'CurrentPlayer',
                 type: playerType
             }
@@ -132,24 +137,26 @@ function handleGame(ctx: any): Game {
     }
 
     return {
-        setup: setup,
-        actions: actions,
-        stateVariables: variables,
-        playerType: playerType,
+        setup,
+        actions,
+        winConditions,
+        stateVariables,
+        playerType,
         constants,
         views
     }
 }
 
-function handleAction(ctx: any): Action {
+/** Can parse actions, wins, setup, triggers */
+function handleBlock(ctx: any): Action {
     // const conditions = ctx.when().map(c => handleCondition(c));
     const player = ctx.player ? new ExpressionVisitor().visit(ctx.player) : null;
-    const statements = ctx.statement().map(s => new StatementVisitor().visit(s));
+    const statements = ctx.statement ? ctx.statement().map(s => new StatementVisitor().visit(s)) : [];
     let name: string | undefined = undefined;
     let parameters: Parameter[] = [];
     let conditions: Condition[] = [];
     
-    if (ctx.ruleIndex === LudiParser.RULE_action) {
+    if ([LudiParser.RULE_action, LudiParser.RULE_win].includes(ctx.ruleIndex)) {
         name = ctx.name.getText();
         parameters = handleParameterList(ctx.parameterList());
         conditions = ctx.when().map(c => ({

@@ -186,3 +186,26 @@ describe('players', () => {
         expect(enumerateType(game.playerType)).toEqual(['X', 'O']);
     });
 })
+
+describe('win conditions', () => {
+    it(`Basic wins`, () => {
+        const game = fromString(`
+            players A or B
+            state LastGuess a Number<1, 3>
+
+            setup:
+                set LastGuess to 1
+
+            action Action(number a Number<1, 3>):
+                change LastGuess to number
+
+            win Win() for player:
+                when LastGuess = 3
+        `);
+        let state = initialize(game);
+
+        state = playMove(game, state, {actionName: "Action", args: [3], player: "A"});
+
+        expect(state.winner).toEqual("A");
+    });
+});

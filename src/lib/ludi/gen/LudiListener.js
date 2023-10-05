@@ -266,15 +266,6 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by LudiParser#TypeIdentifierExpression.
-	enterTypeIdentifierExpression(ctx) {
-	}
-
-	// Exit a parse tree produced by LudiParser#TypeIdentifierExpression.
-	exitTypeIdentifierExpression(ctx) {
-	}
-
-
 	// Enter a parse tree produced by LudiParser#UnionTypeExpression.
 	enterUnionTypeExpression(ctx) {
 	}

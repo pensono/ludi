@@ -76,8 +76,8 @@ lvalue
 
 // Don't let these be recursive, instead force users to write everything out so it's clearer
 typeExpression
-    : identifier # TypeIdentifierExpression
-    | values+=identifier ('or' values+=identifier)+ # UnionTypeExpression
+    // : identifier # TypeIdentifierExpression // Is this one even necesseary?
+    : values+=identifier ('or' values+=identifier)+ # UnionTypeExpression
     // | '{' name=identifier type=identifier '}'  // Record
     | name=identifier '<' (arguments+=expression (',' arguments+=expression)*)? '>' # ParameterizedTypeExpression; // Somehow the args must be constants
 

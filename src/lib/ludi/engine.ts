@@ -24,8 +24,11 @@ export function initialize(game: Game, seed?: number) : GameState {
     return state;
 }
 
-
 export function *enumerateMoves(game: Game, state: GameState) : IterableIterator<Move> {
+    if (state.winner) {
+        return;
+    }
+
     for (const actionName in game.actions) {
         const action = game.actions[actionName];
 
@@ -41,6 +44,18 @@ export function playMove(game: Game, state: GameState, move: Move): GameState {
 
     for (const statement of action.statements) {
         runStatement(game, state, locals, statement);
+    }
+
+    for (const winConditionName in game.winConditions) {
+        const winCondition = game.winConditions[winConditionName];
+        
+        // Just enumerate all players for now
+        for (const player of enumerateType(game.constants["Player"])){
+            if (winCondition.conditions.every(c => evaluateExpression(game, state, {...locals, player}, c.expression))) {
+                state.winner = player;
+                break;
+            }
+        }
     }
 
     state.ply++;
@@ -102,6 +117,10 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
 }
 
 function checkMove(game: Game, state: GameState, locals: Record<string, any>, move: Move): boolean {
+    if (state.winner) {
+        return false;
+    }
+
     const action = game.actions[move.actionName];
     if (!action.conditions.every(condition => evaluateExpression(game, state, locals, condition.expression))) {
         return false;
@@ -130,7 +149,6 @@ export function enumerateType(type: LudiType) {
 export function defaultValue(type: LudiType) {
     return builtins.types[type.name].defaultValue(type);
 }
-
 
 function checkPreconditions(game: Game, state: GameState, locals: Record<string, any>, statement: Statement): boolean {
     // OPTIMIZE cache this somehow?

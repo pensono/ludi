@@ -1,5 +1,5 @@
 import seedrandom from 'seedrandom';
-import type { GameState, LudiFunction, LudiType, ParametricType } from './types';
+import type { GameState, LudiFunction, LudiType } from './types';
 import { enumerateType, defaultValue } from './engine';
 
 export const functions: Record<string, LudiFunction> = {
@@ -41,6 +41,73 @@ export const functions: Record<string, LudiFunction> = {
             const nextIndex = (currentIndex + 1) % typeValues.length;
 
             return typeValues[nextIndex];
+        }
+    },
+
+    'InARow': {
+        parameter_types: [
+            'any',
+            'Grid',
+            'number'
+        ],
+        return_type: 'boolean',
+        invoke: (state: GameState, args: any[]): any => {
+            const needle = args[0];
+            const haystack = args[1];
+            const count = args[2];
+            // 4th arg can be the direction, horizontal, vertical, or diagonal
+
+            // Check horizontal
+            for (let y = 0; y < haystack.length; y++) {
+                let currentCount = 0;
+                for (let x = 0; x < haystack[y].length; x++) {
+                    if (haystack[y][x] === needle) {
+                        currentCount++;
+                    } else {
+                        currentCount = 0;
+                    }
+
+                    if (currentCount >= count) {
+                        return true;
+                    }
+                }
+            }
+
+            // check vertical
+            for (let x = 0; x < haystack[0].length; x++) {
+                let currentCount = 0;
+                for (let y = 0; y < haystack.length; y++) {
+                    if (haystack[y][x] === needle) {
+                        currentCount++;
+                    } else {
+                        currentCount = 0;
+                    }
+
+                    if (currentCount >= count) {
+                        return true;
+                    }
+                }
+            }
+
+            // Check diagonal
+            for (let y = 0; y < haystack.length; y++) {
+                for (let x = 0; x < haystack[y].length; x++) {
+                    let currentCount = 0;
+                    for (let i = 0; i < count; i++) {
+                        if (haystack[y + i]?.[x + i] === needle) {
+                            currentCount++;
+                        } else {
+                            currentCount = 0;
+                        }
+
+                        if (currentCount >= count) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
     },
 

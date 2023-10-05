@@ -2,6 +2,7 @@ export interface Game {
     setup?: Action;
     playerType: LudiType;
     actions: Record<string, Action>;
+    winConditions: Record<string, Action>;
     stateVariables: Record<string, StateVariable>;
     constants: Record<string, any>;
     views: View[];
@@ -111,6 +112,7 @@ export interface View {
 
 export interface GameState {
     variables: Record<string, any>;
+    winner: string | null;
     ply: number;
 }
 

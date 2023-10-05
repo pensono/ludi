@@ -12,9 +12,7 @@ action Play(x a Number<1, 3>, y a Number<1, 3>) for CurrentPlayer:
     change CurrentPlayer to NextInSequence(CurrentPlayer, Player)
 
 win 3InARow() for player:
-    when InARow(player, Board, 3, Horizontal)
-        or InARow(player, Board, 3, Vertical)
-        or InARow(player, Board, 3, Diagonal)
+    when InARow(player, Board, 3)
 
 view:
     <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="75%" innerLines="#000 2pt" background="#fff">

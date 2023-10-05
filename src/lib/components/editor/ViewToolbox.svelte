@@ -33,6 +33,7 @@
                 <ToolboxItem title="{key}: {value}" />
             {/if}
         {/each}
+        <ToolboxItem title="Winner: {state.winner ? state.winner : "None"}" />
     </ToolboxSection>
     
     <ToolboxSection title="Available Moves">
