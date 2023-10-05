@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { enumerateMoves, playMove, rewindTo } from "$lib/ludi/engine";
-	import type { Game, GameState, HistoryItem, Move } from "$lib/ludi/types";
+	import type { Game, GamePosition, GameState, Move } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
 	import GridDisplay from "./GridDisplay.svelte";
 
     export let game: Game;
     export let state: GameState;
+    export let previewPosition: GamePosition | null;
 
     function advanceState(move: Move) {
         state = playMove(game, state, move);
@@ -40,7 +41,12 @@
 
     <ToolboxSection title="Played Moves">
         {#each state.history as historyItem}
-            <ToolboxItem class="move" title="{historyItem.ply}. {historyItem.move.actionName}({historyItem.move.args.join(", ")})" on:click={() => rewindState(historyItem.ply)} />
+            <ToolboxItem 
+                class="move"
+                title="{historyItem.ply}. {historyItem.move.actionName}({historyItem.move.args.join(", ")})"
+                on:click={() => rewindState(historyItem.ply)} 
+                on:mouseenter={() => previewPosition = historyItem.position}
+                on:mouseleave={() => previewPosition = null}/>
         {/each}
     </ToolboxSection>
 </div>

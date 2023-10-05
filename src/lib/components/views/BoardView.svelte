@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { parseAndEvaluateMove, playMove } from "$lib/ludi/engine";
-	import type { Game, GameState, View } from "$lib/ludi/types";
+	import type { Game, GamePosition, GameState, View } from "$lib/ludi/types";
 	import vars from "../util/vars";
 	import ViewElement from "./ViewElement.svelte";
 	import { toSize } from "./utils";
@@ -8,9 +8,10 @@
     export let positionStyle: string;
     export let game: Game;
     export let state: GameState;
+    export let previewPosition: GamePosition | null;
     export let element: View;
     $: variable = element.attributes["show"];
-    $: data = state.position.variables[variable];
+    $: data = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
     $: width = game.stateVariables[variable].type.parameters.width;
     $: height = game.stateVariables[variable].type.parameters.height;
 
@@ -73,7 +74,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)}>
                 {#if element}
-                    <ViewElement bind:game={game} bind:state={state} element={element} />
+                    <ViewElement bind:game={game} bind:state={state} previewPosition={previewPosition} element={element} />
                 {/if}
             </div>
         {/each}

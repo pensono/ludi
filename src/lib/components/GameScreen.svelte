@@ -1,16 +1,19 @@
 <script lang="ts">
-	import type { Game, GameState } from "$lib/ludi/types";
+	import type { Game, GamePosition, GameState } from "$lib/ludi/types";
 	import ViewElement from "$lib/components/views/ViewElement.svelte";
 	import { slide, fade } from "svelte/transition";
 	import { initialize } from "$lib/ludi/engine";
 
     export let game: Game;
     export let state: GameState;
+    export let previewPosition: GamePosition | null = null;
+
+    $: position = previewPosition ?? state.position;
 </script>
 
 <div class="container">
     {#each game.views as view}
-        <ViewElement bind:game={game} bind:state={state} bind:element={view} />
+        <ViewElement bind:game={game} bind:state={state} bind:previewPosition={previewPosition} bind:element={view} />
     {/each}
 
     <!-- 
@@ -18,10 +21,10 @@
         UI becomes unresponsive because the game has ended. This can be customizable,
         but showing this screen should be the default.
     -->
-    {#if state.position.winner}
+    {#if position.winner}
         <div transition:fade class="gray-out" />
         <div transition:slide class="banner top">
-            {state.position.winner} Wins!
+            {position.winner} Wins!
         </div>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div transition:slide class="banner bottom" on:click={() => state = initialize(game)}>

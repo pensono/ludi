@@ -2,7 +2,7 @@
     export let title: string;
 </script>
 
-<div {...$$restProps} class:wrap={true} on:click>
+<div {...$$restProps} class:wrap={true} on:click on:mouseenter on:mouseleave>
     <p>{title}</p>
     {#if $$slots.default}
         <div class="detail">

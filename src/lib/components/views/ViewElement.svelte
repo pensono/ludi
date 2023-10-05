@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Game, GameState, View } from "$lib/ludi/types";
+	import type { Game, GamePosition, GameState, View } from "$lib/ludi/types";
     import { parseParts } from "./utils";
 	import BoardView from "./BoardView.svelte";
 	import TextView from "./TextView.svelte";
@@ -7,6 +7,7 @@
 
     export let game: Game;
     export let state: GameState;
+    export let previewPosition: GamePosition | null;
     export let element: View;
 
     $: positionStyle = calculatePositionStyle(element);
@@ -53,7 +54,7 @@
 </script>
 
 {#if element.name == 'board'}
-    <BoardView bind:game={game} bind:state={state} bind:element={element} positionStyle={positionStyle} />
+    <BoardView bind:game={game} bind:state={state} bind:previewPosition={previewPosition} bind:element={element} positionStyle={positionStyle} />
 {:else if element.name == 'text'}
     <TextView bind:game={game} bind:state={state} bind:element={element} positionStyle={positionStyle} />
 {:else if element.name == 'image'}

@@ -5,11 +5,12 @@
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
 	import { initialize } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Game, GameState } from '$lib/ludi/types';
+	import type { Game, GamePosition, GameState } from '$lib/ludi/types';
 
     let selectedGame = "/games/tic-tac-toe.ludi";
     let game: Game | undefined;
     let state: GameState | undefined;
+    let previewPosition: GamePosition | null = null;
 
     onMount(() => {
         loadGame();
@@ -34,8 +35,8 @@
     
     <main>
         {#if game && state}
-            <ViewToolbox bind:game={game} bind:state={state} />
-            <GameScreen bind:game={game} bind:state={state} />
+            <ViewToolbox bind:game={game} bind:state={state} bind:previewPosition={previewPosition} />
+            <GameScreen bind:game={game} bind:state={state} bind:previewPosition={previewPosition} />
             <EditToolbox bind:game={game} bind:state={state} />
         {/if}
     </main>
