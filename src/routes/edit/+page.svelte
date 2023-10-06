@@ -30,6 +30,7 @@
             <option value="/games/number-guessing.ludi">Number Guessing</option>
             <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
             <option value="/games/checkers.ludi">Checkers</option>
+            <option value="/games/gomoku.ludi">Gomoku</option>
         </select>
     </nav>
     
