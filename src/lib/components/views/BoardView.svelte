@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { parseAndEvaluateMove, playMove } from "$lib/ludi/engine";
 	import type { Game, GamePosition, GameState, View } from "$lib/ludi/types";
+    import MiddleLines from "../svg/MiddleLines.svelte";
+    import InnerLines from "../svg/InnerLines.svelte";
 	import vars from "../util/vars";
 	import ViewElement from "./ViewElement.svelte";
 	import { toSize } from "./utils";
@@ -43,29 +45,19 @@
             const color = ((x + y) % 2) ? color1 : color2;
             return `background-color: ${color};`;
         }
-        
-        if (element.attributes["innerLines"]) {
-            // Since innerLines was specified, a background color must be used so the lines render correctly
-            return `background-color: #fff;`;
-        }
 
         return `background-color: ${background}`;
     }
-
-    function styleWrapper() {
-        const innerLines = element.attributes["innerLines"];
-        if (!innerLines) {
-            return '';
-        }
-        
-        const parts = innerLines.split(" ");
-        const color = parts[0];
-        const size = parts[1];
-        return `background-color: ${color}; gap: ${toSize(size)};`;
-    }
 </script>
 
-<div class="wrapper" style={positionStyle+styleWrapper()} use:vars={{ width, height}}>
+<div class="wrapper" style={positionStyle} use:vars={{ width, height}}>
+    {#if element.attributes["middleLines"]}
+        <MiddleLines color={element.attributes["middleLines"]} width={width} height={height} />
+    {/if}
+    {#if element.attributes["innerLines"]}
+        <InnerLines color={element.attributes["innerLines"]} width={width} height={height} />
+    {/if}
+
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each [...Array(height).keys()].reverse() as y}
         {#each [...Array(width).keys()] as x}
@@ -80,6 +72,7 @@
         {/each}
     {/each}
 </div>
+
 
 <style lang="scss">
     .wrapper {

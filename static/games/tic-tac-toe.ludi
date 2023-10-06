@@ -15,7 +15,7 @@ win 3InARow() for player:
     when InARow(player, Board, 3)
 
 view:
-    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="75%" innerLines="#000 2pt" background="#fff">
+    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="75%" innerLines="#000">
         <image useFor="X" file="x.svg" align="Center" size="100%" />
         <image useFor="O" file="o.svg" align="Center" size="100%" />
     </board>

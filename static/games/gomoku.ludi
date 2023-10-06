@@ -15,7 +15,7 @@ win 5InARow() for player:
     when InARow(player, Board, 5)
 
 view:
-    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="75%" innerLines="#000 1pt" background="#fff">
+    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="95%" middleLines="#000">
         <image useFor="Black" file="white-token.svg" align="Center" size="100%" />
         <image useFor="White" file="black-token.svg" align="Center" size="100%" />
     </board>
