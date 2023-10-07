@@ -1,12 +1,12 @@
 players Black or White
 kind Square a Empty or Black or White
 
-state Board a Grid<Square, 17, 17>
+state Board a Grid<Square, 15, 15>
 
 setup:
     set CurrentPlayer to Black
 
-action Play(x a Number<1, 17>, y a Number<1, 17>) for CurrentPlayer:
+action Play(x a Number<1, 15>, y a Number<1, 15>) for CurrentPlayer:
     when Board[x, y] = Empty
     change Board[x, y] to CurrentPlayer
     change CurrentPlayer to NextInSequence(CurrentPlayer, Player)
@@ -15,7 +15,7 @@ win 5InARow() for player:
     when InARow(player, Board, 5)
 
 view:
-    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="95%" middleLines="#000">
+    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="100%" middleLines="#000">
         <image useFor="Black" file="black-token.svg" align="Center" size="100%" />
         <image useFor="White" file="white-token.svg" align="Center" size="100%" />
     </board>
