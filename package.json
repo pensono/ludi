@@ -42,6 +42,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"ably": "^1.2.45",
 		"antlr4": "^4.13.0",
 		"seedrandom": "^3.0.5"
 	}

@@ -46,7 +46,7 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
     }
 }
 
-export function playMove(game: Game, state: GameState, move: Move): GameState {
+export function advance(game: Game, state: GameState, move: Move): GameState {
     const newState = structuredClone(state)
 
     const action = game.actions[move.actionName];

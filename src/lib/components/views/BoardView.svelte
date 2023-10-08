@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { parseAndEvaluateMove, playMove } from "$lib/ludi/engine";
-	import type { Game, GamePosition, GameState, View } from "$lib/ludi/types";
+	import { parseAndEvaluateMove } from "$lib/ludi/engine";
+	import type { Game, GamePosition, GameState, Move, View } from "$lib/ludi/types";
     import MiddleLines from "../svg/MiddleLines.svelte";
     import InnerLines from "../svg/InnerLines.svelte";
 	import vars from "../util/vars";
 	import ViewElement from "./ViewElement.svelte";
-	import { toSize } from "./utils";
 
     export let positionStyle: string;
     export let game: Game;
     export let state: GameState;
     export let previewPosition: GamePosition | null;
+    export let playMove: (move: Move) => void;
     export let element: View;
+    
     $: variable = element.attributes["show"];
     $: data = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
     $: width = game.stateVariables[variable].type.parameters.width;
@@ -24,7 +25,7 @@
 
         // TODO use some sort of disabled state instead?
         if (move != null) {
-            state = playMove(game, state, move);
+            playMove(move);
         }
     }
 
@@ -66,7 +67,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)}>
                 {#if element}
-                    <ViewElement bind:game={game} bind:state={state} previewPosition={previewPosition} element={element} />
+                    <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} playMove={playMove} />
                 {/if}
             </div>
         {/each}

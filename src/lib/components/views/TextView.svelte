@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { parseAndEvaluateMove, playMove } from "$lib/ludi/engine";
+    import { parseAndEvaluateMove, advance } from "$lib/ludi/engine";
     import type { Game, GameState, View } from "$lib/ludi/types";
     import vars from "../util/vars";
     import { parseParts, toSize } from "./utils";
@@ -17,7 +17,7 @@
 
         // TODO use some sort of disabled state instead?
         if (move != null) {
-            state = playMove(game, state, move);
+            state = advance(game, state, move);
         }
     }
 

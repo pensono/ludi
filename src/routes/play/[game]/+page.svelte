@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
-	import { initialize } from "$lib/ludi/engine";
+	import { advance, initialize } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Game, GameState } from '$lib/ludi/types';
+	import type { Game, GameState, Move } from '$lib/ludi/types';
 
     export let data;
 
@@ -19,6 +19,10 @@
         game = fromString(gameText);
         state = initialize(game);
     }
+    
+    function playMove(move: Move) {
+        state = advance(game!, state!, move);
+    }
 </script>
 
 <div class="wrapper">
@@ -28,7 +32,7 @@
     
     <main>
         {#if game && state}
-            <GameScreen bind:game={game} bind:state={state} />
+            <GameScreen bind:game={game} bind:state={state} playMove={playMove} />
         {/if}
     </main>
 </div>
