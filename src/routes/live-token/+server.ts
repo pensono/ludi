@@ -13,7 +13,6 @@ export async function GET({ request, url }) {
         return json({ error: 'gameId is required' }, { status: 400 });
     }
 
-    console.log(JSON.stringify(request));
     const client = new Ably.Realtime(ABLY_API_KEY);
     const tokenRequestData = await client.auth.createTokenRequest({ clientId, capability: { [`game:${gameId}`]: ['subscribe', 'publish', 'presence'] } });
     
