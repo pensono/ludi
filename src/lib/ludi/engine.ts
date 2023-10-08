@@ -112,6 +112,13 @@ export function parseAndEvaluateMove(game: Game, state: GameState, moveText: str
     return move;
 }
 
+export function nextPlayer(game: Game, currentPlayers: string[]): string | null {
+    const allPlayers = enumerateType(game.constants["Player"]);
+    const nextPlayer = allPlayers.filter(p => !currentPlayers.includes(p))[0];
+
+    return nextPlayer;
+}
+
 function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
     // There are many faster ways to do this, but this is easy to implement and fast enough for most games
     // Using something like SMT is ideal

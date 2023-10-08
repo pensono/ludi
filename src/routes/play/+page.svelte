@@ -4,6 +4,8 @@
 	import { advance, initialize } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
 	import type { Game, GameState, Move } from '$lib/ludi/types';
+
+    const liveId = Math.floor(Math.random() * 1000000);
 </script>
 
 <div class="wrapper">
@@ -12,34 +14,23 @@
     </nav>
     
     <main>
-        <h2>Select Game</h2>
+        <h2>Single-device</h2>
         <ul>
             <li><a href="/play/tic-tac-toe">Tic-tac-toe</a></li>
             <li><a href="/play/checkers">Checkers</a></li>
             <li><a href="/play/gomoku">Gomoku</a></li>
         </ul>
+        
+        <h2>Multiplayer</h2>
+        <ul>
+            <li><a href="/play/live/tic-tac-toe/{liveId}">Tic-tac-toe</a></li>
+            <li><a href="/play/live/checkers/{liveId}">Checkers</a></li>
+            <li><a href="/play/live/gomoku/{liveId}">Gomoku</a></li>
+        </ul>
     </main>
 </div>
 
 <style lang="scss">
-    .wrapper {
-        display: flex;
-        flex-direction: column;
-
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
-
-    main {
-        flex-grow: 1;
-
-        display: flex;
-        flex-direction: row;
-    }
-    
 
     h1 {
         margin: .5rem;
