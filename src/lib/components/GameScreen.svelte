@@ -2,12 +2,12 @@
 	import type { Game, GamePosition, GameState, Move } from "$lib/ludi/types";
 	import ViewElement from "$lib/components/views/ViewElement.svelte";
 	import { slide, fade } from "svelte/transition";
-	import { initialize } from "$lib/ludi/engine";
 
     export let game: Game;
     export let state: GameState;
     export let previewPosition: GamePosition | null = null;
     export let playMove: (move: Move) => void;
+    export let reset: () => void;
 
     $: position = previewPosition ?? state.position;
 </script>
@@ -28,7 +28,7 @@
             {position.winner} Wins!
         </div>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div transition:slide class="banner bottom" on:click={() => state = initialize(game)}>
+        <div transition:slide class="banner bottom" on:click={reset}>
             Play Again
         </div>
     {/if}

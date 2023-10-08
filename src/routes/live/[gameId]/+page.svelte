@@ -44,6 +44,11 @@
         state = advance(game!, state!, move);
         channel.publish("state", JSON.stringify(state));
     }
+
+    function reset() {
+        state = initialize(game!);
+        channel.publish("state", JSON.stringify(state));
+    }
 </script>
 
 <div class="wrapper">
@@ -53,7 +58,7 @@
     
     <main>
         {#if game && state}
-            <GameScreen bind:game={game} bind:state={state} playMove={playMove} />
+            <GameScreen bind:game={game} state={state} playMove={playMove} reset={reset} />
         {/if}
     </main>
 </div>

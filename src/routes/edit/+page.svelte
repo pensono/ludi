@@ -25,6 +25,10 @@
     function playMove(move: Move) {
         state = advance(game!, state!, move);
     }
+    
+    function reset() {
+        state = initialize(game!);
+    }
 </script>
 
 <div class="wrapper">
@@ -41,7 +45,7 @@
     <main>
         {#if game && state}
             <ViewToolbox bind:game={game} bind:state={state} bind:previewPosition={previewPosition} />
-            <GameScreen bind:game={game} bind:state={state} bind:previewPosition={previewPosition} playMove={playMove} />
+            <GameScreen bind:game={game} state={state} bind:previewPosition={previewPosition} playMove={playMove} reset={reset} />
             <EditToolbox bind:game={game} bind:state={state} />
         {/if}
     </main>
