@@ -15,7 +15,7 @@
 
     onMount(() => {
         const ably = new Ably.Realtime.Promise({
-            authUrl: `/live-token?gameId=${data.gameId}`,
+            authUrl: `/play/live/token?gameId=${data.gameId}`,
             clientId: "someid",
             idempotentRestPublishing: true,
         });
