@@ -1,11 +1,20 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-	import GameScreen from "$lib/components/GameScreen.svelte";
-	import { advance, initialize } from "$lib/ludi/engine";
+    import { goto } from "$app/navigation";
+    import { ConvexClient } from "convex/browser";
+    import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import { fromString } from "$lib/ludi/parser";
-	import type { Game, GameState, Move } from '$lib/ludi/types';
+	import { api } from "$convex/_generated/api";
 
-    const liveId = Math.floor(Math.random() * 1000000);
+    async function playLive(gameName: string) {
+        const convex = new ConvexClient(PUBLIC_CONVEX_URL);
+
+        const gameText = (await fetch(`/games/${gameName}.ludi`)).text();
+        const game = fromString(await gameText);
+
+        const liveGameId = await convex.mutation(api.live_games.newGame, { game });
+
+        goto(`/play/live/${liveGameId}`);
+    }
 </script>
 
 <div class="wrapper">
@@ -23,9 +32,12 @@
         
         <h2>Multiplayer</h2>
         <ul>
-            <li><a href="/play/live/tic-tac-toe/{liveId}">Tic-tac-toe</a></li>
-            <li><a href="/play/live/checkers/{liveId}">Checkers</a></li>
-            <li><a href="/play/live/gomoku/{liveId}">Gomoku</a></li>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <li><a href="#" on:click={() => playLive('tic-tac-toe')}>Tic-tac-toe</a></li>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <li><a href="#" on:click={() => playLive('checkers')}>Checkers</a></li>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <li><a href="#" on:click={() => playLive('gomoku')}>Gomoku</a></li>
         </ul>
     </main>
 </div>

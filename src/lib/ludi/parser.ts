@@ -1,3 +1,4 @@
+// @ts-nocheck -- Antlr makes typechecking in this file a shitshow
 import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
 import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, StateVariable, View } from './types'
 import LudiLexer from './gen/LudiLexer';

@@ -16,5 +16,10 @@ export default defineConfig({
 			include: [/antlr4/, /node_modules/]
 		}
 	},
-	assetsInclude: ['static/games/*.ludi']
+	assetsInclude: ['static/games/*.ludi'],
+	server: {
+		fs: {
+			allow: ['convex/_generated/']
+		}
+	}
 });
