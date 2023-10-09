@@ -6,13 +6,7 @@
     export let isLocal: boolean = false;
 </script>
 
-<div class="wrapper">
-    {#if currentParticipant === participant.role}
-        <img class="current-turn" src="/current-turn.svg">
-    {:else}
-        <!-- Placeholder -->
-        <div class="current-turn"></div>
-    {/if}
+<div class="wrapper" class:current-participant={currentParticipant == participant.role}>
     <img class="avatar" src="/user.svg">
     <span>{participant.role}{isLocal ? " (You)" : ""}</span>
 </div>
@@ -26,6 +20,10 @@
         padding: 0.25rem;
         line-height: 1.5rem;
         text-align: center;
+    }
+
+    .wrapper.current-participant {
+        background-color: #ccaa8b;
     }
 
     .current-turn {
