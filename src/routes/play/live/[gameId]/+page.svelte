@@ -9,6 +9,8 @@
 	import type { GameParticipant } from '$lib/realtime/types.js';
     import Participant from '$lib/components/Participant.svelte';
 	import { getParticipantId } from '$lib/participantId.js';
+	import Share from '$lib/components/util/Share.svelte';
+	import { unfilledPlayers } from '$lib/ludi/engine.js';
 
     export let data;
 
@@ -19,6 +21,7 @@
     const localParticipantId = getParticipantId();
 
     $: localParticipant = participants?.find(p => p.id === localParticipantId);
+    $: remainingParticipants = game && unfilledPlayers(game, (participants ?? []).map(p => p.role));
 
     const convex = new ConvexClient(PUBLIC_CONVEX_URL);
 
@@ -49,7 +52,7 @@
 
 <div class="wrapper">
     <nav>
-        <h1>Ludi</h1>
+        <h1><a href="/">Ludi</a></h1>
     </nav>
     
     <main>
@@ -62,6 +65,9 @@
                 {#each participants as participant}
                     <Participant bind:participant isLocal={participant.id === localParticipantId} currentParticipant={state?.position.variables["CurrentPlayer"]} />
                 {/each}
+                {#if remainingParticipants && remainingParticipants?.length > 0}
+                    <Share text="Invite" />
+                {/if}
             </div>
         {/if}
     </main>
@@ -90,6 +96,11 @@
         margin: .5rem;
     }
 
+    h1 a {
+        text-decoration: none;
+        color: #000;
+    }
+
     h2 {
         font-size: 1.5rem;
         margin: .5rem;
@@ -104,6 +115,9 @@
     
 
     .players {
+        display: flex;
+        flex-direction: column;
+
         min-width: 200px;
 
         ul {

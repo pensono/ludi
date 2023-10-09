@@ -119,6 +119,11 @@ export function nextPlayer(game: Game, currentPlayers: string[]): string | null 
     return nextPlayer;
 }
 
+export function unfilledPlayers(game: Game, currentPlayers: string[]): string[] {
+    const allPlayers = enumerateType(game.constants["Player"]);
+    return allPlayers.filter(p => !currentPlayers.includes(p));
+}
+
 function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
     // There are many faster ways to do this, but this is easy to implement and fast enough for most games
     // Using something like SMT is ideal
