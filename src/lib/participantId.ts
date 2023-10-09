@@ -1,4 +1,8 @@
-export function getParticipantId() {
+export function getParticipantId(): string {
+  if (typeof(window) === "undefined" || typeof(window.localStorage) === "undefined") {
+    return "dummy";
+  }
+
   let participantId = window.localStorage.getItem("participantId");
   if (participantId) {
     return participantId;

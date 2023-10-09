@@ -8,7 +8,7 @@
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import type { GameParticipant } from '$lib/realtime/types.js';
     import Participant from '$lib/components/Participant.svelte';
-	import { persisted } from '$lib/svelte-persisted-store';
+	import { getParticipantId } from '$lib/participantId.js';
 
     export let data;
 
@@ -16,8 +16,9 @@
     let state: GameState | undefined;
     let participants: GameParticipant[] | undefined;
 
-    const localParticipantId = persisted("participantId", `participant:${Math.floor((Math.random() * 1000000)).toString()}`);
-    $: localParticipant = participants?.find(p => p.id === get(localParticipantId));
+    const localParticipantId = getParticipantId();
+
+    $: localParticipant = participants?.find(p => p.id === localParticipantId);
 
     const convex = new ConvexClient(PUBLIC_CONVEX_URL);
 
@@ -31,7 +32,7 @@
         participants = liveGame.participants;
     });
 
-    convex.mutation(api.live_games.join, { liveGameId: data.gameId, participantId: get(localParticipantId) });
+    convex.mutation(api.live_games.join, { liveGameId: data.gameId, participantId: localParticipantId });
 
     async function playMove(move: Move) {
         if (!localParticipant || move.player !== localParticipant.role) {
@@ -59,7 +60,7 @@
         {#if participants}
             <div class="players">
                 {#each participants as participant}
-                    <Participant bind:participant isLocal={participant.id === $localParticipantId} currentParticipant={state?.position.variables["CurrentPlayer"]} />
+                    <Participant bind:participant isLocal={participant.id === localParticipantId} currentParticipant={state?.position.variables["CurrentPlayer"]} />
                 {/each}
             </div>
         {/if}
