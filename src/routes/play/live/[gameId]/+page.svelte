@@ -1,23 +1,25 @@
 <script lang="ts">
+    import { get } from 'svelte/store'
     import { ConvexClient } from "convex/browser";
     import { api } from "$convex/_generated/api";
-    import { onDestroy, onMount } from 'svelte';
+    import { onDestroy } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
 	import type { Game, GameState, Move } from '$lib/ludi/types';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
+	import type { GameParticipant } from '$lib/realtime/types.js';
+    import Participant from '$lib/components/Participant.svelte';
+	import { persisted } from '$lib/svelte-persisted-store';
 
     export let data;
 
     let game: Game | undefined;
     let state: GameState | undefined;
+    let participants: GameParticipant[] | undefined;
 
-    let players: string[] | undefined;
-    let localPlayer: string | undefined;
+    const localParticipantId = persisted("participantId", `participant:${Math.floor((Math.random() * 1000000)).toString()}`);
+    $: localParticipant = participants?.find(p => p.id === get(localParticipantId));
 
     const convex = new ConvexClient(PUBLIC_CONVEX_URL);
-
-    onMount(async () => {
-    });
 
     onDestroy(() => {
         convex.close();
@@ -26,10 +28,21 @@
     convex.onUpdate(api.live_games.get, { id: data.gameId}, (liveGame) => {
         game = game ?? liveGame.game; // Only update once
         state = liveGame.state;
+        participants = liveGame.participants;
     });
 
+    convex.mutation(api.live_games.join, { liveGameId: data.gameId, participantId: get(localParticipantId) });
+
     async function playMove(move: Move) {
+        if (!localParticipant || move.player !== localParticipant.role) {
+            return;
+        }
+
         await convex.mutation(api.live_games.playMove, { liveGameId: data.gameId, move });
+    }
+    
+    async function reset() {
+        await convex.mutation(api.live_games.reset, { liveGameId: data.gameId });
     }
 </script>
 
@@ -40,17 +53,14 @@
     
     <main>
         {#if game && state}
-            <GameScreen bind:game={game} state={state} playMove={playMove} reset={() => {}} />
+            <GameScreen bind:game={game} state={state} playMove={playMove} reset={reset} />
         {/if}
         
-        {#if players}
+        {#if participants}
             <div class="players">
-                <h2>Connected Players</h2>
-                <ul>
-                    {#each players as player}
-                        <li>{player}{player === localPlayer ? " (You)" : ""}</li>
-                    {/each}
-                </ul>
+                {#each participants as participant}
+                    <Participant bind:participant isLocal={participant.id === $localParticipantId} currentParticipant={state?.position.variables["CurrentPlayer"]} />
+                {/each}
             </div>
         {/if}
     </main>
@@ -106,13 +116,13 @@
         }
     }
 
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 1200px) {
         main {
             flex-direction: column;
         }
     }
     
-    @media only screen and (min-width: 600px) {
+    @media only screen and (min-width: 1200px) {
         main {
             flex-direction: row;
         }
