@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { get } from 'svelte/store'
     import { ConvexClient } from "convex/browser";
     import { api } from "$convex/_generated/api";
     import { onDestroy } from 'svelte';

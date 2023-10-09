@@ -18,6 +18,9 @@
     $: width = game.stateVariables[variable].type.parameters.width;
     $: height = game.stateVariables[variable].type.parameters.height;
 
+    $: lastMoveElement = element.children.find(c => c.attributes["useFor"] == "LastMove");
+    $: lastMoveCoordinates = state.history.length > 0 ? state.history[state.history.length - 1].move.args : null;
+
     function clickSquare(x: number, y: number) {
         // TODO Sad to do so much eval here, will need to fix this eventually
         const moveExpression = element.attributes["clickSquare"];
@@ -68,6 +71,10 @@
             <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)}>
                 {#if element}
                     <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} playMove={playMove} />
+                {/if}
+                <!-- Super hacky -->
+                {#if lastMoveElement && lastMoveCoordinates && `[${x+1},${y+1}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
+                    <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} playMove={playMove} />
                 {/if}
             </div>
         {/each}
