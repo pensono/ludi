@@ -35,7 +35,7 @@
     
     <ToolboxSection title="Available Moves">
         {#each enumerateMoves(game, state) as move}
-            <ToolboxItem class="move" title="{move.actionName}({move.args.join(", ")})" on:click={() => advanceState(move)} />
+            <ToolboxItem class="move" title="{move.actionName}({move.args.join(", ")}) for {move.player}" on:click={() => advanceState(move)} />
         {/each}
     </ToolboxSection>
 
@@ -43,7 +43,7 @@
         {#each state.history as historyItem}
             <ToolboxItem 
                 class="move"
-                title="{historyItem.ply}. {historyItem.move.actionName}({historyItem.move.args.join(", ")})"
+                title="{historyItem.ply}. {historyItem.move.actionName}({historyItem.move.args.join(", ")}) for {historyItem.move.player}"
                 on:click={() => rewindState(historyItem.ply)} 
                 on:mouseenter={() => previewPosition = historyItem.position}
                 on:mouseleave={() => previewPosition = null}/>
