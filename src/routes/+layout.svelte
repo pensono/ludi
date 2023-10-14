@@ -15,6 +15,8 @@
         --border-color: #ccc;
         --hover-color: #eee;
         --detail-text: #666;
+
+        --mono-font: monospace;
     }
     
     :global(.material-symbols-outlined) {

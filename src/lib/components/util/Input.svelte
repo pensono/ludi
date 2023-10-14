@@ -1,11 +1,15 @@
-<input {...$$props} />
+<script lang="ts">
+    export let value: any;
+</script>
+
+<input bind:value type='text' />
 
 <style>
     input {
-        width: 6ch;
+        width: 16ch;
         border: 1px solid transparent;
         border-radius: 4px;
-        color: var(--detail-text);
+        font-family: var(--mono-font);
     }
 
     input:hover {

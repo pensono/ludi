@@ -11,9 +11,7 @@
 <div>
     <ToolboxSection title="State">
         {#each Object.entries(game.stateVariables) as [_, stateVariable]}
-            <ToolboxItem title={stateVariable.name}>
-                <TypeEditor type={stateVariable.type} />
-            </ToolboxItem>
+            <TypeEditor bind:title={stateVariable.name} bind:type={stateVariable.type} />
         {/each}
     </ToolboxSection>
 

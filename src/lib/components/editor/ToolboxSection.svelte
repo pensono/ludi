@@ -11,12 +11,12 @@
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<h2 on:click={toggleExpanded}>{title}<span class="expand-symbol material-symbols-outlined">{expanded ? "expand_less" : "expand_more"}</span></h2>
+<h2 on:click={toggleExpanded}>{title}<span class="expand-symbol material-symbols-outlined" class:expanded>chevron_left</span></h2>
 
 {#if expanded}
-<div transition:slide>
-    <slot />
-</div>
+    <div transition:slide>
+        <slot />
+    </div>
 {/if}
 
 <style lang="scss">
@@ -28,5 +28,14 @@
     .expand-symbol {
         float: right;
         margin-right: .5rem;
+    }
+
+    .expanded.expand-symbol {
+        rotate: -90deg;
+    }
+
+    div {
+        display: flex;
+        flex-direction: column;
     }
 </style>
