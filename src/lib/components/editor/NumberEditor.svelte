@@ -5,7 +5,7 @@
     export let value: number;
 </script>
 
-<div><label>{name}</label><Input type="number" bind:value /></div>
+<div><label>{name}</label><Input bind:value kind="number" /></div>
 
 <style lang="scss">
     div {

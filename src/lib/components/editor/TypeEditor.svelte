@@ -11,7 +11,7 @@
 </script>
 
 <div>
-    <Input bind:value={title} />
+    <Input bind:value={title} kind='string' />
     <Choice options={["Number", "Grid", "Enumeration"]} bind:value={type.name} />
 </div>
 
@@ -24,6 +24,8 @@
 {:else if type.name == "Enumeration"}
     <ListEditor bind:values={type.parameters.values} />
 {/if}
+
+{JSON.stringify(type)}
 
 <style lang="scss">
 </style>

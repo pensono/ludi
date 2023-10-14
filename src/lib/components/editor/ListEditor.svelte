@@ -15,7 +15,7 @@
 
 {#each values as value, i}
     <div>
-        <Input bind:value />
+        <Input bind:value kind="string" />
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <span on:click={() => remove(i)} class="material-symbols-outlined">delete</span>
     </div>

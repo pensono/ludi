@@ -1,8 +1,13 @@
 <script lang="ts">
     export let value: any;
+    export let kind: 'string' | 'number';
 </script>
 
-<input bind:value type='text' />
+{#if kind === 'string'}
+    <input bind:value type='text' />
+{:else if kind === 'number'}
+    <input bind:value type='number' />
+{/if}
 
 <style>
     input {
