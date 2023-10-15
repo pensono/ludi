@@ -22,6 +22,7 @@
 <style lang="scss">
     h2 {
         margin: .5rem;
+        margin-bottom: 0;
         user-select: none;
     }
 
