@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { parseAndEvaluateMove } from "$lib/ludi/engine";
+	import { parseAndEvaluateMove, typeOfVariable } from "$lib/ludi/engine";
 	import type { Game, GamePosition, GameState, Move, View } from "$lib/ludi/types";
     import MiddleLines from "../svg/MiddleLines.svelte";
     import InnerLines from "../svg/InnerLines.svelte";
@@ -15,11 +15,13 @@
     
     $: variable = element.attributes["show"];
     $: data = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
-    $: width = game.stateVariables[variable].type.parameters.width;
-    $: height = game.stateVariables[variable].type.parameters.height;
+    $: width = typeOfVariable(game, variable)?.parameters.width;
+    $: height = typeOfVariable(game, variable)?.parameters.height;
 
     $: lastMoveElement = element.children.find(c => c.attributes["useFor"] == "LastMove");
     $: lastMoveCoordinates = state.history.length > 0 ? state.history[state.history.length - 1].move.args : null;
+
+    $: console.log(width)
 
     function clickSquare(x: number, y: number) {
         // TODO Sad to do so much eval here, will need to fix this eventually
@@ -52,9 +54,18 @@
 
         return `background-color: ${background}`;
     }
+
+    function indexOrUndefined(array: any[][], x: number, y: number) : any | undefined {
+        const row = array[x];
+        if (!row) {
+            return undefined;
+        }
+
+        return row[y];
+    }
 </script>
 
-<div class="wrapper" style={positionStyle} use:vars={{ width, height}}>
+<div class="wrapper" style={positionStyle} use:vars={{ width, height }}>
     {#if element.attributes["middleLines"]}
         <MiddleLines color={element.attributes["middleLines"]} width={width} height={height} />
     {/if}
@@ -65,7 +76,7 @@
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each [...Array(height).keys()].reverse() as y}
         {#each [...Array(width).keys()] as x}
-            {@const element=elementFor(data[x][y])}
+            {@const element=elementFor(indexOrUndefined(data, x, y))}
             <!-- Map back into 1-index coordinates -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)}>

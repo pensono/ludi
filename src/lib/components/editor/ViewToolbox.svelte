@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enumerateMoves, advance, rewindTo } from "$lib/ludi/engine";
+	import { enumerateMoves, advance, rewindTo, typeOfVariable } from "$lib/ludi/engine";
 	import type { Game, GamePosition, GameState, Move } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
@@ -21,7 +21,7 @@
 <div>
     <ToolboxSection title="Current State">
         {#each Object.entries(state.position.variables) as [key, value]}
-            {@const type = game.stateVariables[key].type.name}
+            {@const type = typeOfVariable(game, key)?.name}
             {#if type == 'Grid'}
                 <ToolboxItem title="{key}">
                     <GridDisplay value={value} />

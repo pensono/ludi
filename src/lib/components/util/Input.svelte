@@ -1,12 +1,21 @@
 <script lang="ts">
     export let value: any;
     export let kind: 'string' | 'number';
+
+    function onInputNumber(event: Event) {
+        const target = event.currentTarget as HTMLInputElement;
+        const parsed = parseInt(target.value);
+
+        if (parsed) {
+            value = parsed;
+        }
+    }
 </script>
 
 {#if kind === 'string'}
     <input bind:value type='text' />
 {:else if kind === 'number'}
-    <input bind:value type='number' />
+    <input on:input={onInputNumber} value={value} type='number' />
 {/if}
 
 <style>

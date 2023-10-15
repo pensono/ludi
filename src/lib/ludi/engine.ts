@@ -15,8 +15,8 @@ export function initialize(game: Game, seed?: number) : GameState {
     }
 
     // Default all state variables
-    for (const variableName in game.stateVariables) {
-        state.position.variables[variableName] = defaultValue(game.stateVariables[variableName].type);
+    for (const stateVariable of game.stateVariables) {
+        state.position.variables[stateVariable.name] = defaultValue(stateVariable.type);
     }
 
     if (game.setup) {
@@ -188,6 +188,10 @@ export function enumerateType(type: LudiType) {
 
 export function defaultValue(type: LudiType) {
     return builtins.types[type.name].defaultValue(type);
+}
+
+export function typeOfVariable(game: Game, variableName: string) {
+    return game.stateVariables.find(s => s.name === variableName)?.type;
 }
 
 function checkPreconditions(game: Game, state: GameState, locals: Record<string, any>, statement: Statement): boolean {

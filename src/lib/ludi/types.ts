@@ -3,7 +3,7 @@ export interface Game {
     playerType: LudiType;
     actions: Record<string, Action>;
     winConditions: Record<string, Action>;
-    stateVariables: Record<string, StateVariable>;
+    stateVariables: StateVariable[];
     constants: Record<string, any>;
     views: View[];
 }

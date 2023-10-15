@@ -10,7 +10,7 @@
 
 <div>
     <ToolboxSection title="State">
-        {#each Object.entries(game.stateVariables) as [_, stateVariable]}
+        {#each game.stateVariables as stateVariable}
             <TypeEditor bind:title={stateVariable.name} bind:type={stateVariable.type} />
         {/each}
     </ToolboxSection>

@@ -75,7 +75,7 @@ function handleGame(ctx: any): Game {
     let setup: Action | undefined = undefined;
     let actions: Record<string, Action> = {};
     let winConditions: Record<string, Action> = {};
-    let stateVariables: Record<string, StateVariable> = {};
+    let stateVariables: StateVariable[] = [];
     let playerType: LudiType = undefined;
     let constants: Record<string, any> = {};
     let views: View[] = [];
@@ -98,10 +98,10 @@ function handleGame(ctx: any): Game {
         } else if (definition.state_definition()) {
             const stateDefinition = definition.state_definition();
             const name = stateDefinition.name.getText();
-            stateVariables[name]  = {
+            stateVariables.push({
                 name: name,
                 type: new TypeExpressionVisitor(constants).visit(stateDefinition.type)
-            };
+            });
         } else if (definition.kind()) {
             // Assume for now that types are specified in an order which does not include backreferences            
             var type = new TypeExpressionVisitor(constants).visit(definition.kind().type);
@@ -128,10 +128,10 @@ function handleGame(ctx: any): Game {
             constants['Player'] = playerType;
 
             // Built-in
-            stateVariables['CurrentPlayer'] = {
+            stateVariables.push({
                 name: 'CurrentPlayer',
                 type: playerType
-            }
+            });
         } else if (definition.view()) {
             views = definition.view().elements.map((v: any) => new ViewVisitor().visit(v));
         }

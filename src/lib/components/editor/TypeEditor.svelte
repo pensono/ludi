@@ -3,7 +3,6 @@
     import Input from "$lib/components/util/Input.svelte"
 	import NumberEditor from "./NumberEditor.svelte";
 	import Choice from "../util/Choice.svelte";
-	import ChoiceEditor from "./ChoiceEditor.svelte";
 	import ListEditor from "./ListEditor.svelte";
 
     export let title: string;
@@ -24,8 +23,6 @@
 {:else if type.name == "Enumeration"}
     <ListEditor bind:values={type.parameters.values} />
 {/if}
-
-{JSON.stringify(type)}
 
 <style lang="scss">
 </style>
