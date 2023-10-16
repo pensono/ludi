@@ -41,6 +41,11 @@
         vertical-align: bottom;
         padding: var(--input-padding);
         color: var(--detail-text-color);
+        display: none;
+    }
+
+    div:hover span {
+        display: inline;
     }
 
     .detail {

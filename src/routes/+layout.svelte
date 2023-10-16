@@ -24,7 +24,7 @@
 
         --indent: 1.5rem;
     }
-    
+
     :global(.material-symbols-outlined) {
         user-select: none;
     }
