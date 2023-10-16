@@ -44,7 +44,7 @@
 
 <style lang="scss">
     div {
-        width: 25rem;
+        width: 22rem;
 
         border-left: 1px var(--border-color) solid;
         overflow-y: auto;
@@ -52,6 +52,6 @@
     }
 
     * {
-        --item-name-size: 5rem;
+        --item-label-size: 8rem;
     }
 </style>

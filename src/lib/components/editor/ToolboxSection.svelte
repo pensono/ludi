@@ -29,6 +29,7 @@
     .expand-symbol {
         float: right;
         margin-right: .5rem;
+        transition: rotate 200ms;
     }
 
     .expanded.expand-symbol {
@@ -38,5 +39,7 @@
     div {
         display: flex;
         flex-direction: column;
+        margin-left: var(--indent);
+        margin-right: var(--indent);
     }
 </style>

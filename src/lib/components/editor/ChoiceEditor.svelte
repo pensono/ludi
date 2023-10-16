@@ -9,12 +9,12 @@
 
 <style lang="scss">
     div {
-        color: var(--detail-text);
+        color: var(--detail-text-color);
         margin: 0;
     }
 
     label {
         display: inline-block;
-        width: var(--item-name-size)
+        width: var(--item-label-size)
     }
 </style>

@@ -15,18 +15,37 @@
 
 {#each values as value, i}
     <div>
-        <Input bind:value kind="string" />
+        <Input bind:value kind="string" class="input"/>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <span on:click={() => remove(i)} class="material-symbols-outlined">delete</span>
+        <span on:click={() => remove(i)} class="material-symbols-outlined">close</span>
     </div>
 {/each}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div on:click={addItem}>+ Add</div>
+<div class="detail" on:click={addItem}>+ Add</div>
 
 <style lang="scss">
     div {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+
+        margin-left: var(--indent);
+    }
+
+    :global(.input) {
+        flex-grow: 1;
+    }
+
+    span {
+        font-size: 16px;
+        vertical-align: bottom;
+        padding: var(--input-padding);
+        color: var(--detail-text-color);
+    }
+
+    .detail {
+        font-size: var(--detail-text-size);
+        color: var(--detail-text-color);
+        cursor: pointer;
     }
 </style>

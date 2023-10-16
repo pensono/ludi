@@ -13,14 +13,16 @@
 </script>
 
 {#if kind === 'string'}
-    <input bind:value type='text' />
+    <input class={$$props.class} bind:value type='text' />
 {:else if kind === 'number'}
-    <input on:input={onInputNumber} value={value} type='number' />
+    <input class={$$props.class} on:input={onInputNumber} value={value} type='number' />
 {/if}
 
 <style>
     input {
-        width: 16ch;
+        padding: var(--input-padding);
+        min-height: var(--input-height);
+        max-height: var(--input-height);
         border: 1px solid transparent;
         border-radius: 4px;
         font-family: var(--mono-font);
@@ -38,6 +40,5 @@
 
     input[type="number"] {
         appearance: textfield;
-        text-align: right;
     }
 </style>

@@ -3,7 +3,7 @@
     export let value: string;
 </script>
 
-<select bind:value={value}>
+<select class={$$props.class} bind:value={value}>
     {#each options as option}
         <option value={option}>{option}</option>
     {/each}
@@ -11,15 +11,20 @@
 
 <style>
     select {
-        width: 20ch;
+        padding: var(--input-padding);
+        height: calc(var(--input-height) + var(--input-padding) * 2 + 2px);
         border: 1px solid transparent;
         border-radius: 4px;
-        color: var(--detail-text);
+        background: none;
+        color: var(--detail-text-color);
+        appearance: none;
+        line-height: normal;
     }
 
     select:hover {
         border: 1px solid var(--border-color);
         transition: border 100ms;
+        appearance:auto;
     }
 
     select:focus {

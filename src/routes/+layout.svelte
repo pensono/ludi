@@ -14,9 +14,15 @@
 
         --border-color: #ccc;
         --hover-color: #eee;
-        --detail-text: #666;
+        --detail-text-color: #666;
+        --detail-text-size: .8rem;
 
         --mono-font: monospace;
+
+        --input-padding: 4px;
+        --input-height: 1rem;
+
+        --indent: 1.5rem;
     }
     
     :global(.material-symbols-outlined) {
