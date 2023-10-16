@@ -29,6 +29,9 @@
     .wrapper {
         margin-top: .5rem;
         margin-bottom: .5rem;
+
+        margin-left: var(--indent);
+        margin-right: var(--indent);
     }
 
     .title {

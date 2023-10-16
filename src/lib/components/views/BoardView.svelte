@@ -21,8 +21,6 @@
     $: lastMoveElement = element.children.find(c => c.attributes["useFor"] == "LastMove");
     $: lastMoveCoordinates = state.history.length > 0 ? state.history[state.history.length - 1].move.args : null;
 
-    $: console.log(width)
-
     function clickSquare(x: number, y: number) {
         // TODO Sad to do so much eval here, will need to fix this eventually
         const moveExpression = element.attributes["clickSquare"];

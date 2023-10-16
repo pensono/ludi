@@ -39,7 +39,5 @@
     div {
         display: flex;
         flex-direction: column;
-        margin-left: var(--indent);
-        margin-right: var(--indent);
     }
 </style>

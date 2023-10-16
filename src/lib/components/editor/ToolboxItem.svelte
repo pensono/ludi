@@ -18,8 +18,10 @@
     }
 
     div.wrap {
-        margin: 0;
-        padding: .5rem;
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+        padding-left: var(--indent);
+        padding-right: var(--indent);
     }
 
     div.detail {

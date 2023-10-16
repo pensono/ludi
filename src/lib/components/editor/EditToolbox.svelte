@@ -19,8 +19,8 @@
     </ToolboxSection>
 
     <ToolboxSection title="Actions">
-        {#each Object.entries(game.actions) as [key, value]}
-            <p>{key}: {JSON.stringify(value)}</p>
+        {#each Object.entries(game.actions) as [name, action]}
+            <ToolboxItem class="move" title="{action.name}({action.parameters.map(p => p.name).join(", ")}) for {action.player}" />
         {/each}
     </ToolboxSection>
     
