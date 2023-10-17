@@ -14,6 +14,7 @@
 
         --border-color: #ccc;
         --hover-color: #eee;
+        --active-color: rgb(207, 222, 243);
         --detail-text-color: #666;
         --detail-text-size: .8rem;
 
