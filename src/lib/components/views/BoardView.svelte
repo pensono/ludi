@@ -14,7 +14,7 @@
     export let element: View;
     
     $: variable = element.attributes["show"];
-    $: data = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
+    $: grid = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
     $: width = typeOfVariable(game, variable)?.parameters.width;
     $: height = typeOfVariable(game, variable)?.parameters.height;
 
@@ -74,7 +74,7 @@
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each [...Array(height).keys()].reverse() as y}
         {#each [...Array(width).keys()] as x}
-            {@const element=elementFor(indexOrUndefined(data, x, y))}
+            {@const element=elementFor(indexOrUndefined(grid, x, y))}
             <!-- Map back into 1-index coordinates -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)}>
