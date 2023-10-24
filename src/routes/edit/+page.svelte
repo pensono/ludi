@@ -33,7 +33,7 @@
 
 <div class="wrapper">
     <nav>
-        <h1>Ludi</h1>
+        <h1><a href="/">Ludi</a></h1>
         <select bind:value={selectedGame} on:change={loadGame}>
             <option value="/games/number-guessing.ludi">Number Guessing</option>
             <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
@@ -74,6 +74,11 @@
 
     h1 {
         margin: .5rem;
+    }
+    
+    h1 a {
+        text-decoration: none;
+        color: #000;
     }
     
     nav {

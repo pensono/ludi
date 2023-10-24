@@ -19,7 +19,7 @@
 
 <div class="wrapper">
     <nav>
-        <h1>Ludi</h1>
+        <h1><a href="/">Ludi</a></h1>
     </nav>
     
     <main>
@@ -46,6 +46,11 @@
 
     h1 {
         margin: .5rem;
+    }
+    
+    h1 a {
+        text-decoration: none;
+        color: #000;
     }
     
     nav {
