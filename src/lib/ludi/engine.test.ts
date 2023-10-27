@@ -8,8 +8,8 @@ describe('starting position', () => {
         const game = fromFile(`./static/games/number-guessing.ludi`);
         const initialState = initialize(game, 0);
 
-        expect(initialState).toEqual({
-            ply: 0,
+        expect(initialState.position).toEqual({
+            winner: null,
             variables: {
                 "HiddenNumber": 8,
                 "RemainingGuesses": 3,
@@ -67,29 +67,30 @@ describe('enumerate moves', () => {
         let moves = [...enumerateMoves(game, state)];
 
         expect(moves).toEqual([
-            {actionName: "Play", args: [1, 1], player: "X"},
-            {actionName: "Play", args: [1, 2], player: "X"},
-            {actionName: "Play", args: [1, 3], player: "X"},
-            {actionName: "Play", args: [2, 1], player: "X"},
-            {actionName: "Play", args: [2, 2], player: "X"},
-            {actionName: "Play", args: [2, 3], player: "X"},
-            {actionName: "Play", args: [3, 1], player: "X"},
-            {actionName: "Play", args: [3, 2], player: "X"},
-            {actionName: "Play", args: [3, 3], player: "X"},
+            {actionName: "PlacePiece", args: [1, 1], player: "X"},
+            {actionName: "PlacePiece", args: [1, 2], player: "X"},
+            {actionName: "PlacePiece", args: [1, 3], player: "X"},
+            {actionName: "PlacePiece", args: [2, 1], player: "X"},
+            {actionName: "PlacePiece", args: [2, 2], player: "X"},
+            {actionName: "PlacePiece", args: [2, 3], player: "X"},
+            {actionName: "PlacePiece", args: [3, 1], player: "X"},
+            {actionName: "PlacePiece", args: [3, 2], player: "X"},
+            {actionName: "PlacePiece", args: [3, 3], player: "X"},
         ]);
 
-        state = nextPosition(game, state, moves[0]);
-        moves = [...enumerateMoves(game, state)];
+        state = nextPosition(game, state, moves[0])!;
+        expect(state).not.toBeNull()
 
+        moves = [...enumerateMoves(game, state)];
         expect(moves).toEqual([
-            {actionName: "Play", args: [1, 2], player: "O"},
-            {actionName: "Play", args: [1, 3], player: "O"},
-            {actionName: "Play", args: [2, 1], player: "O"},
-            {actionName: "Play", args: [2, 2], player: "O"},
-            {actionName: "Play", args: [2, 3], player: "O"},
-            {actionName: "Play", args: [3, 1], player: "O"},
-            {actionName: "Play", args: [3, 2], player: "O"},
-            {actionName: "Play", args: [3, 3], player: "O"},
+            {actionName: "PlacePiece", args: [1, 2], player: "O"},
+            {actionName: "PlacePiece", args: [1, 3], player: "O"},
+            {actionName: "PlacePiece", args: [2, 1], player: "O"},
+            {actionName: "PlacePiece", args: [2, 2], player: "O"},
+            {actionName: "PlacePiece", args: [2, 3], player: "O"},
+            {actionName: "PlacePiece", args: [3, 1], player: "O"},
+            {actionName: "PlacePiece", args: [3, 2], player: "O"},
+            {actionName: "PlacePiece", args: [3, 3], player: "O"},
         ]);
     });
     
@@ -204,8 +205,9 @@ describe('win conditions', () => {
         `);
         let state = initialize(game);
 
-        state = nextPosition(game, state, {actionName: "Action", args: [3], player: "A"});
+        state = nextPosition(game, state, {actionName: "Action", args: [3], player: "A"})!;
+        expect(state).not.toBeNull();
 
-        expect(state.winner).toEqual("A");
+        expect(state.position.winner).toEqual("A");
     });
 });

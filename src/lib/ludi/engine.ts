@@ -56,6 +56,12 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
 
         // This extra transformation is sad but fine for now
         const locals = action.parameters.reduce((intermediate, parameter, i) => ({...intermediate, [parameter.name]: args[i]}), {});
+
+        if (!action.player) {
+            // This should work, but I'm not sure of the semantics yet
+            throw new Error(`Action ${JSON.stringify(action)} has no player`);
+        }
+
         const player = evaluateExpression(game, state, locals, action.player);
         const move = {
             actionName: action.name!,
