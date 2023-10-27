@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enumerateMoves, advance, rewindTo, typeOfVariable } from "$lib/ludi/engine";
+	import { enumerateMoves, nextPosition, rewindTo, typeOfVariable } from "$lib/ludi/engine";
 	import type { Game, GamePosition, GameState, Move } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
@@ -10,7 +10,7 @@
     export let previewPosition: GamePosition | null;
 
     function advanceState(move: Move) {
-        state = advance(game, state, move);
+        state = nextPosition(game, state, move);
     }
 
     function rewindState(ply: number) {

@@ -46,12 +46,11 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
     }
 }
 
-export function runStatements(game: Game, state: GameState, statements: Statement[], locals: Record<string, any>): GameState | null {
+export function applyStatements(game: Game, state: GameState, statements: Statement[], locals: Record<string, any>): GameState | null {
     const newState = structuredClone(state)
 
     for (const statement of statements) {
         if (!checkPreconditions(game, newState, locals, statement)) {
-            console.log("Precondition failed", statement)
             return null;
         }
         runStatement(game, newState, locals, statement);
@@ -60,16 +59,31 @@ export function runStatements(game: Game, state: GameState, statements: Statemen
     return newState;
 }
 
-export function advance(game: Game, state: GameState, move: Move): GameState {
-    console.log("Making move", move);
-
-    // const newState = structuredClone(state)
+/** Returns the state which follows after playing `move`, or null if no valid state exists */
+export function nextPosition(game: Game, state: GameState, move: Move): GameState | null {
+    if (state.position.winner) {
+        return null;
+    }
+    
+    if (move.player !== state.position.variables['CurrentPlayer']) {
+        return null;
+    }
 
     const action = game.actions[move.actionName];
     const args = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: move.args[i]}), {});
 
+    if (!action.conditions.every(condition => evaluateExpression(game, state, args, condition.expression))) {
+        return null;
+    }
+
+    const newState = structuredClone(state);
+
     for (const statement of action.statements) {
-        runStatement(game, state, args, statement);
+        if (!checkPreconditions(game, newState, args, statement)) {
+            return null;
+        }
+
+        runStatement(game, newState, args, statement);
     }
 
     for (const winConditionName in game.winConditions) {
@@ -77,23 +91,23 @@ export function advance(game: Game, state: GameState, move: Move): GameState {
         
         // Just enumerate all players for now
         for (const player of enumerateType(game.constants["Player"])){
-            if (winCondition.conditions.every(c => evaluateExpression(game, state, {...args, player}, c.expression))) {
-                state.position.winner = player;
+            if (winCondition.conditions.every(c => evaluateExpression(game, newState, {...args, player}, c.expression))) {
+                newState.position.winner = player;
                 break;
             }
         }
     }
 
-    state.ply++;
-    state.history.push({
+    newState.ply++;
+    newState.history.push({
         move: move,
-        position: structuredClone(state.position),
-        ply: state.ply,
+        position: structuredClone(newState.position),
+        ply: newState.ply,
     });
 
-    state.transientVariables = {};
+    newState.transientVariables = {};
 
-    return state;
+    return newState;
 }
 
 export function rewindTo(state: GameState, ply: number) {
@@ -138,7 +152,7 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
             args,
         };
 
-        if (!checkMove(game, state, {}, move)) {
+        if (!nextPosition(game, state, move)) {
             return;
         }
 
@@ -151,33 +165,6 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
     for (const value of enumerateType(parameter.type)) {
         yield* enumerateActionMoves(game, state, action, newRemainingParameters, [...args, value]);
     }
-}
-
-function checkMove(game: Game, state: GameState, locals: Record<string, any>, move: Move): boolean {
-    if (state.position.winner) {
-        return false;
-    }
-
-    const action = game.actions[move.actionName];
-    const args = action.parameters.reduce((intermediate, parameter, i) => ({...intermediate, [parameter.name]: move.args[i]}), {});
-    if (!action.conditions.every(condition => evaluateExpression(game, state, args, condition.expression))) {
-        return false;
-    }
-
-    if (move.player !== state.position.variables['CurrentPlayer']) {
-        return false;
-    }
-
-    // Duplication with runAction :(
-    var dummyState = structuredClone(state)
-    for (const statement of action.statements) {
-        if (!checkPreconditions(game, dummyState, args, statement)) {
-            return false;
-        }
-        runStatement(game, dummyState, args, statement);
-    }
-
-    return true;
 }
 
 export function enumerateType(type: LudiType) {
@@ -213,7 +200,7 @@ function checkPreconditions(game: Game, state: GameState, locals: Record<string,
                 player: evaluateExpression(game, state, locals, statement.player),
                 args: statement.arguments.map(arg => evaluateExpression(game, state, locals, arg))
             };
-            return checkMove(game, state, {}, move);
+            return nextPosition(game, state, move) != null;
         default:
             throw new Error(`Unknown statement ${JSON.stringify(statement)}`);
     }
@@ -251,7 +238,7 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
                     player: evaluateExpression(game, state, locals, statement.player),
                     args: statement.arguments.map(arg => evaluateExpression(game, state, locals, arg))
                 };
-                advance(game, state, move);
+                nextPosition(game, state, move);
                 return;
             }
             case 'change': {

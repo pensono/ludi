@@ -1,6 +1,6 @@
 import { fromString } from './parser';
 import { describe, it, expect } from 'vitest';
-import { enumerateMoves, enumerateType, initialize, advance } from './engine';
+import { enumerateMoves, enumerateType, initialize, nextPosition } from './engine';
 import { fromFile } from './parse-from-file';
 
 describe('starting position', () => {
@@ -78,7 +78,7 @@ describe('enumerate moves', () => {
             {actionName: "Play", args: [3, 3], player: "X"},
         ]);
 
-        state = advance(game, state, moves[0]);
+        state = nextPosition(game, state, moves[0]);
         moves = [...enumerateMoves(game, state)];
 
         expect(moves).toEqual([
@@ -204,7 +204,7 @@ describe('win conditions', () => {
         `);
         let state = initialize(game);
 
-        state = advance(game, state, {actionName: "Action", args: [3], player: "A"});
+        state = nextPosition(game, state, {actionName: "Action", args: [3], player: "A"});
 
         expect(state.winner).toEqual("A");
     });

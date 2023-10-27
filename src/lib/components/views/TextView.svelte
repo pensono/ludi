@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { advance } from "$lib/ludi/engine";
+    import { nextPosition } from "$lib/ludi/engine";
     import type { Game, GameState, View } from "$lib/ludi/types";
     import vars from "../util/vars";
     import { parseParts, toSize } from "./utils";
@@ -17,7 +17,7 @@
 
         // TODO use some sort of disabled state instead?
         if (move != null) {
-            state = advance(game, state, move);
+            state = nextPosition(game, state, move);
         }
     }
 
