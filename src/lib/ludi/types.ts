@@ -1,3 +1,5 @@
+
+
 export interface Game {
     setup?: Action;
     playerType: LudiType;
@@ -8,6 +10,28 @@ export interface Game {
     views: View[];
 }
 
+export interface GameState {
+    position: GamePosition;
+    history: HistoryItem[];
+    transientVariables: Record<string, any>;
+    ply: number;
+}
+
+export interface GamePosition {
+    variables: Record<string, any>;
+    winner: string | null;
+}
+
+export interface HistoryItem {
+    move: Move;
+
+    /** The position that was obtained after playing `move` */
+    position: GamePosition;
+
+    /** The ply that was obtained after playing `move` */
+    ply: number;
+}
+
 export interface Action {
     name?: string;
     player: Expression;
@@ -16,7 +40,7 @@ export interface Action {
     parameters: Parameter[];
 }
 
-export type Statement = ChangeStatement | SetStatement | IncreaseStatement | DecreaseStatement;
+export type Statement = ChangeStatement | SetStatement | IncreaseStatement | DecreaseStatement | PlayStatement | RememberStatement;
 
 export interface ChangeStatement {
     type: "change";
@@ -30,6 +54,12 @@ export interface SetStatement {
     value: Expression;
 }
 
+export interface RememberStatement {
+    type: "remember";
+    variable: string;
+    value: Expression;
+}
+
 export interface IncreaseStatement {
     type: "increase";
     variable: LValue;
@@ -40,6 +70,13 @@ export interface DecreaseStatement {
     type: "decrease";
     variable: LValue;
     amount: Expression;
+}
+
+export interface PlayStatement {
+    type: "play";
+    actionName: string;
+    player: Expression;
+    arguments: Expression[];
 }
 
 export interface Condition {
@@ -108,25 +145,4 @@ export interface View {
     name: string;
     attributes: Record<string, string>;
     children: View[];
-}
-
-export interface GameState {
-    position: GamePosition;
-    history: HistoryItem[];
-    ply: number;
-}
-
-export interface GamePosition {
-    variables: Record<string, any>;
-    winner: string | null;
-}
-
-export interface HistoryItem {
-    move: Move;
-
-    /** The position that was obtained after playing `move` */
-    position: GamePosition;
-
-    /** The ply that was obtained after playing `move` */
-    ply: number;
 }

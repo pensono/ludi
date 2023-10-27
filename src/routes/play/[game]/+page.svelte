@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
-	import { advance, initialize } from "$lib/ludi/engine";
+	import { runStatements as runStatements_, initialize } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Game, GameState, Move } from '$lib/ludi/types';
+	import type { Game, GameState, Move, Statement } from '$lib/ludi/types';
 
     export let data;
 
@@ -20,8 +20,13 @@
         state = initialize(game);
     }
     
-    function playMove(move: Move) {
-        state = advance(game!, state!, move);
+    function runStatements(statements: Statement[], locals: Record<string, any>) {
+        const newState = runStatements_(game!, state!, statements, locals);
+
+        // Legal move
+        if (newState) {
+            state = newState;
+        }
     }
     
     function reset() {
@@ -36,7 +41,7 @@
     
     <main>
         {#if game && state}
-            <GameScreen bind:game={game} bind:state={state} playMove={playMove} reset={reset} />
+            <GameScreen bind:game={game} bind:state={state} runStatements={runStatements} reset={reset} />
         {/if}
     </main>
 </div>

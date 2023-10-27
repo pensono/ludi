@@ -33,13 +33,15 @@ setup:
 
 action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for CurrentPlayer:
     when Board[x1, y1] = CurrentPlayer
+    change Board[x1, y1] to Empty
+    change Board[x2, y2] to CurrentPlayer
     change CurrentPlayer to NextInSequence(CurrentPlayer, Player)
 
 loss NoMorePieces() for player:
     when Count(Board, player) = 0
 
 view:
-    <board show="Board" clickSquare="Play(x, y) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">
+    <board show="Board" drag="remember x as xStart remember y as yStart" drop="play MoveNormal(xStart, yStart, x, y) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">
         <image useFor="Black" file="black-token.svg" align="Center" size="90%" />
         <image useFor="White" file="white-token.svg" align="Center" size="90%" />
     </board>

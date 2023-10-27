@@ -8,7 +8,7 @@
     $: file = element.attributes["file"];
 </script>
 
-<img src="/assets/{file}" style={positionStyle}>
+<img src="/assets/{file}" style={positionStyle} draggable="false">
 
 <style lang="scss">
 </style>

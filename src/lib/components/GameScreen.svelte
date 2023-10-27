@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { Game, GamePosition, GameState, Move } from "$lib/ludi/types";
+	import type { Game, GamePosition, GameState, Move, Statement } from "$lib/ludi/types";
 	import ViewElement from "$lib/components/views/ViewElement.svelte";
 	import { slide, fade } from "svelte/transition";
 
     export let game: Game;
     export let state: GameState;
     export let previewPosition: GamePosition | null = null;
-    export let playMove: (move: Move) => void;
+    export let runStatements: (statementList: Statement[], locals: Record<string, any>) => void;
     export let reset: () => void;
 
     $: position = previewPosition ?? state.position;
@@ -14,7 +14,7 @@
 
 <div class="container">
     {#each game.views as view}
-        <ViewElement bind:game bind:state bind:previewPosition bind:element={view} playMove={playMove} />
+        <ViewElement bind:game bind:state bind:previewPosition bind:element={view} runStatements={runStatements} />
     {/each}
 
     <!-- 

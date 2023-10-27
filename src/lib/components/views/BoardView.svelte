@@ -1,16 +1,17 @@
 <script lang="ts">
-	import { parseAndEvaluateMove, typeOfVariable } from "$lib/ludi/engine";
-	import type { Game, GamePosition, GameState, Move, View } from "$lib/ludi/types";
+	import { typeOfVariable } from "$lib/ludi/engine";
+	import type { Game, GamePosition, GameState, Move, Statement, View } from "$lib/ludi/types";
     import MiddleLines from "../svg/MiddleLines.svelte";
     import InnerLines from "../svg/InnerLines.svelte";
 	import vars from "../util/vars";
 	import ViewElement from "./ViewElement.svelte";
+	import { parseStatementList } from "$lib/ludi/parser";
 
     export let positionStyle: string;
     export let game: Game;
     export let state: GameState;
     export let previewPosition: GamePosition | null;
-    export let playMove: (move: Move) => void;
+    export let runStatements: (statementList: Statement[], locals: Record<string, any>) => void;
     export let element: View;
     
     $: variable = element.attributes["show"];
@@ -23,13 +24,35 @@
 
     function clickSquare(x: number, y: number) {
         // TODO Sad to do so much eval here, will need to fix this eventually
-        const moveExpression = element.attributes["clickSquare"];
-        const move = parseAndEvaluateMove(game, state, moveExpression, { x, y });
-
-        // TODO use some sort of disabled state instead?
-        if (move != null) {
-            playMove(move);
+        const statementsString = element.attributes["clickSquare"];
+        if (!statementsString) {
+            return;
         }
+
+        const statements = parseStatementList(statementsString);
+        runStatements(statements, { x, y });
+    }
+
+    function pointerDown(x: number, y: number) {
+        // TODO Sad to do so much eval here, will need to fix this eventually
+        const statementsString = element.attributes["drag"];
+        if (!statementsString) {
+            return;
+        }
+
+        const statements = parseStatementList(statementsString);
+        runStatements(statements, { x, y });
+    }
+    
+    function pointerUp(x: number, y: number) {
+        // TODO Sad to do so much eval here, will need to fix this eventually
+        const statementsString = element.attributes["drop"];
+        if (!statementsString) {
+            return;
+        }
+
+        const statements = parseStatementList(statementsString);
+        runStatements(statements, { x, y });
     }
 
     function elementFor(value: any): View | undefined {
@@ -77,13 +100,13 @@
             {@const element=elementFor(indexOrUndefined(grid, x, y))}
             <!-- Map back into 1-index coordinates -->
             <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)}>
+            <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)} on:pointerdown={() => pointerDown(x+1, y+1)} on:pointerup={() => pointerUp(x+1, y+1)}>
                 {#if element}
-                    <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} playMove={playMove} />
+                    <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
                 {/if}
                 <!-- Super hacky -->
                 {#if lastMoveElement && lastMoveCoordinates && `[${x+1},${y+1}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
-                    <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} playMove={playMove} />
+                    <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
                 {/if}
             </div>
         {/each}
@@ -98,6 +121,7 @@
         grid-template-rows: repeat(var(--height), 1fr);
 
         height: 100%;
+        user-select: none;
     }
 
     div.cell {

@@ -36,7 +36,7 @@
 
     convex.mutation(api.live_games.join, { liveGameId: data.gameId, participantId: localParticipantId });
 
-    async function playMove(move: Move) {
+    async function runStatements(move: Move) {
         if (!localParticipant || move.player !== localParticipant.role) {
             return;
         }
@@ -56,7 +56,7 @@
     
     <main>
         {#if game && state}
-            <GameScreen bind:game={game} state={state} playMove={playMove} reset={reset} />
+            <GameScreen bind:game={game} state={state} runStatements={runStatements} reset={reset} />
         {/if}
         
         {#if participants}

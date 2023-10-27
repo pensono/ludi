@@ -1,6 +1,6 @@
 // @ts-nocheck -- Antlr makes typechecking in this file a shitshow
 import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
-import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, StateVariable, View } from './types'
+import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, RememberStatement, StateVariable, View } from './types'
 import LudiLexer from './gen/LudiLexer';
 // import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiParser from './gen/LudiParser';
@@ -49,7 +49,7 @@ export interface MoveExpression {
     player: Expression;
 }
 
-export function parseMoveExpression(input: string): MoveExpression {
+export function parseStatementList(input: string): Statement[] {
     const inputStream = new CharStream(input);
     const lexer = new LudiLexer(inputStream);
     const tokens = new CommonTokenStream(lexer);
@@ -58,17 +58,13 @@ export function parseMoveExpression(input: string): MoveExpression {
     const errorListener = new CollectingErrorListener();
     parser.addErrorListener(errorListener);
 
-    var moveExpression = parser.moveExpression();
+    var statementList = parser.statementList();
 
     if (errorListener.errors.length > 0) {
         throw new Error(errorListener.errors.join('\n'));
     }
     
-    return {
-        actionName: moveExpression.actionName.getText(),
-        arguments: moveExpression.arguments.map((a: any) => new ExpressionVisitor().visit(a)),
-        player: new ExpressionVisitor().visit(moveExpression.playerExpression)
-    };
+    return statementList.statements.map(s => new StatementVisitor().visit(s));
 }
 
 function handleGame(ctx: any): Game {
@@ -217,6 +213,23 @@ class StatementVisitor extends LudiVisitor {
             type: 'decrease',
             variable: new LValueVisitor().visit(ctx.lvalue()),
             amount: new ExpressionVisitor().visit(ctx.expression())
+        }
+    }
+
+    visitPlayStatement(ctx: any): PlayStatement {
+        return {
+            type: 'play',
+            actionName: ctx.actionName.getText(),
+            player: new ExpressionVisitor().visit(ctx.playerExpression),
+            arguments: ctx.arguments.map((a: any) => new ExpressionVisitor().visit(a))
+        }
+    }
+
+    visitRememberStatement(ctx: any): RememberStatement {
+        return {
+            type: 'remember',
+            variable: ctx.variableName.getText(),
+            value: new ExpressionVisitor().visit(ctx.expression())
         }
     }
 }

@@ -34,7 +34,9 @@ setup: 'setup' ':' statement+;
 // players: 'players' ':' identifier (',' identifier)*; // Need something for unnamed players too, variable number of players etc
 
 kind: 'kind' name=identifier 'a' type=typeExpression;
-    
+
+statementList: statements+=statement (','? statements+=statement*);
+
 // Must name state_definition to avoid conflicts with antlr internals
 state_definition: 'state' name=identifier 'a' type=typeExpression;
 
@@ -45,11 +47,11 @@ statement
     | 'set' lvalue 'to' expression # SetStatement
     | 'increase' lvalue 'by' expression # IncreaseStatement
     | 'decrease' lvalue 'by' expression # DecreaseStatement
-    | 'if' expression 'then' statement+ 'end' # IfStatement;
+    | 'if' expression 'then' statement+ 'end' # IfStatement
+    | 'play' actionName=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' 'for' playerExpression=expression # PlayStatement
+    | 'remember' expression 'as' variableName=identifier # RememberStatement;
 
 when: 'when' expression;
-
-moveExpression: actionName=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' 'for' playerExpression=expression;
 
 parameterList: (names+=identifier 'a' types+=typeExpression (',' names+=identifier 'a' types+=typeExpression)*)?;
 

@@ -60,6 +60,12 @@ export default class LudiVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by LudiParser#statementList.
+	visitStatementList(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by LudiParser#state_definition.
 	visitState_definition(ctx) {
 	  return this.visitChildren(ctx);
@@ -102,14 +108,20 @@ export default class LudiVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
-	// Visit a parse tree produced by LudiParser#when.
-	visitWhen(ctx) {
+	// Visit a parse tree produced by LudiParser#PlayStatement.
+	visitPlayStatement(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
 
-	// Visit a parse tree produced by LudiParser#moveExpression.
-	visitMoveExpression(ctx) {
+	// Visit a parse tree produced by LudiParser#RememberStatement.
+	visitRememberStatement(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by LudiParser#when.
+	visitWhen(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
