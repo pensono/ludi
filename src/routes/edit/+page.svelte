@@ -3,7 +3,7 @@
 	import GameScreen from "$lib/components/GameScreen.svelte";
 	import EditToolbox from "$lib/components/editor/EditToolbox.svelte";
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
-	import { initialize, applyStatements as runStatements_ } from "$lib/ludi/engine";
+	import { initialize, execute as runStatements_ } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
 	import type { Game, GamePosition, GameState, Move, Statement } from '$lib/ludi/types';
 

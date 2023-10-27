@@ -46,7 +46,39 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
     }
 }
 
-export function applyStatements(game: Game, state: GameState, statements: Statement[], locals: Record<string, any>): GameState | null {
+function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
+    // There are many faster ways to do this, but this is easy to implement and fast enough for most games
+    // Using something like SMT is ideal
+    if (remainingParameters.length === 0) {
+        if (action.name === undefined) {
+            new Error(`Action ${JSON.stringify(action)} has no name`);
+        }
+
+        // This extra transformation is sad but fine for now
+        const locals = action.parameters.reduce((intermediate, parameter, i) => ({...intermediate, [parameter.name]: args[i]}), {});
+        const player = evaluateExpression(game, state, locals, action.player);
+        const move = {
+            actionName: action.name!,
+            player,
+            args,
+        };
+
+        if (!nextPosition(game, state, move)) {
+            return;
+        }
+
+        yield move;
+        return;
+    }
+
+    const parameter = remainingParameters[0];
+    const newRemainingParameters = remainingParameters.slice(1);
+    for (const value of enumerateType(parameter.type)) {
+        yield* enumerateActionMoves(game, state, action, newRemainingParameters, [...args, value]);
+    }
+}
+
+export function execute(game: Game, state: GameState, statements: Statement[], locals: Record<string, any>): GameState | null {
     const newState = structuredClone(state)
 
     for (const statement of statements) {
@@ -122,63 +154,6 @@ export function rewindTo(state: GameState, ply: number) {
         history: state.history.slice(0, ply+1),
     }
 }
-
-export function nextPlayer(game: Game, currentPlayers: string[]): string | null {
-    const allPlayers = enumerateType(game.constants["Player"]);
-    const nextPlayer = allPlayers.filter(p => !currentPlayers.includes(p))[0];
-
-    return nextPlayer;
-}
-
-export function unfilledPlayers(game: Game, currentPlayers: string[]): string[] {
-    const allPlayers = enumerateType(game.constants["Player"]);
-    return allPlayers.filter(p => !currentPlayers.includes(p));
-}
-
-function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
-    // There are many faster ways to do this, but this is easy to implement and fast enough for most games
-    // Using something like SMT is ideal
-    if (remainingParameters.length === 0) {
-        if (action.name === undefined) {
-            new Error(`Action ${JSON.stringify(action)} has no name`);
-        }
-
-        // This extra transformation is sad but fine for now
-        const locals = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: args[i]}), {});
-        const player = evaluateExpression(game, state, locals, action.player);
-        const move = {
-            actionName: action.name!,
-            player,
-            args,
-        };
-
-        if (!nextPosition(game, state, move)) {
-            return;
-        }
-
-        yield move;
-        return;
-    }
-
-    const parameter = remainingParameters[0];
-    const newRemainingParameters = remainingParameters.slice(1);
-    for (const value of enumerateType(parameter.type)) {
-        yield* enumerateActionMoves(game, state, action, newRemainingParameters, [...args, value]);
-    }
-}
-
-export function enumerateType(type: LudiType) {
-    return builtins.types[type.name].enumerate(type);
-}
-
-export function defaultValue(type: LudiType) {
-    return builtins.types[type.name].defaultValue(type);
-}
-
-export function typeOfVariable(game: Game, variableName: string) {
-    return game.stateVariables.find(s => s.name === variableName)?.type;
-}
-
 function checkPreconditions(game: Game, state: GameState, locals: Record<string, any>, statement: Statement): boolean {
     // OPTIMIZE cache this somehow?
     switch (statement.type) {
@@ -204,29 +179,6 @@ function checkPreconditions(game: Game, state: GameState, locals: Record<string,
         default:
             throw new Error(`Unknown statement ${JSON.stringify(statement)}`);
     }
-}
-
-interface Reference {
-    getValue: () => any;
-    setValue: (value: any) => void;
-}
-
-function toReference(game: Game, state: GameState, locals: Record<string, any>, lvalue: LValue): Reference {
-    // subtract one to one-index everything
-    let indexValues = lvalue.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
-
-    let target = state.position.variables;
-    let index: any = lvalue.name;
-
-    for (const indexValue of indexValues) {
-        target = target[index];
-        index = indexValue;
-    }
-
-    return {
-        getValue: () => target[index],
-        setValue: (value: any) => target[index] = value,
-    };
 }
 
 function runStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
@@ -304,6 +256,29 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
     }
 }
 
+interface Reference {
+    getValue: () => any;
+    setValue: (value: any) => void;
+}
+
+function toReference(game: Game, state: GameState, locals: Record<string, any>, lvalue: LValue): Reference {
+    // subtract one to one-index everything
+    let indexValues = lvalue.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
+
+    let target = state.position.variables;
+    let index: any = lvalue.name;
+
+    for (const indexValue of indexValues) {
+        target = target[index];
+        index = indexValue;
+    }
+
+    return {
+        getValue: () => target[index],
+        setValue: (value: any) => target[index] = value,
+    };
+}
+
 export function evaluateExpression(game: Game, state: GameState, locals: Record<string, any>, expression: Expression) : any {
     switch (expression.type) {
         case 'constant':
@@ -348,4 +323,29 @@ export function evaluateExpression(game: Game, state: GameState, locals: Record<
         default:
             throw new Error(`Unknown expression ${JSON.stringify(expression)}`);
     }
+}
+
+export function nextPlayer(game: Game, currentPlayers: string[]): string | null {
+    const allPlayers = enumerateType(game.constants["Player"]);
+    const nextPlayer = allPlayers.filter(p => !currentPlayers.includes(p))[0];
+
+    return nextPlayer;
+}
+
+export function unfilledPlayers(game: Game, currentPlayers: string[]): string[] {
+    const allPlayers = enumerateType(game.constants["Player"]);
+    return allPlayers.filter(p => !currentPlayers.includes(p));
+}
+
+
+export function enumerateType(type: LudiType) {
+    return builtins.types[type.name].enumerate(type);
+}
+
+export function defaultValue(type: LudiType) {
+    return builtins.types[type.name].defaultValue(type);
+}
+
+export function typeOfVariable(game: Game, variableName: string) {
+    return game.stateVariables.find(s => s.name === variableName)?.type;
 }

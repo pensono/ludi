@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
-	import { applyStatements as runStatements_, initialize } from "$lib/ludi/engine";
+	import { execute as runStatements_, initialize } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
 	import type { Game, GameState, Move, Statement } from '$lib/ludi/types';
 
