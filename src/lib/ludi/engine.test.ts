@@ -1,6 +1,6 @@
-import { fromString } from './parser';
+import { fromString, parseStatementList } from './parser';
 import { describe, it, expect } from 'vitest';
-import { enumerateMoves, enumerateType, initialize, nextPosition } from './engine';
+import { enumerateMoves, enumerateType, execute, initialize, nextPosition } from './engine';
 import { fromFile } from './parse-from-file';
 
 describe('starting position', () => {
@@ -185,6 +185,28 @@ describe('players', () => {
     it(`tic-tac-toe.ludi`, () => {
         const game = fromFile(`./static/games/tic-tac-toe.ludi`);
         expect(enumerateType(game.playerType)).toEqual(['X', 'O']);
+    });
+})
+
+describe('execute', () => {
+    it(`tic-tac-toe.ludi`, () => {
+        const game = fromFile(`./static/games/tic-tac-toe.ludi`);
+        const state = initialize(game);
+
+        const statements = parseStatementList("play PlacePiece(x, y) for X")
+        const actual = execute(game, state, statements, {x: 1, y: 1})!;
+
+        expect(actual.position).toEqual({
+            winner: null,
+            variables: {
+                "Board": [
+                    ["X", "Empty", "Empty"],
+                    ["Empty", "Empty", "Empty"],
+                    ["Empty", "Empty", "Empty"],
+                ],
+                "CurrentPlayer": "O",
+            }
+        });
     });
 })
 

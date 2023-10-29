@@ -21,7 +21,7 @@ export function initialize(game: Game, seed?: number) : GameState {
 
     if (game.setup) {
         for (const statement of game.setup.statements) {
-            runStatement(game, state, {}, statement);
+            applyStatement(game, state, {}, statement);
         }
     }
 
@@ -91,14 +91,14 @@ export function execute(game: Game, state: GameState, statements: Statement[], l
         if (!checkPreconditions(game, newState, locals, statement)) {
             return null;
         }
-        runStatement(game, newState, locals, statement);
+        applyStatement(game, newState, locals, statement);
     }
 
     return newState;
 }
 
 /** Returns the state which follows after playing `move`, or null if no valid state exists */
-export function nextPosition(game: Game, state: GameState, move: Move): GameState | null {
+export function nextPosition(game: Game, state: GameState, move: Move, {inPlace} = {inPlace: false}): GameState | null {
     if (state.position.winner) {
         return null;
     }
@@ -114,14 +114,16 @@ export function nextPosition(game: Game, state: GameState, move: Move): GameStat
         return null;
     }
 
-    const newState = structuredClone(state);
+    if (!inPlace) {
+        state = structuredClone(state);
+    }
 
     for (const statement of action.statements) {
-        if (!checkPreconditions(game, newState, args, statement)) {
+        if (!checkPreconditions(game, state, args, statement)) {
             return null;
         }
 
-        runStatement(game, newState, args, statement);
+        applyStatement(game, state, args, statement);
     }
 
     for (const winConditionName in game.winConditions) {
@@ -129,23 +131,23 @@ export function nextPosition(game: Game, state: GameState, move: Move): GameStat
         
         // Just enumerate all players for now
         for (const player of enumerateType(game.constants["Player"])){
-            if (winCondition.conditions.every(c => evaluateExpression(game, newState, {...args, player}, c.expression))) {
-                newState.position.winner = player;
+            if (winCondition.conditions.every(c => evaluateExpression(game, state, {...args, player}, c.expression))) {
+                state.position.winner = player;
                 break;
             }
         }
     }
 
-    newState.ply++;
-    newState.history.push({
+    state.ply++;
+    state.history.push({
         move: move,
-        position: structuredClone(newState.position),
-        ply: newState.ply,
+        position: structuredClone(state.position),
+        ply: state.ply,
     });
 
-    newState.transientVariables = {};
+    state.transientVariables = {};
 
-    return newState;
+    return state;
 }
 
 export function rewindTo(state: GameState, ply: number) {
@@ -187,7 +189,7 @@ function checkPreconditions(game: Game, state: GameState, locals: Record<string,
     }
 }
 
-function runStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
+function applyStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
     try {
         switch (statement.type) {
             case 'play': {
@@ -196,7 +198,7 @@ function runStatement(game: Game, state: GameState, locals: Record<string, any>,
                     player: evaluateExpression(game, state, locals, statement.player),
                     args: statement.arguments.map(arg => evaluateExpression(game, state, locals, arg))
                 };
-                nextPosition(game, state, move);
+                nextPosition(game, state, move, {inPlace: true});
                 return;
             }
             case 'change': {
