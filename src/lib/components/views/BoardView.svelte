@@ -3,9 +3,10 @@
 	import type { Game, GamePosition, GameState, Move, Statement, View } from "$lib/ludi/types";
     import MiddleLines from "../svg/MiddleLines.svelte";
     import InnerLines from "../svg/InnerLines.svelte";
-	import vars from "../util/vars";
+	import vars, { variableStyle } from "../util/vars";
 	import ViewElement from "./ViewElement.svelte";
 	import { parseStatementList } from "$lib/ludi/parser";
+	import { gridCoordinates } from "./utils";
 
     export let positionStyle: string;
     export let game: Game;
@@ -13,6 +14,10 @@
     export let previewPosition: GamePosition | null;
     export let runStatements: (statementList: Statement[], locals: Record<string, any>) => void;
     export let element: View;
+
+    let mousePositionStyle = '';
+    let draggingCoordinates: null | {x: number, y: number} = null;
+    let board: HTMLDivElement;
     
     $: variable = element.attributes["show"];
     $: grid = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
@@ -33,26 +38,17 @@
         runStatements(statements, { x, y });
     }
 
-    function pointerDown(x: number, y: number) {
-        // TODO Sad to do so much eval here, will need to fix this eventually
-        const statementsString = element.attributes["drag"];
-        if (!statementsString) {
-            return;
-        }
-
-        const statements = parseStatementList(statementsString);
-        runStatements(statements, { x, y });
+    function mouseMove(event: MouseEvent) {
+        const {x, y} = board.getBoundingClientRect();
+        mousePositionStyle = `--mouse-x: ${event.clientX - x}px; --mouse-y: ${event.clientY - y}px;`;
     }
-    
-    function pointerUp(x: number, y: number) {
-        // TODO Sad to do so much eval here, will need to fix this eventually
-        const statementsString = element.attributes["drop"];
-        if (!statementsString) {
-            return;
-        }
 
-        const statements = parseStatementList(statementsString);
-        runStatements(statements, { x, y });
+    function pointerDown(x: number, y: number) {
+        draggingCoordinates = {x, y};
+    }
+
+    function pointerUp() {
+        draggingCoordinates = null;
     }
 
     function elementFor(value: any): View | undefined {
@@ -77,16 +73,16 @@
     }
 
     function indexOrUndefined(array: any[][], x: number, y: number) : any | undefined {
-        const row = array[x];
+        const row = array[x-1];
         if (!row) {
             return undefined;
         }
 
-        return row[y];
+        return row[y-1];
     }
 </script>
 
-<div class="wrapper" style={positionStyle} use:vars={{ width, height }}>
+<div class="wrapper" style={positionStyle + mousePositionStyle} style:--width={width} style:--height={height} on:mousemove|capture={mouseMove} bind:this={board}>
     {#if element.attributes["middleLines"]}
         <MiddleLines color={element.attributes["middleLines"]} width={width} height={height} />
     {/if}
@@ -95,21 +91,23 @@
     {/if}
 
     <!-- Reverse y so that the origin is in the bottom left -->
-    {#each [...Array(height).keys()].reverse() as y}
-        {#each [...Array(width).keys()] as x}
-            {@const element=elementFor(indexOrUndefined(grid, x, y))}
-            <!-- Map back into 1-index coordinates -->
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x+1, y+1)} on:pointerdown={() => pointerDown(x+1, y+1)} on:pointerup={() => pointerUp(x+1, y+1)}>
-                {#if element}
-                    <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
-                {/if}
-                <!-- Super hacky -->
-                {#if lastMoveElement && lastMoveCoordinates && `[${x+1},${y+1}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
-                    <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
-                {/if}
+    {#each gridCoordinates(width, height) as {x, y}}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x, y)} style:grid-row={height-y+1} style:grid-column={x} />
+    {/each}
+    
+    {#each gridCoordinates(width, height) as {x, y}}
+        {@const element=elementFor(indexOrUndefined(grid, x, y))}
+        {#if element}
+            {@const dragging= x === draggingCoordinates?.x && y === draggingCoordinates?.y}
+            <div class="piece" on:pointerdown={() => pointerDown(x, y)} on:pointerup={pointerUp} class:dragging  style:--x={x} style:--y={y}>
+                <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
             </div>
-        {/each}
+        {/if}
+        <!-- Super hacky -->
+        {#if lastMoveElement && lastMoveCoordinates && `[${x},${y}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
+            <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
+        {/if}
     {/each}
 </div>
 
@@ -126,5 +124,17 @@
 
     div.cell {
         container-type: size;
+    }
+
+    div.piece {
+        container-type: size;
+        grid-column: calc(var(--x));
+        grid-row: calc(var(--height) - var(--y) + 1);
+    }
+
+    div.piece.dragging {
+        z-index: 100;
+        transform: translate(calc(var(--mouse-x) + 50% - (var(--x) * 100%)), calc(var(--mouse-y) + 50% - ((var(--height) - var(--y) + 1) * 100%)));
+        cursor: grabbing;
     }
 </style>

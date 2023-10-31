@@ -19,3 +19,11 @@ export function toSize(size: string | undefined) {
 
     return "1rem";
 }
+
+export function *gridCoordinates(width: number, height: number): IterableIterator<{x: number, y: number}> {
+    for (let y = height; y >= 1; y--) {
+        for (let x = 1; x <= width; x++) {
+            yield {x, y};
+        }
+    }
+}
