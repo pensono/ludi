@@ -105,7 +105,9 @@
         {/if}
         <!-- Super hacky -->
         {#if lastMoveElement && lastMoveCoordinates && `[${x},${y}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
-            <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
+            <div class="overlay" style:--x={x} style:--y={y}>
+                <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
+            </div>
         {/if}
     {/each}
 </div>
@@ -126,6 +128,12 @@
     }
 
     div.piece {
+        container-type: size;
+        grid-column: calc(var(--x));
+        grid-row: calc(var(--height) - var(--y) + 1);
+    }
+
+    div.overlay {
         container-type: size;
         grid-column: calc(var(--x));
         grid-row: calc(var(--height) - var(--y) + 1);
