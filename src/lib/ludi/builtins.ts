@@ -57,6 +57,10 @@ export const functions: Record<string, LudiFunction> = {
             const count = args[2];
             // 4th arg can be the direction, horizontal, vertical, or diagonal
 
+            if (count < 1) {
+                throw Error(`InARow count must be at least 1`)
+            }
+
             // Check horizontal
             for (let y = 0; y < haystack.length; y++) {
                 let currentCount = 0;
@@ -89,33 +93,29 @@ export const functions: Record<string, LudiFunction> = {
                 }
             }
 
-            // Check diagonal
-            for (let y = 0; y < haystack.length; y++) {
-                for (let x = 0; x < haystack[y].length; x++) {
-                    let currentCount = 0;
+            // Check \ diagonal
+            for (let y = 0; y <= haystack.length - count; y++) {
+                square:
+                for (let x = 0; x <= haystack[y].length - count; x++) {
                     for (let i = 0; i < count; i++) {
-                        if (haystack[y + i]?.[x + i] === needle) {
-                            currentCount++;
-                        } else {
-                            currentCount = 0;
-                        }
-
-                        if (currentCount >= count) {
-                            return true;
+                        if (haystack[y + i]?.[x + i] !== needle) {
+                            continue square;
                         }
                     }
-                    
+                    return true;
+                }
+            } 
+            
+            // Check / diagonal
+            for (let y = count - 1; y < haystack.length; y++) {
+                square:
+                for (let x = 0; x <= haystack[y].length - count; x++) {
                     for (let i = 0; i < count; i++) {
-                        if (haystack[y + i]?.[x - i] === needle) {
-                            currentCount++;
-                        } else {
-                            currentCount = 0;
-                        }
-
-                        if (currentCount >= count) {
-                            return true;
+                        if (haystack[y - i]?.[x + i] !== needle) {
+                            continue square;
                         }
                     }
+                    return true;
                 }
             }
 

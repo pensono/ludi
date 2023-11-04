@@ -18,4 +18,14 @@ describe('InARow', () => {
         const actual = inARow.invoke(null!, [1, [[0, 0, 1], [0, 1, 0], [1, 0, 0]], 3]);
         expect(actual).toBe(true);
     });
+
+    it('bug 1', () => {
+        const board =  [
+            ["Empty","Black","Empty","Empty"],
+            ["Black","Empty","Empty","Empty"],
+            ["Empty","Empty","Empty","Black"],
+          ];
+        const actual = inARow.invoke(null!, ["Black", board, 3]);
+        expect(actual).toBe(false);
+    })
 });
