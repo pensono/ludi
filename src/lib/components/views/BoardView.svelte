@@ -46,7 +46,27 @@
         draggingCoordinates = {x, y};
     }
 
-    function pointerUp() {
+    function pointerUp(x: number, y: number) {
+        if (!draggingCoordinates) {
+            // Event is not the result of a drag, probably a random click
+            return;
+        }
+
+        // TODO Sad to do so much eval here, will need to fix this eventually
+        const statementsString = element.attributes["drag"];
+        if (!statementsString) {
+            return;
+        }
+        
+        const statements = parseStatementList(statementsString);
+        const parameters = { 
+            xStart: draggingCoordinates.x,
+            yStart: draggingCoordinates.y,
+            xEnd: x,
+            yEnd: y 
+        };
+        runStatements(statements, parameters);
+
         draggingCoordinates = null;
     }
 
@@ -92,14 +112,14 @@
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each gridCoordinates(width, height) as {x, y}}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x, y)} style:grid-row={height-y+1} style:grid-column={x} />
+        <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x, y)} style:grid-row={height-y+1} style:grid-column={x} on:pointerup={() => pointerUp(x, y)} />
     {/each}
     
     {#each gridCoordinates(width, height) as {x, y}}
         {@const element=elementFor(indexOrUndefined(grid, x, y))}
         {#if element}
             {@const dragging= x === draggingCoordinates?.x && y === draggingCoordinates?.y}
-            <div class="piece" on:pointerdown={() => pointerDown(x, y)} on:pointerup={pointerUp} class:dragging  style:--x={x} style:--y={y}>
+            <div class="piece" on:pointerdown={() => pointerDown(x, y)} class:dragging  style:--x={x} style:--y={y}>
                 <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
             </div>
         {/if}
@@ -143,5 +163,8 @@
         z-index: 100;
         transform: translate(calc(var(--mouse-x) + 50% - (var(--x) * 100%)), calc(var(--mouse-y) + 50% - ((var(--height) - var(--y) + 1) * 100%)));
         cursor: grabbing;
+
+        /* Needed so the pointerup event goes to the square rather than the piece */
+        pointer-events: none;
     }
 </style>

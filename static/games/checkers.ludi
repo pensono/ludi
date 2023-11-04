@@ -41,7 +41,7 @@ loss NoMorePieces() for player:
     when Count(Board, player) = 0
 
 view:
-    <board show="Board" drag="remember x as xStart remember y as yStart" drop="play MoveNormal(xStart, yStart, x, y) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">
+    <board show="Board" drag="play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">
         <image useFor="Black" file="black-token.svg" align="Center" size="90%" />
         <image useFor="White" file="white-token.svg" align="Center" size="90%" />
     </board>
