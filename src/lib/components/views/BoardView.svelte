@@ -3,7 +3,6 @@
 	import type { Game, GamePosition, GameState, Move, Statement, View } from "$lib/ludi/types";
     import MiddleLines from "../svg/MiddleLines.svelte";
     import InnerLines from "../svg/InnerLines.svelte";
-	import vars, { variableStyle } from "../util/vars";
 	import ViewElement from "./ViewElement.svelte";
 	import { parseStatementList } from "$lib/ludi/parser";
 	import { gridCoordinates } from "./utils";
