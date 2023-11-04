@@ -44,4 +44,5 @@ view:
     <board show="Board" drag="play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">
         <image useFor="Black" file="black-token.svg" align="Center" size="90%" />
         <image useFor="White" file="white-token.svg" align="Center" size="90%" />
+        <image useFor="DropTarget" file="square-highlight.svg" align="Center" size="100%" />
     </board>

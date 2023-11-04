@@ -16,6 +16,7 @@
 
     let mousePositionStyle = '';
     let draggingCoordinates: null | {x: number, y: number} = null;
+    let hoverCoordinates: null | {x: number, y: number} = null;
     let board: HTMLDivElement;
     
     $: variable = element.attributes["show"];
@@ -25,6 +26,8 @@
 
     $: lastMoveElement = element.children.find(c => c.attributes["useFor"] == "LastMove");
     $: lastMoveCoordinates = state.history.length > 0 ? state.history[state.history.length - 1].move.args : null;
+
+    $: dropTargetElement = element.children.find(c => c.attributes["useFor"] == "DropTarget");
 
     function clickSquare(x: number, y: number) {
         // TODO Sad to do so much eval here, will need to fix this eventually
@@ -70,6 +73,14 @@
         draggingCoordinates = null;
     }
 
+    function squareEnter(x: number, y: number) {
+        hoverCoordinates = {x, y};
+    }
+
+    function squareLeave(x: number, y: number) {
+        // hoverCoordinates = null;
+    }
+
     function elementFor(value: any): View | undefined {
         return element.children.find(c => c.attributes["useFor"] == value);
     }
@@ -112,20 +123,27 @@
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each gridCoordinates(width, height) as {x, y}}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x, y)} style:grid-row={height-y+1} style:grid-column={x} on:pointerup={() => pointerUp(x, y)} />
+        <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x, y)} style:grid-row={height-y+1} style:grid-column={x} on:pointerup={() => pointerUp(x, y)} on:pointerenter={() => squareEnter(x, y)} on:pointerleave={() => squareLeave(x, y)} />
     {/each}
+    
+    {#if dropTargetElement && hoverCoordinates}
+        <div class="charm" style:--x={hoverCoordinates.x} style:--y={hoverCoordinates.y}>
+            <ViewElement bind:game bind:state previewPosition={previewPosition} element={dropTargetElement} runStatements={runStatements} />
+        </div>
+    {/if}
     
     {#each gridCoordinates(width, height) as {x, y}}
         {@const element=elementFor(indexOrUndefined(grid, x, y))}
         {#if element}
-            {@const dragging= x === draggingCoordinates?.x && y === draggingCoordinates?.y}
+            {@const dragging = x === draggingCoordinates?.x && y === draggingCoordinates?.y}
             <div class="piece" on:pointerdown={() => pointerDown(x, y)} class:dragging  style:--x={x} style:--y={y}>
                 <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
             </div>
         {/if}
+
         <!-- Super hacky -->
         {#if lastMoveElement && lastMoveCoordinates && `[${x},${y}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
-            <div class="overlay" style:--x={x} style:--y={y}>
+            <div class="charm" style:--x={x} style:--y={y}>
                 <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
             </div>
         {/if}
@@ -153,18 +171,20 @@
         grid-row: calc(var(--height) - var(--y) + 1);
     }
 
-    div.overlay {
+    div.charm {
         container-type: size;
         grid-column: calc(var(--x));
         grid-row: calc(var(--height) - var(--y) + 1);
+        pointer-events: none;
+        z-index: 50;
     }
 
     div.piece.dragging {
-        z-index: 100;
+        // z-index: 100;
         transform: translate(calc(var(--mouse-x) + 50% - (var(--x) * 100%)), calc(var(--mouse-y) + 50% - ((var(--height) - var(--y) + 1) * 100%)));
         cursor: grabbing;
 
         /* Needed so the pointerup event goes to the square rather than the piece */
-        pointer-events: none;
+        pointer-events: none
     }
 </style>
