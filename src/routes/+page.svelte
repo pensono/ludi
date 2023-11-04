@@ -1,4 +1,8 @@
-<h1>Ludi</h1>
+<script>
+	import RootLayout from "$lib/components/layout/RootLayout.svelte";
+</script>
 
-<a href="/play">Play</a>
-<a href="/edit">Edit</a>
+<RootLayout>
+    <a href="/play">Play</a>
+    <a href="/edit">Edit</a>
+</RootLayout>

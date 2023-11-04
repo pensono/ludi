@@ -10,6 +10,7 @@
 	import { getParticipantId } from '$lib/participantId.js';
 	import Share from '$lib/components/util/Share.svelte';
 	import { unfilledPlayers } from '$lib/ludi/engine.js';
+    import RootLayout from '$lib/components/layout/RootLayout.svelte';
 
     export let data;
 
@@ -49,12 +50,8 @@
     }
 </script>
 
-<div class="wrapper">
-    <nav>
-        <h1><a href="/">Ludi</a></h1>
-    </nav>
-    
-    <main>
+<RootLayout>
+    <mian>
         {#if game && state}
             <GameScreen bind:game={game} state={state} runStatements={runStatements} reset={reset} />
         {/if}
@@ -69,20 +66,10 @@
                 {/if}
             </div>
         {/if}
-    </main>
-</div>
+    </mian>
+</RootLayout>
 
 <style lang="scss">
-    .wrapper {
-        display: flex;
-        flex-direction: column;
-
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
 
     main {
         flex-grow: 1;
@@ -90,44 +77,11 @@
         display: flex;
         flex-direction: row;
     }
-    
-    h1 {
-        margin: .5rem;
-    }
-
-    h1 a {
-        text-decoration: none;
-        color: #000;
-    }
-
-    h2 {
-        font-size: 1.5rem;
-        margin: .5rem;
-    }
-    
-    nav {
-        display: flex;
-        justify-content: space-between;
-        padding: .2rem;
-        border-bottom: 1px solid #ccc;
-    }
-    
-
     .players {
         display: flex;
         flex-direction: column;
 
         min-width: 200px;
-
-        ul {
-            margin: 0;
-            padding: .5rem;
-        }
-
-        li {
-            list-style: none;
-            font-size: 1rem;
-        }
     }
 
     @media only screen and (max-width: 1200px) {

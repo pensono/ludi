@@ -4,6 +4,7 @@
 	import { execute as runStatements_, initialize } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
 	import type { Game, GameState, Move, Statement } from '$lib/ludi/types';
+	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 
     export let data;
 
@@ -34,51 +35,20 @@
     }
 </script>
 
-<div class="wrapper">
-    <nav>
-        <h1><a href="/">Ludi</a> - {data.gameName}</h1>
-    </nav>
-    
+<RootLayout>
     <main>
         {#if game && state}
             <GameScreen bind:game={game} bind:state={state} runStatements={runStatements} reset={reset} />
         {/if}
     </main>
-</div>
+</RootLayout>
+
 
 <style lang="scss">
-    .wrapper {
-        display: flex;
-        flex-direction: column;
-
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
-
     main {
         flex-grow: 1;
 
         display: flex;
         flex-direction: row;
-    }
-    
-
-    h1 {
-        margin: .5rem;
-    }
-    
-    h1 a {
-        text-decoration: none;
-        color: #000;
-    }
-    
-    nav {
-        display: flex;
-        justify-content: space-between;
-        padding: .2rem;
-        border-bottom: 1px solid #ccc;
     }
 </style>

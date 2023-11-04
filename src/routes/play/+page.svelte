@@ -4,6 +4,7 @@
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import { fromString } from "$lib/ludi/parser";
 	import { api } from "$convex/_generated/api";
+	import RootLayout from "$lib/components/layout/RootLayout.svelte";
 
     async function playLive(gameName: string) {
         const convex = new ConvexClient(PUBLIC_CONVEX_URL);
@@ -17,46 +18,30 @@
     }
 </script>
 
-<div class="wrapper">
-    <nav>
-        <h1><a href="/">Ludi</a></h1>
-    </nav>
+<RootLayout>
+    <h2>Single-device</h2>
+    <ul>
+        <li><a href="/play/tic-tac-toe">Tic-tac-toe</a></li>
+        <li><a href="/play/checkers">Checkers</a></li>
+        <li><a href="/play/gomoku">Gomoku</a></li>
+    </ul>
     
-    <main>
-        <h2>Single-device</h2>
-        <ul>
-            <li><a href="/play/tic-tac-toe">Tic-tac-toe</a></li>
-            <li><a href="/play/checkers">Checkers</a></li>
-            <li><a href="/play/gomoku">Gomoku</a></li>
-        </ul>
-        
-        <h2>Multiplayer</h2>
-        <ul>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li><a href="#" on:click={() => playLive('tic-tac-toe')}>Tic-tac-toe</a></li>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li><a href="#" on:click={() => playLive('checkers')}>Checkers</a></li>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <li><a href="#" on:click={() => playLive('gomoku')}>Gomoku</a></li>
-        </ul>
-    </main>
-</div>
+    <h2>Multiplayer</h2>
+    <ul>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <li><a href="#" on:click={() => playLive('tic-tac-toe')}>Tic-tac-toe</a></li>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <li><a href="#" on:click={() => playLive('checkers')}>Checkers</a></li>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <li><a href="#" on:click={() => playLive('gomoku')}>Gomoku</a></li>
+    </ul>
+</RootLayout>
 
 <style lang="scss">
+    main {
+        flex-grow: 1;
 
-    h1 {
-        margin: .5rem;
-    }
-    
-    h1 a {
-        text-decoration: none;
-        color: #000;
-    }
-    
-    nav {
         display: flex;
-        justify-content: space-between;
-        padding: .2rem;
-        border-bottom: 1px solid #ccc;
+        flex-direction: row;
     }
 </style>
