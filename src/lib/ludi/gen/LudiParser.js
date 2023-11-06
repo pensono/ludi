@@ -4,7 +4,7 @@ import antlr4 from 'antlr4';
 import LudiListener from './LudiListener.js';
 import LudiVisitor from './LudiVisitor.js';
 
-const serializedATN = [4,1,45,393,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,
+const serializedATN = [4,1,46,393,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,
 4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,
 2,13,7,13,2,14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,
 20,7,20,2,21,7,21,1,0,5,0,46,8,0,10,0,12,0,49,9,0,1,0,1,0,1,1,1,1,1,1,1,
@@ -157,7 +157,7 @@ export default class LudiParser extends antlr4.Parser {
                              null, null, null, null, null, null, null, null, 
                              null, null, null, null, null, null, null, null, 
                              null, null, "QUOTED_STRING", "IDENTIFIER", 
-                             "NUMBER", "WS" ];
+                             "NUMBER", "WS", "COMMENT" ];
     static ruleNames = [ "game", "definition", "players", "action", "trigger", 
                          "win", "loss", "setup", "kind", "statementList", 
                          "state_definition", "view", "statement", "when", 
@@ -1611,6 +1611,7 @@ LudiParser.QUOTED_STRING = 42;
 LudiParser.IDENTIFIER = 43;
 LudiParser.NUMBER = 44;
 LudiParser.WS = 45;
+LudiParser.COMMENT = 46;
 
 LudiParser.RULE_game = 0;
 LudiParser.RULE_definition = 1;
