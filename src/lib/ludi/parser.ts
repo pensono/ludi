@@ -200,6 +200,14 @@ class StatementVisitor extends LudiVisitor {
         }
     }
 
+    visitMoveStatement = (ctx: any): MoveStatement => {
+        return {
+            type: 'move',
+            from: new LValueVisitor().visit(ctx.from),
+            to: new LValueVisitor().visit(ctx.to),
+        }
+    }
+
     visitIncreaseStatement = (ctx: any): Statement => {
         return {
             type: 'increase',

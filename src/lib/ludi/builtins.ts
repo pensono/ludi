@@ -3,6 +3,12 @@ import type { GameState, LudiFunction, LudiType } from './types';
 import { enumerateType, defaultValue } from './engine';
 
 export const functions: Record<string, LudiFunction> = {
+    '=': comparison((left, right) => left === right),
+    '<': comparison((left, right) => left < right),
+    '>': comparison((left, right) => left > right),
+    '<=': comparison((left, right) => left <= right),
+    '>=': comparison((left, right) => left >= right),
+
     'RandomNumber': {
         parameter_types: [
             'number',
@@ -122,12 +128,31 @@ export const functions: Record<string, LudiFunction> = {
             return false;
         }
     },
+    
+    'IsDiagonal': {
+        parameter_types: [
+            'Grid',
+            'number',
+            'number',
+            'number',
+            'number',
+        ],
+        return_type: 'number',
+        invoke: (state: GameState, args: any[]): any => {
+            if (state.position.variables.__seed === undefined) {
+                state.position.variables.__seed = Math.floor(Math.random() * 100000);
+            }
+            const min = args[0];
+            const max = args[1];
 
-    '=': comparison((left, right) => left === right),
-    '<': comparison((left, right) => left < right),
-    '>': comparison((left, right) => left > right),
-    '<=': comparison((left, right) => left <= right),
-    '>=': comparison((left, right) => left >= right),
+            var rng = seedrandom(state.position.variables.__seed.toString());
+            const result = Math.floor(rng() * (max - min + 1) + min);
+            
+            state.position.variables.__seed++;
+
+            return result;
+        }
+    },
 }
 
 function comparison(operator: (left: number, right: number) => boolean) {
@@ -210,4 +235,10 @@ export const types: Record<string, TypeSpecification> = {
             throw new Error(`Not implemented`);
         }
     }
+}
+
+// This is definitely not the right type for this, but I want to make a list of special values
+export enum Variables {
+    CurrentPlayer = 'CurrentPlayer',
+    Empty = 'Empty',
 }

@@ -103,7 +103,7 @@ export function nextPosition(game: Game, state: GameState, move: Move, {inPlace}
         return null;
     }
     
-    if (move.player !== state.position.variables['CurrentPlayer']) {
+    if (move.player !== state.position.variables[builtins.Variables.CurrentPlayer]) {
         return null;
     }
 
@@ -171,6 +171,11 @@ function checkPreconditions(game: Game, state: GameState, locals: Record<string,
             return variable.getValue() !== evaluateExpression(game, state, locals, statement.value);
         case 'set':
             return true;
+        case 'move':
+            // OPTIMIZE Double evaluation with regular running of the action.
+            const from = toReference(game, state, locals, statement.from);
+            const to = toReference(game, state, locals, statement.from);
+            return from.getValue() !== builtins.Variables.Empty && to.getValue() === builtins.Variables.Empty;
         case 'remember':
             return true;
         case 'increase':
@@ -211,6 +216,14 @@ function applyStatement(game: Game, state: GameState, locals: Record<string, any
                 }
 
                 variable.setValue(newValue);
+                return;
+            }
+            case 'move': {
+                const from = toReference(game, state, locals, statement.from);
+                const to = toReference(game, state, locals, statement.to);
+
+                to.setValue(from.getValue());
+                from.setValue(builtins.Variables.Empty);
                 return;
             }
             case 'set': {

@@ -1,5 +1,5 @@
 players Black or White
-kind Square a Empty or Black or White
+kind Square a Empty or Black or White or BlackKing or WhiteKing
 
 state Board a Grid<Square, 8, 8>
 
@@ -31,14 +31,23 @@ setup:
     set Board[6, 8] to White
     set Board[8, 8] to White
 
-action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for CurrentPlayer:
-    when Board[x1, y1] = CurrentPlayer
-    change Board[x1, y1] to Empty
-    change Board[x2, y2] to CurrentPlayer
-    change CurrentPlayer to NextInSequence(CurrentPlayer, Player)
+action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for Black:
+    when Board[x1, y1] = Black
+    move Board[x1, y1] to Board[x2, y2] by (-1, -1) or (1, -1)
+    change CurrentPlayer to White
+    
+action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for White:
+    when Board[x1, y1] = White
+    move Board[x1, y1] to Board[x2, y2] by (-1, 1) or (1, 1)
+    change CurrentPlayer to Black
+
+trigger Crowning(x a Number<1, 8>):
+    when Board[x, y] = Black
+    change Board[x, y] to BlackKing
 
 loss NoMorePieces() for player:
     when Count(Board, player) = 0
+
 
 view:
     <board show="Board" drag="play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">

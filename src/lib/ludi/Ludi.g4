@@ -45,6 +45,7 @@ view: 'view' ':' elements+=viewElement*;
 statement
     : 'change' lvalue 'to' expression # ChangeStatement
     | 'set' lvalue 'to' expression # SetStatement
+    | 'move' from=lvalue 'to' to=lvalue # MoveStatement
     | 'increase' lvalue 'by' expression # IncreaseStatement
     | 'decrease' lvalue 'by' expression # DecreaseStatement
     | 'if' expression 'then' statement+ 'end' # IfStatement

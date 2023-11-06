@@ -40,7 +40,7 @@ export interface Action {
     parameters: Parameter[];
 }
 
-export type Statement = ChangeStatement | SetStatement | IncreaseStatement | DecreaseStatement | PlayStatement | RememberStatement;
+export type Statement = ChangeStatement | SetStatement | MoveStatement | IncreaseStatement | DecreaseStatement | PlayStatement | RememberStatement;
 
 export interface ChangeStatement {
     type: "change";
@@ -52,6 +52,12 @@ export interface SetStatement {
     type: "set";
     variable: LValue;
     value: Expression;
+}
+
+export interface MoveStatement {
+    type: "move";
+    from: LValue;
+    to: LValue;
 }
 
 export interface RememberStatement {

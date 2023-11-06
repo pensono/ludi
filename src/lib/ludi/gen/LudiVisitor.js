@@ -90,6 +90,12 @@ export default class LudiVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by LudiParser#MoveStatement.
+	visitMoveStatement(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by LudiParser#IncreaseStatement.
 	visitIncreaseStatement(ctx) {
 	  return this.visitChildren(ctx);
