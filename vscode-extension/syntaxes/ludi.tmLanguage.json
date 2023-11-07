@@ -1,0 +1,129 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Ludi",
+	"patterns": [
+		{
+			"patterns": [{
+				"name": "keyword.control.ludi",
+				"match": "\\b(players|for|trigger|setup|kind|a|state|change|to|set|increase|by|decrease|if|then|end|play|remember|as|when)\\b"
+			}]
+		},
+		{
+			"patterns": [{
+				"match": "\\b(not|or|and)\\b",
+				"name": "keyword.operator.ludi"
+			}]
+		},
+		{
+			"match": "\\b[0-9]+\\b",
+			"name": "constant.numeric.ludi"
+		},
+		{
+			"match": "//.*$",
+			"name": "comment.line.double-slash.ludi"
+		},
+		{
+			"match": "\\bEmpty\\b",
+			"name": "support.constant.ludi"
+		},
+		{
+			"match": "\\b(action|loss|win)\\s+(\\w+)",
+			"captures": {
+				"1": {
+					"name": "storage.type.ludi"
+				},
+				"2": {
+					"name": "entity.name.class.ludi"
+				}
+			}
+		},
+		{
+			"match": "\\b(setup)\\b",
+			"name": "storage.type.ludi"
+		},
+		{
+			"match": "\\b(InARow|NextInSequence)\\b",
+			"name": "support.function.ludi"
+		},
+		{
+			"begin": "\\b(view)\\s*(:)",
+			"end": "(?=\\b(players|trigger|setup|kind|state|win|loss|setup|action)\\b)",
+			"patterns": [
+				{
+					"include": "#view-element-start"
+				},
+				{
+					"include": "#view-element-end"
+				},
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#view-property"
+				}
+			],
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.control.ludi"
+				},
+				"2": {
+					"name": "punctuation.section.block.begin.ludi"
+				}
+			},
+			"name": "meta.view.ludi"
+		}
+	],
+	"repository": {
+		"view-element-start": {
+			"match": "(<)\\s*(\\w+)",
+			"captures": {
+				"1": {
+					"name": "punctuation.definition.tag.begin.ludi"
+				},
+				"2": {
+					"name": "entity.name.tag.ludi"
+				}
+			}
+		},
+		"view-element-end": {
+			"match": "(<\\s*\\/)\\s*(\\w+)\\s*(>)|(/\\s*>)|(>)",
+			"captures": {
+				"1": {
+					"name": "punctuation.definition.tag.begin.ludi"
+				},
+				"2": {
+					"name": "entity.name.tag.ludi"
+				},
+				"3": {
+					"name": "punctuation.definition.tag.end.ludi"
+				},
+				"4": {
+					"name": "punctuation.definition.tag.end.ludi"
+				},
+				"5": {
+					"name": "punctuation.definition.tag.end.ludi"
+				}
+			}
+		},
+		"view-property": {
+			"match": "\\b(\\w+)\\s*=",
+			"captures": {
+				"1": {
+					"name": "entity.other.attribute-name.ludi"
+				}
+			}
+		},
+		"string": {
+			"name": "string.quoted.double.ludi",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ludi",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.ludi"
+}

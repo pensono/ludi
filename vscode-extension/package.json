@@ -1,0 +1,29 @@
+{
+  "name": "ludi",
+  "displayName": "ludi",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pensono/ludi"
+  },
+  "contributes": {
+    "languages": [{
+      "id": "ludi",
+      "aliases": ["Ludi", "ludi"],
+      "extensions": [".ludi"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "ludi",
+      "scopeName": "source.ludi",
+      "path": "./syntaxes/ludi.tmLanguage.json"
+    }]
+  }
+}
