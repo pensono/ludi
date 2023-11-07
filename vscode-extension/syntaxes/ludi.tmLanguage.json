@@ -5,7 +5,7 @@
 		{
 			"patterns": [{
 				"name": "keyword.control.ludi",
-				"match": "\\b(players|for|trigger|setup|kind|a|state|change|to|set|increase|by|decrease|if|then|end|play|remember|as|when)\\b"
+				"match": "\\b(players|for|trigger|setup|kind|a|state|change|to|set|increase|move|by|decrease|if|then|end|play|remember|as|when)\\b"
 			}]
 		},
 		{
