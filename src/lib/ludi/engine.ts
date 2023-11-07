@@ -174,9 +174,21 @@ function checkPreconditions(game: Game, state: GameState, locals: Record<string,
         case 'move':
             // OPTIMIZE Double evaluation with regular running of the action.
             const from = toReference(game, state, locals, statement.from);
-            const to = toReference(game, state, locals, statement.from);
+            const to = toReference(game, state, locals, statement.to);
 
-            return from.getValue() !== builtins.Variables.Empty && to.getValue() === builtins.Variables.Empty;
+            if (statement.movements) {
+                // TODO multi-dimensional
+                const delta = {
+                    x: to.indexes[0] - from.indexes[0],
+                    y: to.indexes[1] - from.indexes[1]
+                }
+
+                if (statement.movements.every(m => m.x != delta.x || m.y != delta.y)) {
+                    return false;
+                }
+            }
+
+            return from.getValue() != builtins.Variables.Empty && to.getValue() == builtins.Variables.Empty;
         case 'remember':
             return true;
         case 'increase':
@@ -281,6 +293,7 @@ function applyStatement(game: Game, state: GameState, locals: Record<string, any
 interface Reference {
     getValue: () => any;
     setValue: (value: any) => void;
+    indexes: number[]
 }
 
 function toReference(game: Game, state: GameState, locals: Record<string, any>, lvalue: LValue): Reference {
@@ -298,6 +311,7 @@ function toReference(game: Game, state: GameState, locals: Record<string, any>, 
     return {
         getValue: () => target[index],
         setValue: (value: any) => target[index] = value,
+        indexes: indexValues
     };
 }
 
