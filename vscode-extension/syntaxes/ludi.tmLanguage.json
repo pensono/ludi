@@ -15,7 +15,7 @@
 			}]
 		},
 		{
-			"match": "\\b[0-9]+\\b",
+			"match": "(^\\w|\\w$|\\W\\w|\\w\\W|-)?[0-9]+\\b",
 			"name": "constant.numeric.ludi"
 		},
 		{

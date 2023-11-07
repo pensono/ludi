@@ -5,7 +5,7 @@ state Board a Grid<Square, 8, 8>
 
 setup:
     set CurrentPlayer to Black
-    set Board[1, 1] to Black
+    set Board[1, 1] to BlackKing
     set Board[3, 1] to Black
     set Board[5, 1] to Black
     set Board[7, 1] to Black
@@ -18,7 +18,7 @@ setup:
     set Board[5, 3] to Black
     set Board[7, 3] to Black
 
-    set Board[2, 6] to White
+    set Board[2, 6] to WhiteKing
     set Board[4, 6] to White
     set Board[6, 6] to White
     set Board[8, 6] to White
@@ -33,24 +33,31 @@ setup:
 
 action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for Black:
     when Board[x1, y1] = Black
-    move Board[x1, y1] to Board[x2, y2] by (-1, -1) or (1, -1)
+    move Board[x1, y1] to Board[x2, y2] by [-1, -1] or [1, -1]
     change CurrentPlayer to White
     
 action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for White:
     when Board[x1, y1] = White
-    move Board[x1, y1] to Board[x2, y2] by (-1, 1) or (1, 1)
+    move Board[x1, y1] to Board[x2, y2] by [-1, 1] or [1, 1]
     change CurrentPlayer to Black
 
 trigger Crowning(x a Number<1, 8>):
-    when Board[x, y] = Black
-    change Board[x, y] to BlackKing
+    when Board[x, 8] = Black
+    change Board[x, 8] to BlackKing
+    
+trigger Crowning(x a Number<1, 8>):
+    when Board[x, 1] = White
+    change Board[x, 1] to WhiteKing
 
 loss NoMorePieces() for player:
     when Count(Board, player) = 0
-
 
 view:
     <board show="Board" drag="play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">
         <image useFor="Black" file="black-token.svg" align="Center" size="90%" />
         <image useFor="White" file="white-token.svg" align="Center" size="90%" />
+        <image useFor="BlackKing" file="black-token.svg" align="Center" size="90%" />
+        <image useFor="BlackKing" file="crown.svg" align="Center" size="60%" />
+        <image useFor="WhiteKing" file="white-token.svg" align="Center" size="90%" />
+        <image useFor="WhiteKing" file="crown.svg" align="Center" size="60%" />
     </board>

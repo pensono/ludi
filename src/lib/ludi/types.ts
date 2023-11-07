@@ -58,6 +58,9 @@ export interface MoveStatement {
     type: "move";
     from: LValue;
     to: LValue;
+
+    // Null if any movements are possible
+    movements: {x:number, y:number}[] | null;
 }
 
 export interface RememberStatement {

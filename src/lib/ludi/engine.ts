@@ -175,6 +175,7 @@ function checkPreconditions(game: Game, state: GameState, locals: Record<string,
             // OPTIMIZE Double evaluation with regular running of the action.
             const from = toReference(game, state, locals, statement.from);
             const to = toReference(game, state, locals, statement.from);
+
             return from.getValue() !== builtins.Variables.Empty && to.getValue() === builtins.Variables.Empty;
         case 'remember':
             return true;

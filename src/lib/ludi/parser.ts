@@ -205,6 +205,13 @@ class StatementVisitor extends LudiVisitor {
             type: 'move',
             from: new LValueVisitor().visit(ctx.from),
             to: new LValueVisitor().visit(ctx.to),
+            movements: ctx.movements.map(m => 
+                ({
+                    x: parseInt(m.number()[0]?.getText()) || undefined,
+                    y: parseInt(m.number()[1]?.getText()) || undefined,
+                    z: parseInt(m.number()[2]?.getText()) || undefined,
+                })
+            )
         }
     }
 

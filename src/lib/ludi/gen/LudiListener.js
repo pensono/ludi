@@ -311,6 +311,15 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by LudiParser#coordinate.
+	enterCoordinate(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#coordinate.
+	exitCoordinate(ctx) {
+	}
+
+
 	// Enter a parse tree produced by LudiParser#LeafView.
 	enterLeafView(ctx) {
 	}

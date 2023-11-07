@@ -45,7 +45,7 @@ view: 'view' ':' elements+=viewElement*;
 statement
     : 'change' lvalue 'to' expression # ChangeStatement
     | 'set' lvalue 'to' expression # SetStatement
-    | 'move' from=lvalue 'to' to=lvalue # MoveStatement
+    | 'move' from=lvalue 'to' to=lvalue ('by' movements+=coordinate ('or' movements+=coordinate)*)? # MoveStatement
     | 'increase' lvalue 'by' expression # IncreaseStatement
     | 'decrease' lvalue 'by' expression # DecreaseStatement
     | 'if' expression 'then' statement+ 'end' # IfStatement
@@ -84,6 +84,8 @@ typeExpression
     // | '{' name=identifier type=identifier '}'  // Record
     | name=identifier '<' (arguments+=expression (',' arguments+=expression)*)? '>' # ParameterizedTypeExpression; // Somehow the args must be constants
 
+coordinate: '[' number (',' number)* ']';
+
 viewElement
     : '<' name=identifier attributes+=viewAttribute* '/' '>' # LeafView
     | '<' name=identifier attributes+=viewAttribute* '>' childViews+=viewElement* '<' '/' name2=identifier '>' # StemView;
@@ -102,7 +104,7 @@ IDENTIFIER
     : [A-Za-z] [A-Za-z0-9]*
     | [A-Za-z0-9]+ [A-Za-z] [A-Za-z0-9]*;
 
-NUMBER: [0-9]+; // No floats! Discrete games ftw! (for now)
+NUMBER: '-'? [0-9]+; // No floats! Discrete games ftw! (for now)
 
 WS: [ \t\r\n]+ -> channel(HIDDEN);
 

@@ -70,8 +70,8 @@
         draggingCoordinates = null;
     }
 
-    function elementFor(value: any): View | undefined {
-        return element.children.find(c => c.attributes["useFor"] == value);
+    function elementsFor(value: any): View[] {
+        return element.children.filter(c => c.attributes["useFor"] == value);
     }
 
     function styleCell(x: number, y: number) {
@@ -116,13 +116,12 @@
     {/each}
     
     {#each gridCoordinates(width, height) as {x, y}}
-        {@const element=elementFor(indexOrUndefined(grid, x, y))}
-        {#if element}
+        {#each elementsFor(indexOrUndefined(grid, x, y)) as element}
             {@const dragging= x === draggingCoordinates?.x && y === draggingCoordinates?.y}
             <div class="piece" on:pointerdown={() => pointerDown(x, y)} class:dragging  style:--x={x} style:--y={y}>
                 <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
             </div>
-        {/if}
+        {/each}
         <!-- Super hacky -->
         {#if lastMoveElement && lastMoveCoordinates && `[${x},${y}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
             <div class="overlay" style:--x={x} style:--y={y}>
