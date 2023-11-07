@@ -16,7 +16,9 @@
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
 		"generate-parser": "cd src/lib/ludi && antlr4 -Dlanguage=JavaScript Ludi.g4 -o gen/ -visitor",
-		"generate-types-to-get-around-vite-issues": "antlr4 -Dlanguage=TypeScript src/lib/ludi/Ludi.g4 -o tmp -visitor && tsc tmp/LudiParser.ts -d --declarationDir src/lib/ludi/gen --declarationMap --emitDeclarationOnly && rm -rf tmp"
+		"generate-types-to-get-around-vite-issues": "antlr4 -Dlanguage=TypeScript src/lib/ludi/Ludi.g4 -o tmp -visitor && tsc tmp/LudiParser.ts -d --declarationDir src/lib/ludi/gen --declarationMap --emitDeclarationOnly && rm -rf tmp",
+		"vscode-extension:build": "cd vscode-extension && mkdir dist && vsce package --skip-license --out dist/ludi.vsix",
+		"vscode-extension:install": "code --install-extension vscode-extension/dist/ludi.vsix"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -25,6 +27,7 @@
 		"@types/seedrandom": "^3.0.5",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
+		"@vscode/vsce": "^2.22.0",
 		"antlr4ts": "^0.5.0-alpha.4",
 		"dts-gen": "^0.6.1",
 		"eslint": "^8.28.0",

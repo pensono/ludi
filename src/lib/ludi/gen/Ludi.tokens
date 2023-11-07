@@ -44,6 +44,7 @@ QUOTED_STRING=43
 IDENTIFIER=44
 NUMBER=45
 WS=46
+COMMENT=47
 'players'=1
 'action'=2
 '('=3

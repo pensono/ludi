@@ -105,3 +105,5 @@ IDENTIFIER
 NUMBER: [0-9]+; // No floats! Discrete games ftw! (for now)
 
 WS: [ \t\r\n]+ -> channel(HIDDEN);
+
+COMMENT: '//' ~[\r\n]* -> channel(HIDDEN);
