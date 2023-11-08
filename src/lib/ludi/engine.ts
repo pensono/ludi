@@ -39,9 +39,7 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
         return;
     }
 
-    for (const actionName in game.actions) {
-        const action = game.actions[actionName];
-
+    for (const action of game.actions) {
         yield* enumerateActionMoves(game, state, action, action.parameters, []);
     }
 }
@@ -107,7 +105,11 @@ export function nextPosition(game: Game, state: GameState, move: Move, {inPlace}
         return null;
     }
 
-    const action = game.actions[move.actionName];
+    const action = game.actions.filter(a => a.name === move.actionName && move.player == evaluateExpression(game, state, {}, a.player))[0];
+    if (!action) {
+        throw Error(`Action ${move.actionName} not found`)
+    }
+
     const args = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: move.args[i]}), {});
 
     if (!action.conditions.every(condition => evaluateExpression(game, state, args, condition.expression))) {

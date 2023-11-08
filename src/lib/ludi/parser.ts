@@ -73,7 +73,7 @@ export function parseStatementList(input: string): Statement[] {
 
 function handleGame(ctx: any): Game {
     let setup: Action | undefined = undefined;
-    let actions: Record<string, Action> = {};
+    let actions: Action[] = [];
     let winConditions: Record<string, Action> = {};
     let stateVariables: StateVariable[] = [];
     let playerType: LudiType = undefined;
@@ -91,7 +91,7 @@ function handleGame(ctx: any): Game {
             setup = handleBlock(definition.setup());
         } else if (definition.action()) {
             const action = definition.action();
-            actions[action.name.getText()] = handleBlock(action);
+            actions.push(handleBlock(action));
         } else if (definition.win()) {
             const win = definition.win();
             winConditions[win.name.getText()] = handleBlock(win);

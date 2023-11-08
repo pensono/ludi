@@ -1,4 +1,4 @@
-import { fromString, parseStatementList } from './parser';
+import { fromString, ludi, parseStatementList } from './parser';
 import { describe, it, expect } from 'vitest';
 import { enumerateMoves, enumerateType, execute, initialize, nextPosition } from './engine';
 import { fromFile } from './parse-from-file';
@@ -95,9 +95,9 @@ describe('enumerate moves', () => {
     });
     
     it(`One move`, () => {
-        const game = fromString(`
+        const game = ludi`
             action OnlyThingToDo():
-        `);
+        `;
         let state = initialize(game);
 
         let moves = [...enumerateMoves(game, state)];
@@ -106,7 +106,7 @@ describe('enumerate moves', () => {
             {actionName: "OnlyThingToDo", args: []},
         ]);
     });
-    
+
     it(`No moves`, () => {
         const game = fromString("");
         let state = initialize(game);
@@ -117,7 +117,7 @@ describe('enumerate moves', () => {
     });
 
     it(`Conditional move`, () => {
-        const game = fromString(`
+        const game = ludi`
             state Minimum a Number<1, 10>
 
             setup:
@@ -125,7 +125,7 @@ describe('enumerate moves', () => {
 
             action Action(number a Number<1, 10>):
                 when number > Minimum
-        `);
+        `;
         let state = initialize(game);
 
         let moves = [...enumerateMoves(game, state)];
@@ -205,6 +205,34 @@ describe('execute', () => {
                     ["Empty", "Empty", "Empty"],
                 ],
                 "CurrentPlayer": "O",
+            }
+        });
+    });
+
+    it(`Choose based on player`, () => {
+        const game = ludi`
+            players X or Y
+            state Result a Number<1, 3>
+
+            setup:
+                set Result to 1
+
+            action Action() for X:
+                set Result to 2
+
+            action Action() for Y:
+                set Result to 3
+        `;
+        let state = initialize(game);
+
+        const statements = parseStatementList("play Action() for X")
+        const actual = execute(game, state, statements, {})!;
+
+        expect(actual.position).toEqual({
+            winner: null,
+            variables: {
+                "Result": 2,
+                "CurrentPlayer": "X",
             }
         });
     });

@@ -22,7 +22,7 @@
     </ToolboxSection>
 
     <ToolboxSection title="Actions">
-        {#each Object.entries(game.actions) as [name, action]}
+        {#each game.actions as action}
             <ToolboxItem
                 class="move {actionDetail === action && 'detail-active'}"
                 title="{action.name}({action.parameters.map(p => p.name).join(", ")}) for {action.player}"

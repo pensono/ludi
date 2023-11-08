@@ -3,8 +3,10 @@ kind Square a Empty or Black or White or BlackKing or WhiteKing
 
 state Board a Grid<Square, 8, 8>
 
+// data BlackMoves = [-1, -1] or [1, -1]
+
 setup:
-    set CurrentPlayer to White
+    set CurrentPlayer to Black
     set Board[1, 1] to WhiteKing
     set Board[3, 1] to White
     set Board[5, 1] to White
@@ -32,13 +34,14 @@ setup:
     set Board[8, 8] to Black
 
 // Ideally called MoveNormal
-// action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for Black:
-//     when Board[x1, y1] = Black
-//     move Board[x1, y1] to Board[x2, y2] by [-1, -1] or [1, -1]
-//     change CurrentPlayer to White
+action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for Black:
+    when Board[x1, y1] = Black
+    move Board[x1, y1] to Board[x2, y2] by [-1, -1] or [1, -1]
+    change CurrentPlayer to White
     
 // Ideally called MoveNormal
 action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for White:
+    // notation (Lookup(BoardSquare)) - (Lookup(BoardSquare))
     when Board[x1, y1] = White
     move Board[x1, y1] to Board[x2, y2] by [-1, 1] or [1, 1]
     change CurrentPlayer to Black
