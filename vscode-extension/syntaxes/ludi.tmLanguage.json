@@ -10,12 +10,12 @@
 		},
 		{
 			"patterns": [{
-				"match": "\\b(not|or|and)\\b",
+				"match": "\\b(not|or|and)\\b|<|>|=|<=|>=",
 				"name": "keyword.operator.ludi"
 			}]
 		},
 		{
-			"match": "(^\\w|\\w$|\\W\\w|\\w\\W|-)?[0-9]+\\b",
+			"match": "\\b[0-9]+\\b",
 			"name": "constant.numeric.ludi"
 		},
 		{
