@@ -20,10 +20,20 @@
       "extensions": [".ludi"],
       "configuration": "./language-configuration.json"
     }],
-    "grammars": [{
-      "language": "ludi",
-      "scopeName": "source.ludi",
-      "path": "./syntaxes/ludi.tmLanguage.json"
-    }]
+    "grammars": [
+      {
+        "language": "ludi",
+        "scopeName": "source.ludi",
+        "path": "./syntaxes/ludi.tmLanguage.json"
+      },
+      {
+        "path": "./syntaxes/ts-injection.tmLanguage.json",
+        "scopeName": "source.ts.embedded.ludi",
+        "injectTo": ["source.ts"],
+        "embeddedLanguages": {
+          "meta.embedded.inline.ludi.typescript": "ludi"
+        }
+      }
+    ]
   }
 }

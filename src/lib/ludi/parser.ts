@@ -25,6 +25,10 @@ export function fromString(input: string): Game {
     return fromStream(new CharStream(input))
 }
 
+export function ludi(strings: TemplateStringsArray, ...values): Game {
+    return fromString(String.raw({ raw:strings }, values));
+}
+
 /** Internal use only */
 export function fromStream(input: CharStream): Game {
     const lexer = new LudiLexer(input);

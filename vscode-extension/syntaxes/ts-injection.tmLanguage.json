@@ -1,0 +1,16 @@
+{
+	"scopeName": "source.ts.embedded.ludi",
+	"injectionSelector": "L:source.ts -string -comment",
+	"patterns": [
+		{
+			"begin": "(?:ludi)\\s*`",
+			"end": "`",
+			"contentName": "meta.embedded.block.ludi.typescript source.ludi",
+			"patterns": [
+				{
+					"include": "source.ludi"
+				}
+			]
+		}
+	]
+}
