@@ -2,10 +2,9 @@
 	import Logo from "../Logo.svelte";
 
     export let logoColor: string = "var(--color-foreground)";
-    export let backgroundColor: string = "var(--color-background)";
 </script>
 
-<div class="wrapper" style:background-color={backgroundColor}>
+<div class="wrapper">
     <nav>
         <a href="/" class="logoWrap"><Logo color="{logoColor}" /></a>
         <div>

@@ -35,13 +35,21 @@
     }
 </script>
 
-<RootLayout backgroundColor="#fff" logoColor="#000">
+<RootLayout logoColor="#000">
     <main>
         {#if game && state}
             <GameScreen bind:game={game} bind:state={state} runStatements={runStatements} reset={reset} />
         {/if}
     </main>
 </RootLayout>
+
+<svelte:head>
+    <style>
+        html {
+            background-color: #fff !important;
+        }
+    </style>
+</svelte:head>
 
 
 <style lang="scss">

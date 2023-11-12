@@ -72,6 +72,5 @@
         flex-grow: 1;
         container: game / size;
         position: relative;
-        background-color: white;
     }
 </style>
