@@ -43,7 +43,9 @@
     }
 
     function pointerDown(x: number, y: number) {
-        draggingCoordinates = {x, y};
+        if (element.attributes["drag"]) {
+            draggingCoordinates = {x, y};
+        }
     }
 
     function pointerUp(x: number, y: number) {
@@ -117,8 +119,8 @@
     
     {#each gridCoordinates(width, height) as {x, y}}
         {#each elementsFor(indexOrUndefined(grid, x, y)) as element}
-            {@const dragging= x === draggingCoordinates?.x && y === draggingCoordinates?.y}
-            <div class="piece" on:pointerdown={() => pointerDown(x, y)} class:dragging  style:--x={x} style:--y={y}>
+            {@const dragging = x === draggingCoordinates?.x && y === draggingCoordinates?.y}
+            <div class="piece" on:pointerdown={() => pointerDown(x, y)} class:dragging style:--x={x} style:--y={y}>
                 <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
             </div>
         {/each}
