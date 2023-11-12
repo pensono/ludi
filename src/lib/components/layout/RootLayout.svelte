@@ -35,19 +35,9 @@
         height: 2rem;
         padding: 1rem;
     }
-
-    h1 {
-        margin: .5rem;
-    }
-    
-    h1 a {
-        text-decoration: none;
-        color: #000;
-    }
     
     nav {
         display: flex;
-        justify-content: space-between;
-        padding: .2rem;
+        padding-bottom: .2rem;
     }
 </style>
