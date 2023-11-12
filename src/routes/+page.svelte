@@ -61,7 +61,7 @@
 
     a {
         display: inline-block;
-        margin-top: 15rem;
+        margin-top: 10rem;
         padding: .5em;
         
         border-radius: 2em;
