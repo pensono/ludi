@@ -11,10 +11,10 @@
 <Toaster />
 
 <style lang="scss">
-    :global(body) {
+    :global(:root) {
         margin: 0;
         padding: 0;
-        font-family: sans-serif;
+        font-family: Geist;
 
         --border-color: #ccc;
         --hover-color: #eee;
@@ -28,6 +28,12 @@
         --input-height: 1rem;
 
         --indent: 1.5rem;
+        
+    
+        @font-face {
+            font-family: 'Geist';
+            src: url('/assets/fonts/GeistVariableVF.woff2');
+        }
     }
 
     :global(.material-symbols-outlined) {
