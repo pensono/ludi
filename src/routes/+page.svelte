@@ -76,7 +76,7 @@
         user-select: none;
         
         @media screen and (max-width: 1000px) {
-            margin-top: 10rem;
+            margin-top: 5rem;
             font-size: 2rem;
             max-width: 80vw;
         }
