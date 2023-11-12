@@ -21,7 +21,7 @@ export function initialize(game: Game, seed?: number) : GameState {
 
     if (game.setup) {
         for (const statement of game.setup.statements) {
-            applyStatement(game, state, {}, statement);
+            applyStatement(game, state, "initialize", {}, statement);
         }
     }
 
@@ -39,12 +39,14 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
         return;
     }
 
-    for (const action of game.actions) {
-        yield* enumerateActionMoves(game, state, action, action.parameters, []);
+    for (const role of enumerateType(game.playerType)) {
+        for (const action of game.actions) {
+            yield* enumerateActionMoves(game, state, role, action, action.parameters, []);
+        }
     }
 }
 
-function *enumerateActionMoves(game: Game, state: GameState, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
+function *enumerateActionMoves(game: Game, state: GameState, role: string, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
     // There are many faster ways to do this, but this is easy to implement and fast enough for most games
     // Using something like SMT is ideal
     if (remainingParameters.length === 0) {
@@ -67,7 +69,7 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
             args,
         };
 
-        if (!nextPosition(game, state, move)) {
+        if (!nextPosition(game, state, role, move)) {
             return;
         }
 
@@ -78,25 +80,25 @@ function *enumerateActionMoves(game: Game, state: GameState, action: Action, rem
     const parameter = remainingParameters[0];
     const newRemainingParameters = remainingParameters.slice(1);
     for (const value of enumerateType(parameter.type)) {
-        yield* enumerateActionMoves(game, state, action, newRemainingParameters, [...args, value]);
+        yield* enumerateActionMoves(game, state, role, action, newRemainingParameters, [...args, value]);
     }
 }
 
-export function execute(game: Game, state: GameState, statements: Statement[], locals: Record<string, any>): GameState | null {
+export function execute(game: Game, state: GameState, role: string, statements: Statement[], locals: Record<string, any>): GameState | null {
     const newState = structuredClone(state)
 
     for (const statement of statements) {
-        if (!checkPreconditions(game, newState, locals, statement)) {
+        if (!checkPreconditions(game, newState, role, locals, statement)) {
             return null;
         }
-        applyStatement(game, newState, locals, statement);
+        applyStatement(game, newState, role, locals, statement);
     }
 
     return newState;
 }
 
 /** Returns the state which follows after playing `move`, or null if no valid state exists */
-export function nextPosition(game: Game, state: GameState, move: Move, {inPlace} = {inPlace: false}): GameState | null {
+export function nextPosition(game: Game, state: GameState, role: string, move: Move, {inPlace} = {inPlace: false}): GameState | null {
     if (state.position.winner) {
         return null;
     }
@@ -121,11 +123,11 @@ export function nextPosition(game: Game, state: GameState, move: Move, {inPlace}
     }
 
     for (const statement of action.statements) {
-        if (!checkPreconditions(game, state, args, statement)) {
+        if (!checkPreconditions(game, state, role, args, statement)) {
             return null;
         }
 
-        applyStatement(game, state, args, statement);
+        applyStatement(game, state, role, args, statement);
     }
 
     for (const winConditionName in game.winConditions) {
@@ -164,7 +166,8 @@ export function rewindTo(state: GameState, ply: number) {
         history: state.history.slice(0, ply+1),
     }
 }
-function checkPreconditions(game: Game, state: GameState, locals: Record<string, any>, statement: Statement): boolean {
+
+function checkPreconditions(game: Game, state: GameState, role: string, locals: Record<string, any>, statement: Statement): boolean {
     // OPTIMIZE cache this somehow?
     switch (statement.type) {
         case 'change':
@@ -198,18 +201,23 @@ function checkPreconditions(game: Game, state: GameState, locals: Record<string,
             // Must look at variable types and check that it's in range
             return true;
         case 'play':
+            const player = evaluateExpression(game, state, locals, statement.player);
+            if (player != role) {
+                return false;
+            }
+
             const move: Move = {
                 actionName: statement.actionName,
-                player: evaluateExpression(game, state, locals, statement.player),
+                player,
                 args: statement.arguments.map(arg => evaluateExpression(game, state, locals, arg))
             };
-            return nextPosition(game, state, move) != null;
+            return nextPosition(game, state, role, move) != null;
         default:
             throw new Error(`Unknown statement ${JSON.stringify(statement)}`);
     }
 }
 
-function applyStatement(game: Game, state: GameState, locals: Record<string, any>, statement: Statement) {
+function applyStatement(game: Game, state: GameState, role: string, locals: Record<string, any>, statement: Statement) {
     try {
         switch (statement.type) {
             case 'play': {
@@ -218,7 +226,8 @@ function applyStatement(game: Game, state: GameState, locals: Record<string, any
                     player: evaluateExpression(game, state, locals, statement.player),
                     args: statement.arguments.map(arg => evaluateExpression(game, state, locals, arg))
                 };
-                nextPosition(game, state, move, {inPlace: true});
+                
+                nextPosition(game, state, role, move, {inPlace: true});
                 return;
             }
             case 'change': {

@@ -3,13 +3,13 @@
     import { api } from "$convex/_generated/api";
     import { onDestroy } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
-	import type { Game, GameState, Move } from '$lib/ludi/types';
+	import type { Game, GameState, Move, Statement } from '$lib/ludi/types';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import type { GameParticipant } from '$lib/realtime/types.js';
     import Participant from '$lib/components/Participant.svelte';
 	import { getParticipantId } from '$lib/participantId.js';
 	import Share from '$lib/components/util/Share.svelte';
-	import { unfilledPlayers } from '$lib/ludi/engine.js';
+	import { execute, unfilledPlayers } from '$lib/ludi/engine.js';
     import RootLayout from '$lib/components/layout/RootLayout.svelte';
 
     export let data;
@@ -37,12 +37,19 @@
 
     convex.mutation(api.live_games.join, { liveGameId: data.gameId, participantId: localParticipantId });
 
-    async function runStatements(move: Move) {
-        if (!localParticipant || move.player !== localParticipant.role) {
-            return;
-        }
+    async function runStatements(statements: Statement[], locals: Record<string, any>) {
+        // Test if this is legal for the local player
+        const newState = execute(game!, state!, localParticipant!.role, statements, locals);
 
-        await convex.mutation(api.live_games.playMove, { liveGameId: data.gameId, move });
+        if (newState) {
+            state = newState;
+            await convex.mutation(api.live_games.executeStatements, { 
+                liveGameId: data.gameId, 
+                participantId: localParticipantId, 
+                statements,
+                locals,
+            });
+        }
     }
     
     async function reset() {
@@ -50,8 +57,8 @@
     }
 </script>
 
-<RootLayout>
-    <mian>
+<RootLayout logoColor="#000">
+    <main>
         {#if game && state}
             <GameScreen bind:game={game} state={state} runStatements={runStatements} reset={reset} />
         {/if}
@@ -66,18 +73,28 @@
                 {/if}
             </div>
         {/if}
-    </mian>
+    </main>
 </RootLayout>
 
-<style lang="scss">
+<svelte:head>
+    <style>
+        html {
+            background-color: #fff !important;
+        }
+    </style>
+</svelte:head>
 
+
+<style lang="scss">
     main {
         flex-grow: 1;
 
         display: flex;
         flex-direction: row;
     }
+
     .players {
+        color: #000;
         display: flex;
         flex-direction: column;
 

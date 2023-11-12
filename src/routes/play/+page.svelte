@@ -5,6 +5,7 @@
 	import { fromString } from "$lib/ludi/parser";
 	import { api } from "$convex/_generated/api";
 	import SingleLayout from "$lib/components/layout/SingleLayout.svelte";
+	import ExpandingListItem from "$lib/components/ui/ExpandingListItem.svelte";
 
     async function playLive(gameName: string) {
         const convex = new ConvexClient(PUBLIC_CONVEX_URL);
@@ -21,45 +22,68 @@
 <SingleLayout>
     <h1>Play a game</h1>
 
-    <a href="/play/tic-tac-toe">Tic-tac-toe</a>
-    <a href="/play/checkers">Checkers</a>
-    <a href="/play/gomoku">Gomoku</a>
+    <ExpandingListItem>
+        <h2 slot="header">Tic-tac-toe</h2>
+        <div class="expand-body" slot="body">
+            <a href="/play/tic-tac-toe">One Device</a>
+            <a href="#" on:click={() => playLive('tic-tac-toe')}>Online</a>
+        </div>
+    </ExpandingListItem>
     
-    <!-- <h2>Multiplayer</h2>
-    <ul>
-        <li><a href="#" on:click={() => playLive('tic-tac-toe')}>Tic-tac-toe</a></li>
-        <li><a href="#" on:click={() => playLive('checkers')}>Checkers</a></li>
-        <li><a href="#" on:click={() => playLive('gomoku')}>Gomoku</a></li>
-    </ul> -->
+    <ExpandingListItem>
+        <h2 slot="header">Checkers</h2>
+        <div class="expand-body" slot="body">
+            <a href="/play/checkers">One Device</a>
+            <a href="#" on:click={() => playLive('checkers')}>Online</a>
+        </div>
+    </ExpandingListItem>
+
+    <ExpandingListItem>
+        <h2 slot="header">Gomoku</h2>
+        <div class="expand-body" slot="body">
+            <a href="/play/gomoku">One Device</a>
+            <a href="#" on:click={() => playLive('gomoku')}>Online</a>
+        </div>
+    </ExpandingListItem>
 </SingleLayout>
 
 <style lang="scss">
-    main {
-        flex-grow: 1;
-
-        display: flex;
-        flex-direction: row;
-    }
-
     h1 {
-        margin-left: 1rem;
         font-size: 3rem;
         text-align: center;
     }
 
-    a {
+    h2 {
         display: block;
         text-decoration: none;
+        margin: 0;
         margin-top: 1rem;
-        margin-bottom: 1rem;
-        margin-left: 1rem;
 
         font-size: 2rem;
 
         color: var(--color-foreground);
     }
 
+    h2:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    a {
+        font-size: 1.25rem;
+        color: var(--color-foreground);
+        text-decoration: none;
+
+        padding: 0.5rem;
+    }
+
     a:hover {
         text-decoration: underline;
+    }
+
+    .expand-body {
+        margin-left: 2rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
     }
 </style>

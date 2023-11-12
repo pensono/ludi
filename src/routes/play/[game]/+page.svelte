@@ -1,9 +1,10 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
-	import { execute as runStatements_, initialize } from "$lib/ludi/engine";
+	import { execute, initialize } from "$lib/ludi/engine";
+    import { Variables } from "$lib/ludi/builtins";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Game, GameState, Move, Statement } from '$lib/ludi/types';
+	import type { Game, GameState, Statement } from '$lib/ludi/types';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 
     export let data;
@@ -22,7 +23,9 @@
     }
     
     function runStatements(statements: Statement[], locals: Record<string, any>) {
-        const newState = runStatements_(game!, state!, statements, locals);
+        // Single device, just always be the current player
+        const currentPlayer = state?.position.variables[Variables.CurrentPlayer];
+        const newState = execute(game!, state!, currentPlayer, statements, locals);
 
         // Legal move
         if (newState) {

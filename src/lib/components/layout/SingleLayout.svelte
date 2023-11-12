@@ -10,7 +10,7 @@
 
 <style lang="scss">
     main {
-        width: calc(min(100%, var(--desktop-width)));
+        width: calc(min(100% - 2em, var(--desktop-width)));
         margin: 0 auto;
     }
 </style>

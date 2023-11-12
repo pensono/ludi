@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { nextPosition, initialize, nextPlayer } from "../src/lib/ludi/engine";
+import { initialize, nextPlayer, execute } from "../src/lib/ludi/engine";
 import { Game, Move } from "../src/lib/ludi/types";
 import { GameParticipant } from "../src/lib/realtime/types";
 
@@ -27,13 +27,14 @@ export const newGame = mutation({
   },
 });
 
-export const playMove = mutation({
-  args: { liveGameId: v.id("liveGame"), move: v.any() },
-  handler: async (ctx, { liveGameId, move }) => {
+export const executeStatements = mutation({
+  args: { liveGameId: v.id("liveGame"), participantId: v.string(), statements: v.any(), locals: v.any() },
+  handler: async (ctx, { liveGameId, participantId, statements, locals }) => {
     const liveGame = await ctx.db.get(liveGameId);
 
     // TODO check move validity
-    const newState = nextPosition(liveGame.game, liveGame.state, move as Move);
+    const role = liveGame.participants.find((p: GameParticipant) => p.id === participantId)?.role;
+    const newState = execute(liveGame.game, liveGame.state, role, statements, locals);
     const updatedLiveGame = await ctx.db.patch(liveGameId, {state: newState});
 
     return updatedLiveGame;

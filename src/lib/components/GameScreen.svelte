@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Game, GamePosition, GameState, Move, Statement } from "$lib/ludi/types";
+	import type { Game, GamePosition, GameState, Statement } from "$lib/ludi/types";
 	import ViewElement from "$lib/components/views/ViewElement.svelte";
 	import { slide, fade } from "svelte/transition";
 
