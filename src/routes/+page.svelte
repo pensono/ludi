@@ -3,7 +3,7 @@
 </script>
 
 <div class="wrap">
-    <h1><div class="logoWrap"><Logo color="var(--color-foreground)" capWidth/></div></h1>
+    <h1><div class="logoWrap"><Logo color="var(--color-foreground)" capWidth animate/></div></h1>
     <!-- <h2>Any game, with anyone</h2> -->
     <h2>Board games for&nbsp;all</h2>
     <a href="/play">Play a game</a>

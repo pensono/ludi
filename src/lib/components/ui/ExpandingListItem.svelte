@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { slide, fade } from "svelte/transition";
+	import { slide } from "svelte/transition";
 
     let hidden: boolean = true;
 </script>
