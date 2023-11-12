@@ -74,6 +74,7 @@ export function parseStatementList(input: string): Statement[] {
 function handleGame(ctx: any): Game {
     let setup: Action | undefined = undefined;
     let actions: Action[] = [];
+    let triggers: Action[] = [];
     let winConditions: Record<string, Action> = {};
     let stateVariables: StateVariable[] = [];
     let playerType: LudiType = undefined;
@@ -95,6 +96,9 @@ function handleGame(ctx: any): Game {
         } else if (definition.win()) {
             const win = definition.win();
             winConditions[win.name.getText()] = handleBlock(win);
+        } else if (definition.trigger()) {
+            const trigger = definition.trigger();
+            triggers.push(handleBlock(trigger));
         } else if (definition.state_definition()) {
             const stateDefinition = definition.state_definition();
             const name = stateDefinition.name.getText();
@@ -140,6 +144,7 @@ function handleGame(ctx: any): Game {
     return {
         setup,
         actions,
+        triggers,
         winConditions,
         stateVariables,
         playerType,
@@ -157,7 +162,7 @@ function handleBlock(ctx: any): Action {
     let parameters: Parameter[] = [];
     let conditions: Condition[] = [];
     
-    if ([LudiParser.RULE_action, LudiParser.RULE_win].includes(ctx.ruleIndex)) {
+    if ([LudiParser.RULE_action, LudiParser.RULE_win, LudiParser.RULE_trigger].includes(ctx.ruleIndex)) {
         name = ctx.name.getText();
         parameters = handleParameterList(ctx.parameterList());
         conditions = ctx.when().map(c => ({

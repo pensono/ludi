@@ -29,7 +29,6 @@
         animation-name: fill-in;
         animation-duration: 2s;
         animation-timing-function: cubic-bezier(.45,.05,.55,.95);
-
     }
 
     @keyframes fill-in {

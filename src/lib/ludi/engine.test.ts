@@ -78,7 +78,7 @@ describe('enumerate moves', () => {
             {actionName: "PlacePiece", args: [3, 3], player: "X"},
         ]);
 
-        state = nextPosition(game, state, moves[0])!;
+        state = nextPosition(game, state,  "X", moves[0])!;
         expect(state).not.toBeNull()
 
         moves = [...enumerateMoves(game, state)];
@@ -160,16 +160,17 @@ describe('enumerate moves', () => {
     });
     
     it(`Change after mutation`, () => {
-        const game = fromString(`
+        const game = ludi`
+            players A
             state LastGuess a Number<1, 3>
 
             setup:
                 set LastGuess to 2
 
-            action Action(number a Number<1, 3>):
+            action Action(number a Number<1, 3>) for CurrentPlayer:
                 change LastGuess to 3
                 change LastGuess to number
-        `);
+        `;
         let state = initialize(game);
 
         let moves = [...enumerateMoves(game, state)];
@@ -188,13 +189,56 @@ describe('players', () => {
     });
 })
 
+describe('triggers', () => {
+    it(`basic`, () => {
+        const game = ludi`
+            players X
+            state LastGuess a Number<1, 10>
+
+            setup:
+                set LastGuess to 0
+
+            action Action(number a Number<1, 10>) for X:
+                change LastGuess to number
+            
+            trigger Adjust():
+                when LastGuess < 5
+                increase LastGuess by 1
+        `;
+        let state = initialize(game);
+
+        const statements = parseStatementList("play Action(3) for X")
+        const actual = execute(game, state, "X", statements, {})!;
+
+        expect(actual.position).toEqual({
+            winner: null,
+            variables: {
+                "LastGuess": 5,
+                "CurrentPlayer": "X",
+            }
+        });
+    });
+})
+
 describe('execute', () => {
     it(`tic-tac-toe.ludi`, () => {
-        const game = fromFile(`./static/games/tic-tac-toe.ludi`);
+        const game = ludi`
+            players X or Y
+            state Result a Number<1, 3>
+
+            setup:
+                set Result to 1
+
+            action Action() for X:
+                set Result to 2
+
+            action Action() for Y:
+                set Result to 3
+        `;
         const state = initialize(game);
 
         const statements = parseStatementList("play PlacePiece(x, y) for X")
-        const actual = execute(game, state, statements, {x: 1, y: 1})!;
+        const actual = execute(game, state,  "X", statements, {x: 1, y: 1})!;
 
         expect(actual.position).toEqual({
             winner: null,
@@ -226,7 +270,7 @@ describe('execute', () => {
         let state = initialize(game);
 
         const statements = parseStatementList("play Action() for X")
-        const actual = execute(game, state, statements, {})!;
+        const actual = execute(game, state,  "X", statements, {})!;
 
         expect(actual.position).toEqual({
             winner: null,
@@ -255,7 +299,7 @@ describe('win conditions', () => {
         `);
         let state = initialize(game);
 
-        state = nextPosition(game, state, {actionName: "Action", args: [3], player: "A"})!;
+        state = nextPosition(game, state,  "A", {actionName: "Action", args: [3], player: "A"})!;
         expect(state).not.toBeNull();
 
         expect(state.position.winner).toEqual("A");

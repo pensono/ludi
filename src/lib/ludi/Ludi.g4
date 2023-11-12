@@ -43,7 +43,7 @@ state_definition: 'state' name=identifier 'a' type=typeExpression;
 view: 'view' ':' elements+=viewElement*;
 
 statement
-    : 'change' lvalue 'to' expression # ChangeStatement
+    : 'change' lvalue 'to' expression # ChangeStatement // change x from Y to Z ??
     | 'set' lvalue 'to' expression # SetStatement
     | 'move' from=lvalue 'to' to=lvalue ('by' movements+=coordinate ('or' movements+=coordinate)*)? # MoveStatement
     | 'increase' lvalue 'by' expression # IncreaseStatement
@@ -80,7 +80,7 @@ lvalue
 // Don't let these be recursive, instead force users to write everything out so it's clearer
 typeExpression
     // : identifier # TypeIdentifierExpression // Is this one even necesseary?
-    : values+=identifier ('or' values+=identifier)+ # UnionTypeExpression
+    : values+=identifier ('or' values+=identifier)* # UnionTypeExpression
     // | '{' name=identifier type=identifier '}'  // Record
     | name=identifier '<' (arguments+=expression (',' arguments+=expression)*)? '>' # ParameterizedTypeExpression; // Somehow the args must be constants
 

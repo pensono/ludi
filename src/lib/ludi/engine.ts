@@ -46,23 +46,24 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
     }
 }
 
-function *enumerateActionMoves(game: Game, state: GameState, role: string, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
+function *enumerateActionMoves(game: Game, state: GameState, role: string | null, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
     // There are many faster ways to do this, but this is easy to implement and fast enough for most games
     // Using something like SMT is ideal
     if (remainingParameters.length === 0) {
         if (action.name === undefined) {
-            new Error(`Action ${JSON.stringify(action)} has no name`);
+            throw new Error(`Action ${JSON.stringify(action)} has no name`);
         }
 
         // This extra transformation is sad but fine for now
         const locals = action.parameters.reduce((intermediate, parameter, i) => ({...intermediate, [parameter.name]: args[i]}), {});
 
-        if (!action.player) {
+        if (role != null && !action.player) {
             // This should work, but I'm not sure of the semantics yet
             throw new Error(`Action ${JSON.stringify(action)} has no player`);
         }
 
-        const player = evaluateExpression(game, state, locals, action.player);
+        // Player can be null for triggers
+        const player = action.player == null ? null : evaluateExpression(game, state, locals, action.player);
         const move = {
             actionName: action.name!,
             player,
@@ -98,18 +99,22 @@ export function execute(game: Game, state: GameState, role: string, statements: 
 }
 
 /** Returns the state which follows after playing `move`, or null if no valid state exists */
-export function nextPosition(game: Game, state: GameState, role: string, move: Move, {inPlace} = {inPlace: false}): GameState | null {
+export function nextPosition(game: Game, state: GameState, role: string | null, move: Move, {inPlace} = {inPlace: false}): GameState | null {
     if (state.position.winner) {
         return null;
     }
     
-    if (move.player !== state.position.variables[builtins.Variables.CurrentPlayer]) {
+    // Player can be null for triggers
+    if (move.player != null && move.player !== state.position.variables[builtins.Variables.CurrentPlayer]) {
         return null;
     }
 
-    const action = game.actions.filter(a => a.name === move.actionName && move.player == evaluateExpression(game, state, {}, a.player))[0];
+    let action = game.actions.filter(a => a.name === move.actionName && move.player == evaluateExpression(game, state, {}, a.player))[0];
     if (!action) {
-        throw Error(`Action ${move.actionName} not found`)
+        action = game.triggers.filter(t => t.name === move.actionName)[0];
+    }
+    if (!action) {
+        throw Error(`Action/trigger ${move.actionName} not found`)
     }
 
     const args = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: move.args[i]}), {});
@@ -129,6 +134,22 @@ export function nextPosition(game: Game, state: GameState, role: string, move: M
 
         applyStatement(game, state, role, args, statement);
     }
+
+    // Run available triggers
+    const continueRunningTriggers = false;
+    do {
+        for (const trigger of game.triggers) {
+            const move = enumerateActionMoves(game, state, null, trigger, trigger.parameters, []).next();
+            if (move.done) {
+                continue;
+            }
+
+            nextPosition(game, state, null, move.value, {inPlace: true});
+
+            // Triggers are run from top to bottom, and each time one fires it begins again from the top
+            break;
+        }
+    } while (continueRunningTriggers)
 
     for (const winConditionName in game.winConditions) {
         const winCondition = game.winConditions[winConditionName];
@@ -167,7 +188,7 @@ export function rewindTo(state: GameState, ply: number) {
     }
 }
 
-function checkPreconditions(game: Game, state: GameState, role: string, locals: Record<string, any>, statement: Statement): boolean {
+function checkPreconditions(game: Game, state: GameState, role: string | null, locals: Record<string, any>, statement: Statement): boolean {
     // OPTIMIZE cache this somehow?
     switch (statement.type) {
         case 'change':
@@ -217,7 +238,7 @@ function checkPreconditions(game: Game, state: GameState, role: string, locals: 
     }
 }
 
-function applyStatement(game: Game, state: GameState, role: string, locals: Record<string, any>, statement: Statement) {
+function applyStatement(game: Game, state: GameState, role: string | null, locals: Record<string, any>, statement: Statement) {
     try {
         switch (statement.type) {
             case 'play': {

@@ -47,12 +47,12 @@ action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a 
     change CurrentPlayer to Black
 
 trigger Crowning(x a Number<1, 8>):
-    when Board[x, 8] = Black
-    change Board[x, 8] to BlackKing
+    when Board[x, 1] = Black
+    change Board[x, 1] to BlackKing
     
 trigger Crowning(x a Number<1, 8>):
-    when Board[x, 1] = White
-    change Board[x, 1] to WhiteKing
+    when Board[x, 8] = White
+    change Board[x, 8] to WhiteKing
 
 loss NoMorePieces() for player:
     when Count(Board, player) = 0

@@ -4,6 +4,7 @@ export interface Game {
     setup?: Action;
     playerType: LudiType;
     actions: Action[];
+    triggers: Action[];
     winConditions: Record<string, Action>;
     stateVariables: StateVariable[];
     constants: Record<string, any>;
