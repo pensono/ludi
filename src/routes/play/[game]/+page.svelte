@@ -35,7 +35,7 @@
     }
 </script>
 
-<RootLayout>
+<RootLayout backgroundColor="#fff" logoColor="#000">
     <main>
         {#if game && state}
             <GameScreen bind:game={game} bind:state={state} runStatements={runStatements} reset={reset} />

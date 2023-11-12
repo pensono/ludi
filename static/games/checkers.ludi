@@ -7,7 +7,7 @@ state Board a Grid<Square, 8, 8>
 
 setup:
     set CurrentPlayer to Black
-    set Board[1, 1] to WhiteKing
+    set Board[1, 1] to White
     set Board[3, 1] to White
     set Board[5, 1] to White
     set Board[7, 1] to White
@@ -20,7 +20,7 @@ setup:
     set Board[5, 3] to White
     set Board[7, 3] to White
 
-    set Board[2, 6] to BlackKing
+    set Board[2, 6] to Black
     set Board[4, 6] to Black
     set Board[6, 6] to Black
     set Board[8, 6] to Black

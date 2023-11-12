@@ -1,36 +1,18 @@
 <script>
 	import Logo from "$lib/components/Logo.svelte";
-
 </script>
 
 <div class="wrap">
     <h1><div class="logoWrap"><Logo color="var(--color-foreground)" /></div></h1>
-    <h2>Any game, with anyone</h2>
+    <!-- <h2>Any game, with anyone</h2> -->
+    <h2>Board games for all</h2>
+    <a href="/play">Play a game</a>
 </div>
 
 <style lang="scss">
-    * {
-        // https://pigment.shapefactory.co/?a=0E7144&b=80A11D
-        --color-background: #036134;
-        --color-foreground: #80A11D;
-        --color-foreground-light: #A3C23A;
-
-        // --color-background: #52791E;
-        // --color-foreground: #A4D759;
-        
-        // --color-background: #591B35;
-        // --color-foreground: #EF194F;
-        
-        // --color-background: #521A60;
-        // --color-foreground: #E0285F;
-        
-        // --color-background: #323D21;
-        // --color-foreground: #D6ADA9;
-    }
-
     h1 {
-        margin: 0;
         margin-top: 10rem;
+        margin-bottom: 5rem;
         margin-left: 5rem;
         margin-right: 5rem;
         padding: 0;
@@ -41,8 +23,8 @@
         justify-content: center;
 
         @media screen and (max-width: 1000px) {
-            height: unset;
             margin-top: 4rem;
+            margin-bottom: 2rem;
             margin-left: 2rem;
             margin-right: 2rem;
         }
@@ -53,28 +35,56 @@
     }
     
     h2 {
-        font-family: Geist;
         font-size: 5rem;
         font-weight: 500;
         letter-spacing: -.03em;
-        color: var(--color-foreground-light);
+        color: var(--color-foreground);
         
         margin: 0;
-        margin-top: 5rem;
+        margin-top: 2rem;
         padding: 0;
-        text-align: center;
 
         user-select: none;
         
-        @media screen and (max-width: 1000px) {
-            font-size: 8vw;
+        @media screen and (min-width: 480px) and (max-width: 1000px) {
+            font-size: 4rem;
             margin-top: 2vw;
+        }
+
+        @media screen and (max-width: 480px) {
+            font-size: 2rem;
+            margin-top: 2vw;
+        }
+    }
+
+    a {
+        display: inline-block;
+        margin-top: 15rem;
+        padding: .5em;
+        
+        border-radius: 2em;
+        border: 2px solid var(--color-foreground);
+        color: var(--color-foreground);
+        font-size: 3rem;
+
+        width: 400px;
+        text-align: center;
+
+        text-decoration: none;
+        user-select: none;
+        
+        @media screen and (max-width: 1000px) {
+            margin-top: 10rem;
+            font-size: 2rem;
+            max-width: 80vw;
         }
     }
 
     .wrap {
         background-color: var(--color-background);
         margin: 0;
+
+        text-align: center;
 
         position: absolute;
         top: 0;

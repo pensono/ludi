@@ -4,7 +4,7 @@
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import { fromString } from "$lib/ludi/parser";
 	import { api } from "$convex/_generated/api";
-	import RootLayout from "$lib/components/layout/RootLayout.svelte";
+	import SingleLayout from "$lib/components/layout/SingleLayout.svelte";
 
     async function playLive(gameName: string) {
         const convex = new ConvexClient(PUBLIC_CONVEX_URL);
@@ -18,24 +18,20 @@
     }
 </script>
 
-<RootLayout>
-    <h2>Single-device</h2>
-    <ul>
-        <li><a href="/play/tic-tac-toe">Tic-tac-toe</a></li>
-        <li><a href="/play/checkers">Checkers</a></li>
-        <li><a href="/play/gomoku">Gomoku</a></li>
-    </ul>
+<SingleLayout>
+    <h1>Play a game</h1>
+
+    <a href="/play/tic-tac-toe">Tic-tac-toe</a>
+    <a href="/play/checkers">Checkers</a>
+    <a href="/play/gomoku">Gomoku</a>
     
-    <h2>Multiplayer</h2>
+    <!-- <h2>Multiplayer</h2>
     <ul>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <li><a href="#" on:click={() => playLive('tic-tac-toe')}>Tic-tac-toe</a></li>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <li><a href="#" on:click={() => playLive('checkers')}>Checkers</a></li>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
         <li><a href="#" on:click={() => playLive('gomoku')}>Gomoku</a></li>
-    </ul>
-</RootLayout>
+    </ul> -->
+</SingleLayout>
 
 <style lang="scss">
     main {
@@ -43,5 +39,27 @@
 
         display: flex;
         flex-direction: row;
+    }
+
+    h1 {
+        margin-left: 1rem;
+        font-size: 3rem;
+        text-align: center;
+    }
+
+    a {
+        display: block;
+        text-decoration: none;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        margin-left: 1rem;
+
+        font-size: 2rem;
+
+        color: var(--color-foreground);
+    }
+
+    a:hover {
+        text-decoration: underline;
     }
 </style>

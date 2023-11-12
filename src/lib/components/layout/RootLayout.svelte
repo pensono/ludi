@@ -1,7 +1,19 @@
-<div class="wrapper">
+<script lang="ts">
+	import Logo from "../Logo.svelte";
+
+    export let logoColor: string = "var(--color-foreground)";
+    export let backgroundColor: string = "var(--color-background)";
+</script>
+
+<div class="wrapper" style:background-color={backgroundColor}>
     <nav>
-        <h1><a href="/">Ludi</a></h1>
-        <slot name="nav"></slot>
+        <a href="/" class="logoWrap"><Logo color="{logoColor}" /></a>
+        <div>
+            <slot name="nav-center"></slot>
+        </div>
+        <div>
+            <slot name="nav-right"></slot>
+        </div>
     </nav>
     
     <slot></slot>
@@ -19,6 +31,11 @@
         right: 0;
     }
 
+    .logoWrap {
+        height: 2rem;
+        padding: 1rem;
+    }
+
     h1 {
         margin: .5rem;
     }
@@ -32,6 +49,5 @@
         display: flex;
         justify-content: space-between;
         padding: .2rem;
-        border-bottom: 1px solid #ccc;
     }
 </style>

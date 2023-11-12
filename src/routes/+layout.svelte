@@ -28,7 +28,27 @@
         --input-height: 1rem;
 
         --indent: 1.5rem;
+
+        --desktop-width: 1000px;
         
+        // https://pigment.shapefactory.co/?a=0E7144&b=80A11D
+        --color-background: #036134;
+        --color-foreground: #A3C23A;
+
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+
+        // --color-background: #52791E;
+        // --color-foreground: #A4D759;
+        
+        // --color-background: #591B35;
+        // --color-foreground: #EF194F;
+        
+        // --color-background: #521A60;
+        // --color-foreground: #E0285F;
+        
+        // --color-background: #323D21;
+        // --color-foreground: #D6ADA9;
     
         @font-face {
             font-family: 'Geist';
