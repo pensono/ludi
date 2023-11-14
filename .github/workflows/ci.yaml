@@ -22,6 +22,6 @@ jobs:
       with:
         node-version: 18
     - name: 'Install Deps'
-      run: npm install
+      run: npm ci
     - name: 'Test'
       run: npx vitest
