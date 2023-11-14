@@ -2,8 +2,12 @@
     import { Toaster } from 'svelte-french-toast';
     import { dev } from '$app/environment';
     import { inject } from '@vercel/analytics';
+    import { mountVercelToolbar } from '@vercel/toolbar';
 
     inject({ mode: dev ? 'development' : 'production' });
+    if (dev) {
+        mountVercelToolbar();
+    }
 </script>
 
 <slot />
