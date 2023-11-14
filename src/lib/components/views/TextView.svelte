@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { nextPosition } from "$lib/ludi/engine";
+    import { executeBlock } from "$lib/ludi/engine";
     import type { Game, GameState, View } from "$lib/ludi/types";
-    import vars from "../util/vars";
     import { parseParts, toSize } from "./utils";
 
     export let positionStyle: string;
@@ -17,7 +16,7 @@
 
         // TODO use some sort of disabled state instead?
         if (move != null) {
-            state = nextPosition(game, state, move);
+            state = executeBlock(game, state, move);
         }
     }
 

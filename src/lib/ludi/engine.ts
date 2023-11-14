@@ -21,7 +21,7 @@ export function initialize(game: Game, seed?: number) : GameState {
 
     if (game.setup) {
         for (const statement of game.setup.statements) {
-            applyStatement(game, state, "initialize", {}, statement);
+            executeStatement(game, state, "initialize", {}, statement);
         }
     }
 
@@ -41,12 +41,34 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
 
     for (const role of enumerateType(game.playerType)) {
         for (const action of game.actions) {
-            yield* enumerateActionMoves(game, state, role, action, action.parameters, []);
+            for (const args of legalArguments(game, state, action, role)) {
+                yield {
+                    actionName: action.name!,
+                    player: role,
+                    args,
+                };
+            }
         }
     }
 }
 
-function *enumerateActionMoves(game: Game, state: GameState, role: string | null, action: Action, remainingParameters: Parameter[], args: any[]) : IterableIterator<Move> {
+function *legalArguments(game: Game, state: GameState, action: Action, role: string | null = null) : IterableIterator<any[]> {
+    if (action.player) {
+        const expectedPlayer = evaluateExpression(game, state, {}, action.player);
+        if (role !== expectedPlayer) {
+            return;
+        }
+
+        // Need to find a better way to only let the current player play for games where multiple players may action
+        if (role != state.position.variables[builtins.Variables.CurrentPlayer]) {
+            return;
+        }
+    }
+
+    yield* legalArgumentsImpl(game, state, action, role, action.parameters, []);
+}
+
+function *legalArgumentsImpl(game: Game, state: GameState, action: Action, role: string | null, remainingParameters: Parameter[], args: any[]) : IterableIterator<any[]> {
     // There are many faster ways to do this, but this is easy to implement and fast enough for most games
     // Using something like SMT is ideal
     if (remainingParameters.length === 0) {
@@ -62,26 +84,18 @@ function *enumerateActionMoves(game: Game, state: GameState, role: string | null
             throw new Error(`Action ${JSON.stringify(action)} has no player`);
         }
 
-        // Player can be null for triggers
-        const player = action.player == null ? null : evaluateExpression(game, state, locals, action.player);
-        const move = {
-            actionName: action.name!,
-            player,
-            args,
-        };
-
-        if (!nextPosition(game, state, role, move)) {
+        if (!executeBlock(game, state, action, role, args)) {
             return;
         }
 
-        yield move;
+        yield args;
         return;
     }
 
     const parameter = remainingParameters[0];
     const newRemainingParameters = remainingParameters.slice(1);
     for (const value of enumerateType(parameter.type)) {
-        yield* enumerateActionMoves(game, state, role, action, newRemainingParameters, [...args, value]);
+        yield* legalArgumentsImpl(game, state, action, role, newRemainingParameters, [...args, value]);
     }
 }
 
@@ -89,37 +103,76 @@ export function execute(game: Game, state: GameState, role: string, statements: 
     const newState = structuredClone(state)
 
     for (const statement of statements) {
-        if (!checkPreconditions(game, newState, role, locals, statement)) {
+        if (!executeStatement(game, newState, role, locals, statement)) {
             return null;
         }
-        applyStatement(game, newState, role, locals, statement);
     }
 
     return newState;
 }
 
-/** Returns the state which follows after playing `move`, or null if no valid state exists */
-export function nextPosition(game: Game, state: GameState, role: string | null, move: Move, {inPlace} = {inPlace: false}): GameState | null {
-    if (state.position.winner) {
+export function playMove(game: Game, state: GameState, move: Move): GameState | null {
+    let action = game.actions.filter(a => a.name === move.actionName && move.player == evaluateExpression(game, state, {}, a.player))[0];
+    if (!action) {
+        throw Error(`Action ${move.actionName} not found`)
+    }
+
+    const newState = executeBlock(game, state, action, move.player, move.args);
+    if (!newState) {
         return null;
     }
     
-    // Player can be null for triggers
-    if (move.player != null && move.player !== state.position.variables[builtins.Variables.CurrentPlayer]) {
+    // Run available triggers
+    // !! Scary! possible infinite loop!
+    outer: while (true) {
+        for (const trigger of game.triggers) {
+            const argsIter = legalArguments(game, newState, trigger).next();
+            if (argsIter.done) {
+                continue;
+            }
+
+            executeBlock(game, newState, trigger, null, argsIter.value, {inPlace: true});
+
+            // Triggers are run from top to bottom, and each time one fires it begins again from the top
+            continue outer;
+        }
+
+        break;
+    }
+    
+    for (const winConditionName in game.winConditions) {
+        const winCondition = game.winConditions[winConditionName];
+        
+        // Just enumerate all players for now
+        for (const player of enumerateType(game.playerType)){
+            if (winCondition.conditions.every(c => evaluateExpression(game, newState, {player}, c.expression))) {
+                newState.position.winner = player;
+                break;
+            }
+        }
+    }
+
+    newState.ply++;
+    newState.history.push({
+        move: move,
+        position: structuredClone(newState.position),
+        ply: newState.ply,
+    });
+
+    newState.transientVariables = {};
+
+    return newState;
+}
+
+/** Returns the state which follows after playing `move`, or null if no valid state exists */
+export function executeBlock(game: Game, state: GameState, action: Action, role: string | null, args: any[], {inPlace} = {inPlace: false}): GameState | null {
+    if (state.position.winner) {
         return null;
     }
 
-    let action = game.actions.filter(a => a.name === move.actionName && move.player == evaluateExpression(game, state, {}, a.player))[0];
-    if (!action) {
-        action = game.triggers.filter(t => t.name === move.actionName)[0];
-    }
-    if (!action) {
-        throw Error(`Action/trigger ${move.actionName} not found`)
-    }
+    const argsMap = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: args[i]}), {});
 
-    const args = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: move.args[i]}), {});
-
-    if (!action.conditions.every(condition => evaluateExpression(game, state, args, condition.expression))) {
+    if (!action.conditions.every(condition => evaluateExpression(game, state, argsMap, condition.expression))) {
         return null;
     }
 
@@ -128,49 +181,10 @@ export function nextPosition(game: Game, state: GameState, role: string | null, 
     }
 
     for (const statement of action.statements) {
-        if (!checkPreconditions(game, state, role, args, statement)) {
+        if (!executeStatement(game, state, role, argsMap, statement)) {
             return null;
         }
-
-        applyStatement(game, state, role, args, statement);
     }
-
-    // Run available triggers
-    const continueRunningTriggers = false;
-    do {
-        for (const trigger of game.triggers) {
-            const move = enumerateActionMoves(game, state, null, trigger, trigger.parameters, []).next();
-            if (move.done) {
-                continue;
-            }
-
-            nextPosition(game, state, null, move.value, {inPlace: true});
-
-            // Triggers are run from top to bottom, and each time one fires it begins again from the top
-            break;
-        }
-    } while (continueRunningTriggers)
-
-    for (const winConditionName in game.winConditions) {
-        const winCondition = game.winConditions[winConditionName];
-        
-        // Just enumerate all players for now
-        for (const player of enumerateType(game.constants["Player"])){
-            if (winCondition.conditions.every(c => evaluateExpression(game, state, {...args, player}, c.expression))) {
-                state.position.winner = player;
-                break;
-            }
-        }
-    }
-
-    state.ply++;
-    state.history.push({
-        move: move,
-        position: structuredClone(state.position),
-        ply: state.ply,
-    });
-
-    state.transientVariables = {};
 
     return state;
 }
@@ -188,17 +202,51 @@ export function rewindTo(state: GameState, ply: number) {
     }
 }
 
-function checkPreconditions(game: Game, state: GameState, role: string | null, locals: Record<string, any>, statement: Statement): boolean {
-    // OPTIMIZE cache this somehow?
+export function toMove(game: Game, state: GameState, locals: Record<string, any>, statement: Statement): Move {
+    if (statement.type != 'play') {
+        throw new Error("Not a play statement")
+    }
+    const player = evaluateExpression(game, state, locals, statement.player);
+    const args = statement.arguments.map(arg => evaluateExpression(game, state, locals, arg));
+    
+    // playMove will also execute triggers/evaluate wins/increase ply etc
+    return {
+        actionName: statement.actionName,
+        player,
+        args
+    };
+}
+
+function executeStatement(game: Game, state: GameState, role: string | null, locals: Record<string, any>, statement: Statement) : boolean {
     switch (statement.type) {
-        case 'change':
-            // OPTIMIZE Double evaluation with regular running of the action.
+        case 'play': {
+            const player = evaluateExpression(game, state, locals, statement.player);
+            if (player != role) {
+                return false;
+            }
+
+            let action = game.actions.filter(a => a.name === statement.actionName && player == evaluateExpression(game, state, {}, a.player))[0];
+            if (!action) {
+                throw Error(`Action ${statement.actionName} not found`)
+            }
+            
+            const args = statement.arguments.map(arg => evaluateExpression(game, state, locals, arg));
+            
+            // playMove will also execute triggers/evaluate wins/increase ply etc
+            return executeBlock(game, state, action, player, args, {inPlace: true}) !== null;
+        }
+        case 'change': {
             const variable = toReference(game, state, locals, statement.variable);
-            return variable.getValue() !== evaluateExpression(game, state, locals, statement.value);
-        case 'set':
+            const newValue = evaluateExpression(game, state, locals, statement.value);
+
+            if (variable.getValue() === newValue) {
+                return false;
+            }
+
+            variable.setValue(newValue);
             return true;
-        case 'move':
-            // OPTIMIZE Double evaluation with regular running of the action.
+        }
+        case 'move': {
             const from = toReference(game, state, locals, statement.from);
             const to = toReference(game, state, locals, statement.to);
 
@@ -214,111 +262,55 @@ function checkPreconditions(game: Game, state: GameState, role: string | null, l
                 }
             }
 
-            return from.getValue() != builtins.Variables.Empty && to.getValue() == builtins.Variables.Empty;
-        case 'remember':
+            to.setValue(from.getValue());
+            from.setValue(builtins.Variables.Empty);
             return true;
-        case 'increase':
-        case 'decrease':
-            // Must look at variable types and check that it's in range
+        }
+        case 'set': {
+            const variable = toReference(game, state, locals, statement.variable);
+            const newValue = evaluateExpression(game, state, locals, statement.value);
+            variable.setValue(newValue);
             return true;
-        case 'play':
-            const player = evaluateExpression(game, state, locals, statement.player);
-            if (player != role) {
-                return false;
+        }
+        case 'remember': {
+            const value = evaluateExpression(game, state, locals, statement.value);
+            state.transientVariables[statement.variable] = value;
+            return true;
+        }
+        case 'increase': {
+            const variable = toReference(game, state, locals, statement.variable);
+            if (typeof variable.getValue() !== 'number') {
+                // Typechecking should prevent this from happening
+                throw new Error(`Cannot increment a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${variable.getValue()}`);
             }
 
-            const move: Move = {
-                actionName: statement.actionName,
-                player,
-                args: statement.arguments.map(arg => evaluateExpression(game, state, locals, arg))
-            };
-            return nextPosition(game, state, role, move) != null;
+            const amount = evaluateExpression(game, state, locals, statement.amount);
+            if (typeof amount !== 'number') {
+                // Typechecking should prevent this from happening
+                throw new Error(`Cannot increment by a non-number. This indicates an error in the engine. Value: ${amount}`);
+            }
+
+            variable.setValue(variable.getValue() + amount);
+            return true;
+        }
+        case 'decrease': {
+            const variable = toReference(game, state, locals, statement.variable);
+            if (typeof variable.getValue() !== 'number') {
+                // Typechecking should prevent this from happening
+                throw new Error(`Cannot decrement a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${variable.getValue()}`);
+            }
+
+            const amount = evaluateExpression(game, state, locals, statement.amount);
+            if (typeof amount !== 'number') {
+                // Typechecking should prevent this from happening
+                throw new Error(`Cannot decrement by a non-number. This indicates an error in the engine. Value: ${amount}`);
+            }
+
+            variable.setValue(variable.getValue() - amount);
+            return true;
+        }
         default:
             throw new Error(`Unknown statement ${JSON.stringify(statement)}`);
-    }
-}
-
-function applyStatement(game: Game, state: GameState, role: string | null, locals: Record<string, any>, statement: Statement) {
-    try {
-        switch (statement.type) {
-            case 'play': {
-                const move: Move = {
-                    actionName: statement.actionName,
-                    player: evaluateExpression(game, state, locals, statement.player),
-                    args: statement.arguments.map(arg => evaluateExpression(game, state, locals, arg))
-                };
-                
-                nextPosition(game, state, role, move, {inPlace: true});
-                return;
-            }
-            case 'change': {
-                const variable = toReference(game, state, locals, statement.variable);
-                const newValue = evaluateExpression(game, state, locals, statement.value);
-
-                if (variable.getValue() === newValue) {
-                    // Typechecking should prevent this from happening
-                    throw new Error(`Change statement would not change anything. This indicates an error in the engine. Old value: ${variable.getValue()}, new value: ${newValue}`);
-                }
-
-                variable.setValue(newValue);
-                return;
-            }
-            case 'move': {
-                const from = toReference(game, state, locals, statement.from);
-                const to = toReference(game, state, locals, statement.to);
-
-                to.setValue(from.getValue());
-                from.setValue(builtins.Variables.Empty);
-                return;
-            }
-            case 'set': {
-                const variable = toReference(game, state, locals, statement.variable);
-                const newValue = evaluateExpression(game, state, locals, statement.value);
-                variable.setValue(newValue);
-                return;
-            }
-            case 'remember': {
-                const value = evaluateExpression(game, state, locals, statement.value);
-                state.transientVariables[statement.variable] = value;
-                return;
-            }
-            case 'increase': {
-                const variable = toReference(game, state, locals, statement.variable);
-                if (typeof variable.getValue() !== 'number') {
-                    // Typechecking should prevent this from happening
-                    throw new Error(`Cannot increment a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${variable.getValue()}`);
-                }
-
-                const amount = evaluateExpression(game, state, locals, statement.amount);
-                if (typeof amount !== 'number') {
-                    // Typechecking should prevent this from happening
-                    throw new Error(`Cannot increment by a non-number. This indicates an error in the engine. Value: ${amount}`);
-                }
-
-                variable.setValue(variable.getValue() + amount);
-                return;
-            }
-            case 'decrease': {
-                const variable = toReference(game, state, locals, statement.variable);
-                if (typeof variable.getValue() !== 'number') {
-                    // Typechecking should prevent this from happening
-                    throw new Error(`Cannot decrement a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${variable.getValue()}`);
-                }
-
-                const amount = evaluateExpression(game, state, locals, statement.amount);
-                if (typeof amount !== 'number') {
-                    // Typechecking should prevent this from happening
-                    throw new Error(`Cannot decrement by a non-number. This indicates an error in the engine. Value: ${amount}`);
-                }
-
-                variable.setValue(variable.getValue() - amount);
-                return;
-            }
-            default:
-                throw new Error(`Unknown statement ${JSON.stringify(statement)}`);
-        }
-    } catch (e: any) {
-        throw new Error(`Error running statement ${JSON.stringify(statement)}: ${e.message}`);
     }
 }
 

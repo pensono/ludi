@@ -198,7 +198,7 @@ export const types: Record<string, TypeSpecification> = {
     'Enumeration': {
         construct(values: any[]) {
             return {
-                name: 'Enumaretion',
+                name: 'Enumeration',
                 parameters: {
                     values: values,
                 }

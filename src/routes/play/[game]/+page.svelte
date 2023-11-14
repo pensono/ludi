@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
-	import { execute, initialize } from "$lib/ludi/engine";
+	import { execute, initialize, playMove, toMove } from "$lib/ludi/engine";
     import { Variables } from "$lib/ludi/builtins";
 	import { fromString } from "$lib/ludi/parser";
 	import type { Game, GameState, Statement } from '$lib/ludi/types';
@@ -22,13 +22,17 @@
         state = initialize(game);
     }
     
-    function runStatements(statements: Statement[], locals: Record<string, any>) {
-        // Single device, just always be the current player
-        const currentPlayer = state?.position.variables[Variables.CurrentPlayer];
-        const newState = execute(game!, state!, currentPlayer, statements, locals);
+    function playMove_(statements: Statement[], locals: Record<string, any>) {
+        for (const statement of statements) {
+            const move = toMove(game!, state!, locals, statement);
 
-        // Legal move
-        if (newState) {
+            const newState = playMove(game!, state!, move);
+
+            // Legal move
+            if (!newState) {
+                break;
+            }
+            
             state = newState;
         }
     }
@@ -41,7 +45,7 @@
 <RootLayout logoColor="#000">
     <main>
         {#if game && state}
-            <GameScreen bind:game={game} bind:state={state} runStatements={runStatements} reset={reset} />
+            <GameScreen bind:game={game} bind:state={state} runStatements={playMove_} reset={reset} />
         {/if}
     </main>
 </RootLayout>

@@ -5,6 +5,7 @@ export interface Game {
     playerType: LudiType;
     actions: Action[];
     triggers: Action[];
+    kinds: LudiType[];
     winConditions: Record<string, Action>;
     stateVariables: StateVariable[];
     constants: Record<string, any>;
@@ -129,7 +130,7 @@ export interface StateVariable {
 
 export interface Move {
     actionName: string;
-    player: string;
+    player: string | null;
     args: any[];
 }
 
