@@ -35,7 +35,6 @@
         --color-background: #036134;
         --color-foreground: #A3C23A;
 
-        background-color: var(--color-background);
         color: var(--color-foreground);
 
         // --color-background: #52791E;

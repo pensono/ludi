@@ -13,7 +13,6 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#036134",
     "background_color": "#036134",
     "start_url": "https://ludi.games",
     "display": "standalone"

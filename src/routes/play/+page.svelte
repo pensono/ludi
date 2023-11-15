@@ -6,6 +6,7 @@
 	import { api } from "$convex/_generated/api";
 	import SingleLayout from "$lib/components/layout/SingleLayout.svelte";
 	import ExpandingListItem from "$lib/components/ui/ExpandingListItem.svelte";
+	import Meta from "$lib/components/Meta.svelte";
 
     async function playLive(gameName: string) {
         const convex = new ConvexClient(PUBLIC_CONVEX_URL);
@@ -18,6 +19,8 @@
         goto(`/play/live/${liveGameId}`);
     }
 </script>
+
+<Meta backgroundColor="var(--color-background)" title="Play" />
 
 <SingleLayout>
     <h1>Play a game</h1>

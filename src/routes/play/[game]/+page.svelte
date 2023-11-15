@@ -6,6 +6,7 @@
 	import { fromString } from "$lib/ludi/parser";
 	import type { Game, GameState, Statement } from '$lib/ludi/types';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
+	import Meta from '$lib/components/Meta.svelte';
 
     export let data;
 
@@ -42,6 +43,8 @@
     }
 </script>
 
+<Meta backgroundColor="#fff" title="{data.gameName}" />
+
 <RootLayout logoColor="#000">
     <main>
         {#if game && state}
@@ -49,15 +52,6 @@
         {/if}
     </main>
 </RootLayout>
-
-<svelte:head>
-    <style>
-        html {
-            background-color: #fff !important;
-        }
-    </style>
-</svelte:head>
-
 
 <style lang="scss">
     main {
