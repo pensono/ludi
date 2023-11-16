@@ -1,6 +1,6 @@
 <script>
 	import Logo from "$lib/components/Logo.svelte";
-	import Meta from "$lib/components/Meta.svelte";
+	import Meta from "$lib/components/util/Meta.svelte";
 </script>
 
 <Meta backgroundColor="var(--color-background)" title="Ludi" />

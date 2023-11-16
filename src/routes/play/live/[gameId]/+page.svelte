@@ -6,7 +6,7 @@
 	import type { Game, GameState, Move, Statement } from '$lib/ludi/types';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import type { GameParticipant } from '$lib/realtime/types.js';
-    import Participant from '$lib/components/Participant.svelte';
+    import Participant from './Participant.svelte';
 	import { getParticipantId } from '$lib/participantId.js';
 	import Share from '$lib/components/util/Share.svelte';
 	import { execute, unfilledPlayers } from '$lib/ludi/engine.js';

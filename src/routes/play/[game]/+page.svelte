@@ -6,7 +6,7 @@
 	import { fromString } from "$lib/ludi/parser";
 	import type { Game, GameState, Statement } from '$lib/ludi/types';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
-	import Meta from '$lib/components/Meta.svelte';
+	import Meta from '$lib/components/util/Meta.svelte';
 
     export let data;
 

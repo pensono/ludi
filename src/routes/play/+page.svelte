@@ -6,7 +6,7 @@
 	import { api } from "$convex/_generated/api";
 	import SingleLayout from "$lib/components/layout/SingleLayout.svelte";
 	import ExpandingListItem from "$lib/components/ui/ExpandingListItem.svelte";
-	import Meta from "$lib/components/Meta.svelte";
+	import Meta from "$lib/components/util/Meta.svelte";
 
     async function playLive(gameName: string) {
         const convex = new ConvexClient(PUBLIC_CONVEX_URL);
