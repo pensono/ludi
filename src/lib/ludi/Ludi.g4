@@ -5,8 +5,13 @@ grammar Ludi;
 // - Don't overload
 // - Don't be implicit
 // - Avoid symbols which are not well known. High school should be enough education
+// - Use english words, but computer syntax
 
+// Top level .ludi file
 game: definition* EOF;
+
+// Top level "code" within a view
+interaction: statements+=statement ('or' statements+=statement)*;
 
 definition
     : players
@@ -35,8 +40,6 @@ setup: 'setup' ':' statement+;
 
 kind: 'kind' name=identifier 'a' type=typeExpression;
 
-statementList: statements+=statement (','? statements+=statement*);
-
 // Must name state_definition to avoid conflicts with antlr internals
 state_definition: 'state' name=identifier 'a' type=typeExpression;
 
@@ -45,11 +48,17 @@ view: 'view' ':' elements+=viewElement*;
 statement
     : 'change' lvalue 'to' expression # ChangeStatement // change x from Y to Z ??
     | 'set' lvalue 'to' expression # SetStatement
-    | 'move' from=lvalue 'to' to=lvalue ('by' movements+=coordinate ('or' movements+=coordinate)*)? # MoveStatement
+    | 'move' from=lvalue 'to' to=lvalue
+        ('by' movements+=coordinate ('or' movements+=coordinate)*)? 
+        ('direction' direction=identifier)? 
+        ('distance' distance=number)? 
+        // Should over be a type instead? Merge types/sets together?
+        ('over' over+=identifier ('or' over+=identifier)* ('named' overName=identifier))? # MoveStatement
+    | 'remove' lvalue # RemoveStatement
     | 'increase' lvalue 'by' expression # IncreaseStatement
     | 'decrease' lvalue 'by' expression # DecreaseStatement
     | 'if' expression 'then' statement+ 'end' # IfStatement
-    | 'play' actionName=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' 'for' playerExpression=expression # PlayStatement
+    | 'play' actionName=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' ('for' playerExpression=expression)? # PlayStatement
     | 'remember' expression 'as' variableName=identifier # RememberStatement;
 
 when: 'when' expression;
@@ -63,14 +72,14 @@ expression
     | name=lvalue # IdentifierExpression
     | name=identifier '(' (arguments+=expression (',' arguments+=expression)*)? ')' # FunctionCallExpression
     | ('not' | '!') expression # NegationExpression // Would be good to settle on some syntax here...
-    | left=expression operator='or' right=expression # ConjunctionExpression
-    | left=expression operator='and' right=expression # ConjunctionExpression
     | left=expression operator='=' right=expression # ComparisonExpression
     | left=expression operator='!=' right=expression # ComparisonExpression
     | left=expression operator='>' right=expression # ComparisonExpression
     | left=expression operator='<' right=expression # ComparisonExpression
     | left=expression operator='>=' right=expression # ComparisonExpression
-    | left=expression operator='<=' right=expression # ComparisonExpression;
+    | left=expression operator='<=' right=expression # ComparisonExpression
+    | left=expression operator='or' right=expression # ConjunctionExpression
+    | left=expression operator='and' right=expression # ConjunctionExpression;
 
 
 lvalue

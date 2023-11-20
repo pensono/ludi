@@ -8,6 +8,8 @@ export const functions: Record<string, LudiFunction> = {
     '>': comparison((left, right) => left > right),
     '<=': comparison((left, right) => left <= right),
     '>=': comparison((left, right) => left >= right),
+    'and': conjunction((left, right) => left && right),
+    'or': conjunction((left, right) => left || right),
 
     'RandomNumber': {
         parameter_types: [
@@ -171,6 +173,22 @@ function comparison(operator: (left: number, right: number) => boolean) {
     }
 }
 
+function conjunction(operator: (left: boolean, right: boolean) => boolean) {
+    return {
+        parameter_types: [
+            'boolean',
+            'boolean'
+        ],
+        return_type: 'boolean',
+        invoke: (state: GameState, args: any[]): any => {
+            const left = args[0];
+            const right = args[1];
+
+            return operator(left, right);
+        }
+    }
+}
+
 export interface TypeSpecification {
     construct: (values: any[]) => LudiType;
     defaultValue: (type: LudiType) => any;
@@ -241,4 +259,27 @@ export const types: Record<string, TypeSpecification> = {
 export enum Variables {
     CurrentPlayer = 'CurrentPlayer',
     Empty = 'Empty',
+}
+
+export function onSameDiagonal(x1: number, y1: number, x2: number, y2: number): boolean {
+    return Math.abs(x1 - x2) === Math.abs(y1 - y2);
+}
+
+export function *diagonalCoordinatesBetweenExclusive(x1: number, y1: number, x2: number, y2: number): IterableIterator<{x: number, y: number}> {
+    const xDirection = x2 > x1 ? 1 : -1;
+    const yDirection = y2 > y1 ? 1 : -1;
+
+    let x = x1 + xDirection;
+    let y = y1 + yDirection;
+
+    while (x !== x2 && y !== y2) {
+        yield {x, y};
+
+        x += xDirection;
+        y += yDirection;
+    }
+}
+
+export function axisDistance(x1: number, y1: number, x2: number, y2: number): number {
+    return Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2));
 }

@@ -1,4 +1,4 @@
-import { fromString, ludi, parseStatementList } from './parser';
+import { fromString, ludi, parseInteraction } from './parser';
 import { describe, it, expect } from 'vitest';
 import { enumerateMoves, enumerateType, execute, initialize, executeBlock, playMove } from './engine';
 import { fromFile } from './parse-from-file';
@@ -232,7 +232,7 @@ describe('execute', () => {
         const game = fromFile(`./static/games/tic-tac-toe.ludi`);
         const state = initialize(game);
 
-        const statements = parseStatementList("play PlacePiece(x, y) for X")
+        const statements = parseInteraction("play PlacePiece(x, y) for X")
         const actual = execute(game, state, "X", statements, {x: 1, y: 1})!;
 
         expect(actual.position).toEqual({
@@ -264,7 +264,7 @@ describe('execute', () => {
         `;
         let state = initialize(game);
 
-        const statements = parseStatementList("play Action() for X")
+        const statements = parseInteraction("play Action() for X")
         const actual = execute(game, state,  "X", statements, {})!;
 
         expect(actual.position).toEqual({

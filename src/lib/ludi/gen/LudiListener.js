@@ -14,6 +14,15 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by LudiParser#interaction.
+	enterInteraction(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#interaction.
+	exitInteraction(ctx) {
+	}
+
+
 	// Enter a parse tree produced by LudiParser#definition.
 	enterDefinition(ctx) {
 	}
@@ -86,15 +95,6 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by LudiParser#statementList.
-	enterStatementList(ctx) {
-	}
-
-	// Exit a parse tree produced by LudiParser#statementList.
-	exitStatementList(ctx) {
-	}
-
-
 	// Enter a parse tree produced by LudiParser#state_definition.
 	enterState_definition(ctx) {
 	}
@@ -137,6 +137,15 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by LudiParser#MoveStatement.
 	exitMoveStatement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by LudiParser#RemoveStatement.
+	enterRemoveStatement(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#RemoveStatement.
+	exitRemoveStatement(ctx) {
 	}
 
 

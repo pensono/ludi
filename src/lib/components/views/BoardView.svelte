@@ -4,7 +4,7 @@
     import MiddleLines from "../svg/MiddleLines.svelte";
     import InnerLines from "../svg/InnerLines.svelte";
 	import ViewElement from "./ViewElement.svelte";
-	import { parseStatementList } from "$lib/ludi/parser";
+	import { parseInteraction } from "$lib/ludi/parser";
 	import { gridCoordinates } from "./utils";
 
     export let positionStyle: string;
@@ -33,7 +33,7 @@
             return;
         }
 
-        const statements = parseStatementList(statementsString);
+        const statements = parseInteraction(statementsString);
         runStatements(statements, { x, y });
     }
 
@@ -60,7 +60,7 @@
             return;
         }
         
-        const statements = parseStatementList(statementsString);
+        const statements = parseInteraction(statementsString);
         const parameters = { 
             xStart: draggingCoordinates.x,
             yStart: draggingCoordinates.y,

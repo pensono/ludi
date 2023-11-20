@@ -15,8 +15,11 @@ export interface Game {
 export interface GameState {
     position: GamePosition;
     history: HistoryItem[];
-    transientVariables: Record<string, any>;
     ply: number;
+    
+    // Unsure if these should be here
+    transientVariables: Record<string, any>;
+    references: Record<string, LValue>;
 }
 
 export interface GamePosition {
@@ -42,7 +45,7 @@ export interface Action {
     parameters: Parameter[];
 }
 
-export type Statement = ChangeStatement | SetStatement | MoveStatement | IncreaseStatement | DecreaseStatement | PlayStatement | RememberStatement;
+export type Statement = ChangeStatement | SetStatement | MoveStatement | RemoveStatement | IncreaseStatement | DecreaseStatement | PlayStatement | RememberStatement;
 
 export interface ChangeStatement {
     type: "change";
@@ -61,8 +64,27 @@ export interface MoveStatement {
     from: LValue;
     to: LValue;
 
-    // Null if any movements are possible
+    // Null if any movements are possible. Cannot be present if direction is present
     movements: {x:number, y:number}[] | null;
+
+    // Null if any directions is possible. Cannot be present if movements is present
+    direction: string | null;
+
+    // Null if any distance is possible. Can only be present if direction is present
+    distance: number | null;
+
+    // Any pieces which must be crossed. Can only be present if direction is present
+    over: {
+        // Should this be a type instead?
+        set: string[];
+        name: string | null;
+    } | null;
+}
+
+
+export interface RemoveStatement {
+    type: "remove";
+    what: LValue;
 }
 
 export interface RememberStatement {

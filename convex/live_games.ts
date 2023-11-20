@@ -1,5 +1,5 @@
 import { mutation, query } from "./_generated/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { initialize, nextPlayer, execute } from "../src/lib/ludi/engine";
 import { Game, Move } from "../src/lib/ludi/types";
 import { GameParticipant } from "../src/lib/realtime/types";
@@ -35,6 +35,12 @@ export const executeStatements = mutation({
     // TODO check move validity
     const role = liveGame.participants.find((p: GameParticipant) => p.id === participantId)?.role;
     const newState = execute(liveGame.game, liveGame.state, role, statements, locals);
+
+    if (!newState) {
+      // Illegal move!
+      throw new ConvexError(`Illegal move: ${JSON.stringify(statements)}`);
+    }
+
     const updatedLiveGame = await ctx.db.patch(liveGameId, {state: newState});
 
     return updatedLiveGame;

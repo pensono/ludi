@@ -42,6 +42,18 @@ action MoveNormal(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a 
     move Board[x1, y1] to Board[x2, y2] by [-1, 1] or [1, 1]
     change CurrentPlayer to Black
 
+action Capture(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for White:
+    when Board[x1, y1] = White and y2 > y1
+    move Board[x1, y1] to Board[x2, y2] direction Diagonal distance 2 over Black or BlackKing named Captured
+    remove Captured
+    change CurrentPlayer to Black
+
+action Capture(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for Black:
+    when Board[x1, y1] = Black and y2 < y1
+    move Board[x1, y1] to Board[x2, y2] direction Diagonal distance 2 over White or WhiteKing named Captured
+    remove Captured
+    change CurrentPlayer to White
+
 trigger Crowning(x a Number<1, 8>):
     when Board[x, 1] = Black
     change Board[x, 1] to BlackKing
@@ -50,15 +62,47 @@ trigger Crowning(x a Number<1, 8>):
     when Board[x, 8] = White
     change Board[x, 8] to WhiteKing
 
+// Woah lots of duplication with above
+action MoveNormalKing(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for Black:
+    when Board[x1, y1] = BlackKing
+    move Board[x1, y1] to Board[x2, y2] direction Diagonal distance 1
+    change CurrentPlayer to White
+
+action MoveNormalKing(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for White:
+    // notation (Lookup(BoardSquare)) - (Lookup(BoardSquare))
+    when Board[x1, y1] = WhiteKing
+    move Board[x1, y1] to Board[x2, y2] direction Diagonal distance 1
+    change CurrentPlayer to Black
+
+action CaptureKing(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for White:
+    when Board[x1, y1] = WhiteKing
+    move Board[x1, y1] to Board[x2, y2] direction Diagonal distance 2 over Black or BlackKing named Captured
+    remove Captured
+    change CurrentPlayer to Black
+
+action CaptureKing(x1 a Number<1, 8>, y1 a Number<1, 8>, x2 a Number<1, 8>, y2 a Number<1, 8>) for Black:
+    when Board[x1, y1] = BlackKing
+    move Board[x1, y1] to Board[x2, y2] direction Diagonal distance 2 over White or WhiteKing named Captured
+    remove Captured
+    change CurrentPlayer to White
+
 loss NoMorePieces() for player:
     when Count(Board, player) = 0
 
+// or play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer
 view:
-    <board show="Board" drag="play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer" align="Center" size="90%" background="Checker #365F54 #EFF1DC">
+    <board
+        show="Board"
+        drag="play Capture(xStart, yStart, xEnd, yEnd) for CurrentPlayer or play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer or play CaptureKing(xStart, yStart, xEnd, yEnd) for CurrentPlayer or play MoveNormalKing(xStart, yStart, xEnd, yEnd) for CurrentPlayer"
+        align="Center"
+        size="90%"
+        background="Checker #365F54 #EFF1DC"
+    >
         <image useFor="Black" file="black-token.svg" align="Center" size="90%" />
         <image useFor="White" file="white-token.svg" align="Center" size="90%" />
         <image useFor="BlackKing" file="black-token.svg" align="Center" size="90%" />
         <image useFor="BlackKing" file="crown.svg" align="Center" size="60%" />
         <image useFor="WhiteKing" file="white-token.svg" align="Center" size="90%" />
         <image useFor="WhiteKing" file="crown.svg" align="Center" size="60%" />
+        <image useFor="LastMove" file="red-dot.svg" align="Center" size="100%" />
     </board>

@@ -6,11 +6,11 @@
 
 <div class="wrapper">
     <nav>
-        <a href="/" class="logoWrap"><Logo color="{logoColor}" /></a>
-        <div>
+        <a href="/" class="logoWrap nav-item left"><Logo color="{logoColor}" /></a>
+        <div class="nav-item center">
             <slot name="nav-center"></slot>
         </div>
-        <div>
+        <div class="nav-item right">
             <slot name="nav-right"></slot>
         </div>
     </nav>
@@ -36,7 +36,23 @@
     }
     
     nav {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         padding-bottom: .2rem;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+
+        &.left {
+            justify-content: flex-start;
+        }
+        &.center {
+            justify-content: center;
+        }
+        &.right {
+            justify-content: flex-end;
+        }
     }
 </style>

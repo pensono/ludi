@@ -31,10 +31,11 @@
 
             // Legal move
             if (!newState) {
-                break;
+                continue;
             }
             
             state = newState;
+            break;
         }
     }
     
@@ -46,6 +47,11 @@
 <Meta backgroundColor="#fff" title="{data.gameName}" />
 
 <RootLayout logoColor="#000">
+    <p slot="nav-center">
+        {#if game}
+            {state?.position.variables[Variables.CurrentPlayer]} to play
+        {/if}
+    </p>
     <main>
         {#if game && state}
             <GameScreen bind:game={game} bind:state={state} runStatements={playMove_} reset={reset} />
@@ -59,5 +65,12 @@
 
         display: flex;
         flex-direction: row;
+    }
+
+    p {
+        color: #000;
+        margin: 0;
+        font-size: 2em;
+        white-space: nowrap;
     }
 </style>

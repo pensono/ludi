@@ -9,7 +9,7 @@
     import Participant from './Participant.svelte';
 	import { getParticipantId } from '$lib/participantId.js';
 	import Share from '$lib/components/util/Share.svelte';
-	import { execute, unfilledPlayers } from '$lib/ludi/engine.js';
+	import { execute, playMove, toMove, unfilledPlayers } from '$lib/ludi/engine.js';
     import RootLayout from '$lib/components/layout/RootLayout.svelte';
 
     export let data;
@@ -38,17 +38,23 @@
     convex.mutation(api.live_games.join, { liveGameId: data.gameId, participantId: localParticipantId });
 
     async function runStatements(statements: Statement[], locals: Record<string, any>) {
-        // Test if this is legal for the local player
-        const newState = execute(game!, state!, localParticipant!.role, statements, locals);
+        for (const statement of statements) {
+            // Test if this is legal for the local player
+            const newState = execute(game!, state!, localParticipant!.role, [statement], locals);
 
-        if (newState) {
+            // Legal move
+            if (!newState) {
+                continue;
+            }
+            
             state = newState;
             await convex.mutation(api.live_games.executeStatements, { 
                 liveGameId: data.gameId, 
                 participantId: localParticipantId, 
-                statements,
+                statements: [statement],
                 locals,
             });
+            break;
         }
     }
     

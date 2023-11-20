@@ -1,4 +1,4 @@
-import { functions } from './builtins';
+import { functions, onSameDiagonal } from './builtins';
 import { describe, it, expect } from 'vitest';
 
 describe('InARow', () => {
@@ -28,4 +28,24 @@ describe('InARow', () => {
         const actual = inARow.invoke(null!, ["Black", board, 3]);
         expect(actual).toBe(false);
     })
+});
+
+describe('onSameDiagonal', () => {
+    it(`Basic`, () => {
+        expect(onSameDiagonal(0, 0, 1, 1)).toBe(true);
+    });
+    
+    it(`Shifted`, () => {
+        expect(onSameDiagonal(3, 4, 6, 7)).toBe(true);
+        expect(onSameDiagonal(5, 5, 2, 2)).toBe(true);
+    });
+    
+    it(`Other directions`, () => {
+        expect(onSameDiagonal(0, 0, -2, -2)).toBe(true);
+    });
+    
+    it(`Not same diagonal`, () => {
+        expect(onSameDiagonal(0, 0, -2, 5)).toBe(false);
+        expect(onSameDiagonal(0, 1, -2, 5)).toBe(false);
+    });
 });

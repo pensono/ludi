@@ -53,7 +53,8 @@ export interface MoveExpression {
     player: Expression;
 }
 
-export function parseStatementList(input: string): Statement[] {
+/** Returns statements in priority order */
+export function parseInteraction(input: string): Statement[] {
     const inputStream = new CharStream(input);
     const lexer = new LudiLexer(inputStream);
     const tokens = new CommonTokenStream(lexer);
@@ -62,13 +63,13 @@ export function parseStatementList(input: string): Statement[] {
     const errorListener = new CollectingErrorListener();
     parser.addErrorListener(errorListener);
 
-    var statementList = parser.statementList();
+    var statements = parser.interaction();
 
     if (errorListener.errors.length > 0) {
         throw new Error(errorListener.errors.join('\n'));
     }
     
-    return statementList.statements.map(s => new StatementVisitor().visit(s));
+    return statements.statements.map(s => new StatementVisitor().visit(s));
 }
 
 function handleGame(ctx: any): Game {
@@ -214,13 +215,26 @@ class StatementVisitor extends LudiVisitor {
             type: 'move',
             from: new LValueVisitor().visit(ctx.from),
             to: new LValueVisitor().visit(ctx.to),
-            movements: ctx.movements.map(m => 
+            movements: ctx.movements?.map(m => 
                 ({
                     x: parseInt(m.number()[0]?.getText()) || undefined,
                     y: parseInt(m.number()[1]?.getText()) || undefined,
                     z: parseInt(m.number()[2]?.getText()) || undefined,
                 })
-            )
+            ),
+            direction: ctx.direction?.getText(),
+            distance: parseInt(ctx.distance?.getText()),
+            over: ctx.over?.length ? {
+                set: ctx.over.map(o => o.getText()), // Or use a type?
+                name: ctx.overName?.getText()
+            } : null
+        }
+    }
+    
+    visitRemoveStatement = (ctx: any): RemoveStatement => {
+        return {
+            type: 'remove',
+            what: new LValueVisitor().visit(ctx.lvalue()),
         }
     }
 
@@ -244,7 +258,7 @@ class StatementVisitor extends LudiVisitor {
         return {
             type: 'play',
             actionName: ctx.actionName.getText(),
-            player: new ExpressionVisitor().visit(ctx.playerExpression),
+            player: ctx.playerExpression ? new ExpressionVisitor().visit(ctx.playerExpression) : null,
             arguments: ctx.arguments.map((a: any) => new ExpressionVisitor().visit(a))
         }
     }
@@ -306,6 +320,18 @@ class ExpressionVisitor extends LudiVisitor {
     }
 
     visitComparisonExpression = (ctx): FunctionCallExpression => {
+        // Is function-call specific enough? Worth doing binary-operator or similar?
+        return {
+            type: 'function-call',
+            name: ctx.operator.text,
+            arguments: [
+                this.visit(ctx.left),
+                this.visit(ctx.right)
+            ]
+        }
+    }
+    
+    visitConjunctionExpression = (ctx): ConjunctionExpression => {
         // Is function-call specific enough? Worth doing binary-operator or similar?
         return {
             type: 'function-call',

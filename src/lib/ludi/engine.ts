@@ -1,5 +1,6 @@
 import type { Action, Expression, Game, GameState, LValue, LudiType, Move, Parameter, Statement } from './types'
 import * as builtins from './builtins';
+import { diagonalCoordinatesBetweenExclusive } from './builtins';
 
 export function initialize(game: Game, seed?: number) : GameState {
     let state: GameState = {
@@ -11,6 +12,7 @@ export function initialize(game: Game, seed?: number) : GameState {
         },
         ply: 0,
         transientVariables: {},
+        references: {},
         history: [],
     }
 
@@ -121,7 +123,7 @@ export function playMove(game: Game, state: GameState, move: Move): GameState | 
     if (!newState) {
         return null;
     }
-    
+
     // Run available triggers
     // !! Scary! possible infinite loop!
     outer: while (true) {
@@ -139,10 +141,10 @@ export function playMove(game: Game, state: GameState, move: Move): GameState | 
 
         break;
     }
-    
+
     for (const winConditionName in game.winConditions) {
         const winCondition = game.winConditions[winConditionName];
-        
+
         // Just enumerate all players for now
         for (const player of enumerateType(game.playerType)){
             if (winCondition.conditions.every(c => evaluateExpression(game, newState, {player}, c.expression))) {
@@ -160,6 +162,7 @@ export function playMove(game: Game, state: GameState, move: Move): GameState | 
     });
 
     newState.transientVariables = {};
+    newState.references = {};
 
     return newState;
 }
@@ -208,7 +211,7 @@ export function toMove(game: Game, state: GameState, locals: Record<string, any>
     }
     const player = evaluateExpression(game, state, locals, statement.player);
     const args = statement.arguments.map(arg => evaluateExpression(game, state, locals, arg));
-    
+
     // playMove will also execute triggers/evaluate wins/increase ply etc
     return {
         actionName: statement.actionName,
@@ -222,6 +225,7 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
         case 'play': {
             const player = evaluateExpression(game, state, locals, statement.player);
             if (player != role) {
+                console.log("Player", player, "is not", role);
                 return false;
             }
 
@@ -229,9 +233,9 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
             if (!action) {
                 throw Error(`Action ${statement.actionName} not found`)
             }
-            
+
             const args = statement.arguments.map(arg => evaluateExpression(game, state, locals, arg));
-            
+
             // playMove will also execute triggers/evaluate wins/increase ply etc
             return executeBlock(game, state, action, player, args, {inPlace: true}) !== null;
         }
@@ -250,7 +254,7 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
             const from = toReference(game, state, locals, statement.from);
             const to = toReference(game, state, locals, statement.to);
 
-            if (statement.movements) {
+            if (statement.movements?.length) {
                 // TODO multi-dimensional
                 const delta = {
                     x: to.indexes[0] - from.indexes[0],
@@ -262,8 +266,84 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
                 }
             }
 
+            if (statement.direction) {
+                switch (statement.direction) {
+                    // Lots of gross going on here
+                    case "Diagonal": {
+                        if (!builtins.onSameDiagonal(from.indexes[0], from.indexes[1], to.indexes[0], to.indexes[1])) {
+                            return false;
+                        }
+                        break;
+                    }
+                    default:
+                        throw new Error(`Unknown direction ${statement.direction}`);
+                }
+            }
+
+            if (statement.distance) {
+                if (!statement.direction) {
+                    throw new Error(`Distance cannot be specified without a direction`);
+                }
+
+                if (statement.distance != builtins.axisDistance(from.indexes[0], from.indexes[1], to.indexes[0], to.indexes[1])) {
+                    return false;
+                }
+            }
+
+            if (statement.over) {
+                if (!statement.direction) {
+                    throw new Error(`Over cannot be specified without a direction`);
+                }
+                
+                let overCoordinates = undefined;
+                switch (statement.direction) {
+                    // Lots of gross going on here
+                    case "Diagonal": {
+                        const board = state.position.variables[statement.from.name]
+                        for (const {x, y} of diagonalCoordinatesBetweenExclusive(from.indexes[0]+1, from.indexes[1]+1, to.indexes[0]+1, to.indexes[1]+1)) {
+                            // Semantics are ambiguous here- Can it be only over empty or the piece, or must be over the piece at some point?
+                            // Do the first for now
+                            if (statement.over.set.includes(board[x-1][y-1])) {
+                                overCoordinates = {x, y};
+                                break;
+                            }
+                        }
+
+                        if (!overCoordinates) {
+                            return false;
+                        }
+
+                        if (statement.over.name) {
+                            // What scope to put this into?
+                            state.references[statement.over.name] = {
+                                name: statement.from.name,
+                                indexes: [
+                                    {type: "constant", value: overCoordinates.x}, 
+                                    {type: "constant", value: overCoordinates.y}
+                                ],
+                            };
+                        }
+
+                        break;
+                    }
+                    default:
+                        throw new Error(`Unknown direction ${statement.direction}`);
+                }
+            }
+
             to.setValue(from.getValue());
             from.setValue(builtins.Variables.Empty);
+            return true;
+        }
+        case 'remove': {
+            const variable = toReference(game, state, locals, statement.what);
+
+            if (variable.getValue() === builtins.Variables.Empty) {
+                // Must remove something
+                return false;
+            }
+
+            variable.setValue(builtins.Variables.Empty);
             return true;
         }
         case 'set': {
@@ -321,6 +401,10 @@ interface Reference {
 }
 
 function toReference(game: Game, state: GameState, locals: Record<string, any>, lvalue: LValue): Reference {
+    if (state.references[lvalue.name]) {
+        return toReference(game, state, locals, state.references[lvalue.name]);
+    }
+
     // subtract one to one-index everything
     let indexValues = lvalue.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
 
@@ -333,7 +417,13 @@ function toReference(game: Game, state: GameState, locals: Record<string, any>, 
     }
 
     return {
-        getValue: () => target[index],
+        getValue: () => {
+            const result = target[index];
+            if (!result) {
+                throw new Error(`Index ${index} not found`);
+            }
+            return result;
+        },
         setValue: (value: any) => target[index] = value,
         indexes: indexValues
     };
@@ -373,7 +463,7 @@ export function evaluateExpression(game: Game, state: GameState, locals: Record<
         case 'index': {
             let value = evaluateExpression(game, state, locals, {type: 'identifier', name: expression.variable});
             const indexes = expression.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
-            
+
             for (const index of indexes) {
                 value = value[index];
             }
