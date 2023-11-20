@@ -15,7 +15,7 @@
     export let element: View;
 
     let mousePositionStyle = '';
-    let draggingCoordinates: null | {x: number, y: number} = null;
+    let draggedPieceCoordinates: null | {x: number, y: number} = null;
     let board: HTMLDivElement;
     
     $: variable = element.attributes["show"];
@@ -37,19 +37,40 @@
         runStatements(statements, { x, y });
     }
 
-    function mouseMove(event: MouseEvent) {
-        const {x, y} = board.getBoundingClientRect();
-        mousePositionStyle = `--mouse-x: ${event.clientX - x}px; --mouse-y: ${event.clientY - y}px;`;
-    }
-
-    function pointerDown(x: number, y: number) {
-        if (element.attributes["drag"]) {
-            draggingCoordinates = {x, y};
+    function getClientCoordinates(event: PointerEvent | TouchEvent) : {x: number, y: number} {
+        if (event instanceof PointerEvent) {
+            return { x: event.clientX, y: event.clientY };
+        } else {
+            // Only changed touches is populated for touchend
+            const pointer = event.touches[0] || event.changedTouches[0];
+            return { x: pointer.clientX, y: pointer.clientY };
         }
     }
 
-    function pointerUp(x: number, y: number) {
-        if (!draggingCoordinates) {
+    function toBoardCoordinates(coords: {x: number, y: number}) {
+        const boardRect = board.getBoundingClientRect();
+        return {
+            x: Math.floor((coords.x - boardRect.x) * width / boardRect.width) + 1,
+            y: height - Math.floor((coords.y - boardRect.y) * height / boardRect.height)
+        };
+    }
+
+    function updateDragCoordinates(event: PointerEvent | TouchEvent) {
+        const {x, y} = board.getBoundingClientRect();
+        const {x: clientX, y: clientY} = getClientCoordinates(event);
+        mousePositionStyle = `--mouse-x: ${clientX - x}px; --mouse-y: ${clientY - y}px;`;
+    }
+    
+    function pointerDown(event: PointerEvent | TouchEvent) {
+        updateDragCoordinates(event);
+        const boardCoordinates = toBoardCoordinates(getClientCoordinates(event));
+        if (element.attributes["drag"]) {
+            draggedPieceCoordinates = boardCoordinates;
+        }
+    }
+
+    function pointerUp(event: PointerEvent | TouchEvent) {
+        if (!draggedPieceCoordinates) {
             // Event is not the result of a drag, probably a random click
             return;
         }
@@ -60,16 +81,19 @@
             return;
         }
         
+        updateDragCoordinates(event);
+        const boardCoordinates = toBoardCoordinates(getClientCoordinates(event));
+        
         const statements = parseInteraction(statementsString);
         const parameters = { 
-            xStart: draggingCoordinates.x,
-            yStart: draggingCoordinates.y,
-            xEnd: x,
-            yEnd: y 
+            xStart: draggedPieceCoordinates.x,
+            yStart: draggedPieceCoordinates.y,
+            xEnd: boardCoordinates.x,
+            yEnd: boardCoordinates.y 
         };
         runStatements(statements, parameters);
 
-        draggingCoordinates = null;
+        draggedPieceCoordinates = null;
     }
 
     function elementsFor(value: any): View[] {
@@ -103,7 +127,14 @@
     }
 </script>
 
-<div class="wrapper" style={positionStyle + mousePositionStyle} style:--width={width} style:--height={height} on:mousemove|capture={mouseMove} bind:this={board}>
+<div 
+    bind:this={board}
+    class="wrapper"
+    style={positionStyle + mousePositionStyle}
+    style:--width={width}
+    style:--height={height}
+    on:pointermove|preventDefault={updateDragCoordinates}
+    on:touchmove|preventDefault={updateDragCoordinates}>
     {#if element.attributes["middleLines"]}
         <MiddleLines color={element.attributes["middleLines"]} width={width} height={height} />
     {/if}
@@ -114,13 +145,26 @@
     <!-- Reverse y so that the origin is in the bottom left -->
     {#each gridCoordinates(width, height) as {x, y}}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div class="cell" style={styleCell(x, y)} on:click={() => clickSquare(x, y)} style:grid-row={height-y+1} style:grid-column={x} on:pointerup={() => pointerUp(x, y)} />
+        <div
+            class="cell"
+            style={styleCell(x, y)}
+            style:grid-row={height-y+1}
+            style:grid-column={x} 
+            on:click={() => clickSquare(x, y)}
+            on:pointerdown|preventDefault={pointerDown}
+            on:pointerup={pointerUp}
+            on:touchstart|preventDefault={pointerDown}
+            on:touchend|preventDefault={pointerUp}/>
     {/each}
     
     {#each gridCoordinates(width, height) as {x, y}}
         {#each elementsFor(indexOrUndefined(grid, x, y)) as element}
-            {@const dragging = x === draggingCoordinates?.x && y === draggingCoordinates?.y}
-            <div class="piece" on:pointerdown={() => pointerDown(x, y)} class:dragging style:--x={x} style:--y={y}>
+            {@const dragging = x === draggedPieceCoordinates?.x && y === draggedPieceCoordinates?.y}
+            <div 
+                class="piece"
+                class:dragging
+                style:--x={x}
+                style:--y={y}>
                 <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
             </div>
         {/each}
@@ -152,6 +196,10 @@
         container-type: size;
         grid-column: calc(var(--x));
         grid-row: calc(var(--height) - var(--y) + 1);
+        
+        /* Needed so the pointerup event goes to the square rather than the piece */
+        touch-action: none;
+        pointer-events: none;
     }
 
     div.overlay {
@@ -164,8 +212,5 @@
         z-index: 100;
         transform: translate(calc(var(--mouse-x) + 50% - (var(--x) * 100%)), calc(var(--mouse-y) + 50% - ((var(--height) - var(--y) + 1) * 100%)));
         cursor: grabbing;
-
-        /* Needed so the pointerup event goes to the square rather than the piece */
-        pointer-events: none;
     }
 </style>

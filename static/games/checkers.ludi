@@ -104,5 +104,4 @@ view:
         <image useFor="BlackKing" file="crown.svg" align="Center" size="60%" />
         <image useFor="WhiteKing" file="white-token.svg" align="Center" size="90%" />
         <image useFor="WhiteKing" file="crown.svg" align="Center" size="60%" />
-        <image useFor="LastMove" file="red-dot.svg" align="Center" size="100%" />
     </board>
