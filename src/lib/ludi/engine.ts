@@ -243,7 +243,8 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
             const variable = toReference(game, state, locals, statement.variable);
             const newValue = evaluateExpression(game, state, locals, statement.value);
 
-            if (variable.getValue() === newValue) {
+            // Changing a value always works when it's being set for the first time
+            if (variable.hasValue() && variable.getValue() === newValue) {
                 return false;
             }
 
@@ -396,6 +397,7 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
 
 interface Reference {
     getValue: () => any;
+    hasValue: () => boolean;
     setValue: (value: any) => void;
     indexes: number[]
 }
@@ -419,11 +421,12 @@ function toReference(game: Game, state: GameState, locals: Record<string, any>, 
     return {
         getValue: () => {
             const result = target[index];
-            if (!result) {
+            if (result === undefined) {
                 throw new Error(`Index ${index} not found`);
             }
             return result;
         },
+        hasValue: () => target[index] !== undefined,
         setValue: (value: any) => target[index] = value,
         indexes: indexValues
     };
