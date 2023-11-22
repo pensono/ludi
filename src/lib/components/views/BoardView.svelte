@@ -149,7 +149,9 @@
             class="cell"
             style={styleCell(x, y)}
             style:grid-row={height-y+1}
-            style:grid-column={x} 
+            style:grid-column={x}
+            data-x={x}
+            data-y={y}
             on:click={() => clickSquare(x, y)}
             on:pointerdown|preventDefault={pointerDown}
             on:pointerup={pointerUp}

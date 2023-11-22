@@ -23,5 +23,10 @@ jobs:
         node-version: 18
     - name: 'Install Deps'
       run: npm ci
-    - name: 'Test'
-      run: npx vitest
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Unit Tests
+      run: npx run test:unit
+    - name: Playwright Tests
+      run: npx playwright test
