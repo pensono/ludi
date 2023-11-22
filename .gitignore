@@ -12,3 +12,5 @@ vite.config.ts.timestamp-*
 tmp
 .vercel
 .env*.local
+
+.vercel
