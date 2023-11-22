@@ -1,7 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { initialize, nextPlayer, execute } from "../src/lib/ludi/engine";
-import { Game, Move } from "../src/lib/ludi/types";
+import { Rules } from "../src/lib/ludi/types";
 import { GameParticipant } from "../src/lib/realtime/types";
 
 // Required since convex doesn't support structured clone
@@ -17,11 +17,11 @@ export const get = query({
 });
 
 export const newGame = mutation({
-  args: { game: v.any() },
-  handler: async (ctx, { game }) => {
-    const initialState = initialize(game as Game);
+  args: { rules: v.any() },
+  handler: async (ctx, { rules }) => {
+    const initialState = initialize(rules as Rules);
 
-    const liveGame = await ctx.db.insert("liveGame", {game: game, state: initialState, participants: []});
+    const liveGame = await ctx.db.insert("liveGame", {rules: rules, state: initialState, participants: []});
 
     return liveGame;
   },
@@ -34,7 +34,7 @@ export const executeStatements = mutation({
 
     // TODO check move validity
     const role = liveGame.participants.find((p: GameParticipant) => p.id === participantId)?.role;
-    const newState = execute(liveGame.game, liveGame.state, role, statements, locals);
+    const newState = execute(liveGame.rules, liveGame.state, role, statements, locals);
 
     if (!newState) {
       // Illegal move!
@@ -52,7 +52,7 @@ export const reset = mutation({
   handler: async (ctx, { liveGameId }) => {
     const liveGame = await ctx.db.get(liveGameId);
 
-    const newState = initialize(liveGame.game);
+    const newState = initialize(liveGame.rules);
     const updatedLiveGame = await ctx.db.patch(liveGameId, {state: newState});
 
     return updatedLiveGame;
@@ -71,7 +71,7 @@ export const join = mutation({
     }
 
     const currentRoles = liveGame.participants.map((p: GameParticipant) => p.role);
-    const newRole = nextPlayer(liveGame.game, currentRoles) ?? "Spectator";
+    const newRole = nextPlayer(liveGame.rules, currentRoles) ?? "Spectator";
     const newParticipants = [...liveGame.participants, {id: participantId, name: participantId, role: newRole}];
 
     await ctx.db.patch(liveGameId, {participants: newParticipants});

@@ -11,7 +11,7 @@
             "input": "games/number-guessing.ludi",
             "grammar": "src/lib/lang/Ludi.g4",
             // "actionFile": "grammars/exampleActions.js",
-            "startRule": "game",
+            "startRule": "rules",
             "printParseTree": true,
             "visualParseTree": true
         },

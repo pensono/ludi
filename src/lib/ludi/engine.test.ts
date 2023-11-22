@@ -5,8 +5,8 @@ import { fromFile } from './parse-from-file';
 
 describe('starting position', () => {
     it(`number-guessing.ludi`, () => {
-        const game = fromFile(`./static/games/number-guessing.ludi`);
-        const initialState = initialize(game, 0);
+        const rules = fromFile(`./static/games/number-guessing.ludi`);
+        const initialState = initialize(rules, 0);
 
         expect(initialState.position).toEqual({
             winner: null,
@@ -22,10 +22,10 @@ describe('starting position', () => {
 
 describe('enumerate moves', () => {
     it(`number-guessing.ludi`, () => {
-        const game = fromFile(`./static/games/number-guessing.ludi`);
-        let state = initialize(game, 0);
+        const rules = fromFile(`./static/games/number-guessing.ludi`);
+        let state = initialize(rules, 0);
 
-        let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(rules, state)];
 
         expect(moves).toEqual([
             {actionName: "Guess", args: [1], player: "Solo"},
@@ -42,10 +42,10 @@ describe('enumerate moves', () => {
     });
     
     it(`number-guessing-2player.ludi`, () => {
-        const game = fromFile(`./static/games/number-guessing-2player.ludi`);
-        let state = initialize(game, 0);
+        const rules = fromFile(`./static/games/number-guessing-2player.ludi`);
+        let state = initialize(rules, 0);
 
-        let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(rules, state)];
 
         expect(moves).toEqual([
             {actionName: "Choose", args: [1], player: "Chooser"},
@@ -62,10 +62,10 @@ describe('enumerate moves', () => {
     });
     
     it(`tic-tac-toe.ludi`, () => {
-        const game = fromFile(`./static/games/tic-tac-toe.ludi`);
-        let state = initialize(game, 0);
+        const rules = fromFile(`./static/games/tic-tac-toe.ludi`);
+        let state = initialize(rules, 0);
 
-        let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(rules, state)];
 
         expect(moves).toEqual([
             {actionName: "PlacePiece", args: [1, 1], player: "X"},
@@ -79,10 +79,10 @@ describe('enumerate moves', () => {
             {actionName: "PlacePiece", args: [3, 3], player: "X"},
         ]);
 
-        state = playMove(game, state, moves[0])!;
+        state = playMove(rules, state, moves[0])!;
         expect(state).not.toBeNull()
 
-        moves = [...enumerateMoves(game, state)];
+        moves = [...enumerateMoves(rules, state)];
         expect(moves).toEqual([
             {actionName: "PlacePiece", args: [1, 2], player: "O"},
             {actionName: "PlacePiece", args: [1, 3], player: "O"},
@@ -96,13 +96,13 @@ describe('enumerate moves', () => {
     });
     
     it(`One move`, () => {
-        const game = ludi`
+        const rules = ludi`
             players Solo
             action OnlyThingToDo() for Solo:
         `;
-        let state = initialize(game);
+        let state = initialize(rules);
 
-        let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(rules, state)];
 
         expect(moves).toEqual([
             {actionName: "OnlyThingToDo", args: [], player: "Solo"},
@@ -110,16 +110,16 @@ describe('enumerate moves', () => {
     });
 
     it(`No moves`, () => {
-        const game = fromString("players A");
-        let state = initialize(game);
+        const rules = fromString("players A");
+        let state = initialize(rules);
 
-        let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(rules, state)];
 
         expect(moves).toEqual([]);
     });
 
     it(`Conditional move`, () => {
-        const game = ludi`
+        const rules = ludi`
             players A
             state Minimum a Number<1, 10>
 
@@ -129,9 +129,9 @@ describe('enumerate moves', () => {
             action Action(number a Number<1, 10>) for A:
                 when number > Minimum
         `;
-        let state = initialize(game);
+        let state = initialize(rules);
 
-        let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(rules, state)];
 
         expect(moves).toEqual([
             {actionName: "Action", args: [6], player: "A"},
@@ -143,7 +143,7 @@ describe('enumerate moves', () => {
     });
     
     it(`Change`, () => {
-        const game = ludi`
+        const rules = ludi`
             players Solo
             state LastGuess a Number<1, 3>
 
@@ -153,9 +153,9 @@ describe('enumerate moves', () => {
             action Action(number a Number<1, 3>) for Solo:
                 change LastGuess to number
         `;
-        let state = initialize(game);
+        let state = initialize(rules);
 
-        let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(rules, state)];
 
         expect(moves).toEqual([
             {actionName: "Action", args: [1], player: "Solo"},
@@ -164,7 +164,7 @@ describe('enumerate moves', () => {
     });
     
     it(`Change after mutation`, () => {
-        const game = ludi`
+        const rules = ludi`
             players Solo
             state LastGuess a Number<1, 3>
 
@@ -175,9 +175,9 @@ describe('enumerate moves', () => {
                 change LastGuess to 3
                 change LastGuess to number
         `;
-        let state = initialize(game);
+        let state = initialize(rules);
 
-        let moves = [...enumerateMoves(game, state)];
+        let moves = [...enumerateMoves(rules, state)];
 
         expect(moves).toEqual([
             {actionName: "Action", player: "Solo", args: [1]},
@@ -188,14 +188,14 @@ describe('enumerate moves', () => {
 
 describe('players', () => {
     it(`tic-tac-toe.ludi`, () => {
-        const game = fromFile(`./static/games/tic-tac-toe.ludi`);
-        expect(enumerateType(game.playerType)).toEqual(['X', 'O']);
+        const rules = fromFile(`./static/games/tic-tac-toe.ludi`);
+        expect(enumerateType(rules.playerType)).toEqual(['X', 'O']);
     });
 })
 
 describe('triggers', () => {
     it(`basic`, () => {
-        const game = ludi`
+        const rules = ludi`
             players X
             state LastGuess a Number<1, 10>
 
@@ -209,9 +209,9 @@ describe('triggers', () => {
                 when LastGuess < 5
                 increase LastGuess by 1
         `;
-        let state = initialize(game);
+        let state = initialize(rules);
 
-        const actual = playMove(game, state, {
+        const actual = playMove(rules, state, {
             player: "X",
             actionName: "Action",
             args: [3],
@@ -229,11 +229,11 @@ describe('triggers', () => {
 
 describe('execute', () => {
     it(`tic-tac-toe.ludi`, () => {
-        const game = fromFile(`./static/games/tic-tac-toe.ludi`);
-        const state = initialize(game);
+        const rules = fromFile(`./static/games/tic-tac-toe.ludi`);
+        const state = initialize(rules);
 
         const statements = parseInteraction("play PlacePiece(x, y) for X")
-        const actual = execute(game, state, "X", statements, {x: 1, y: 1})!;
+        const actual = execute(rules, state, "X", statements, {x: 1, y: 1})!;
 
         expect(actual.position).toEqual({
             winner: null,
@@ -249,7 +249,7 @@ describe('execute', () => {
     });
 
     it(`Choose based on player`, () => {
-        const game = ludi`
+        const rules = ludi`
             players X or Y
             state Result a Number<1, 3>
 
@@ -262,10 +262,10 @@ describe('execute', () => {
             action Action() for Y:
                 set Result to 3
         `;
-        let state = initialize(game);
+        let state = initialize(rules);
 
         const statements = parseInteraction("play Action() for X")
-        const actual = execute(game, state,  "X", statements, {})!;
+        const actual = execute(rules, state,  "X", statements, {})!;
 
         expect(actual.position).toEqual({
             winner: null,
@@ -279,7 +279,7 @@ describe('execute', () => {
 
 describe('win conditions', () => {
     it(`Basic wins`, () => {
-        const game = ludi`
+        const rules = ludi`
             players A or B
             state LastGuess a Number<1, 3>
 
@@ -292,9 +292,9 @@ describe('win conditions', () => {
             win Win() for player:
                 when LastGuess = 3
         `;
-        let state = initialize(game);
+        let state = initialize(rules);
 
-        state = playMove(game, state, {actionName: "Action", args: [3], player: "A"})!;
+        state = playMove(rules, state, {actionName: "Action", args: [3], player: "A"})!;
         expect(state).not.toBeNull();
 
         expect(state.position.winner).toEqual("A");

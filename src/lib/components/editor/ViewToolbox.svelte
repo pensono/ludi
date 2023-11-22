@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { enumerateMoves, executeBlock, rewindTo, typeOfVariable } from "$lib/ludi/engine";
-	import type { Game, GamePosition, GameState, Move } from "$lib/ludi/types";
+	import type { Rules, GamePosition, GameState, Move } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
 	import GridDisplay from "./GridDisplay.svelte";
 
-    export let game: Game;
+    export let rules: Rules;
     export let state: GameState;
     export let previewPosition: GamePosition | null;
 
     function advanceState(move: Move) {
-        state = executeBlock(game, state, move);
+        state = executeBlock(rules, state, move);
     }
 
     function rewindState(ply: number) {
@@ -21,7 +21,7 @@
 <div>
     <ToolboxSection title="Current State">
         {#each Object.entries(state.position.variables) as [key, value]}
-            {@const type = typeOfVariable(game, key)?.name}
+            {@const type = typeOfVariable(rules, key)?.name}
             {#if type == 'Grid'}
                 <ToolboxItem title="{key}">
                     <GridDisplay value={value} />
@@ -34,7 +34,7 @@
     </ToolboxSection>
     
     <ToolboxSection title="Available Moves">
-        {#each enumerateMoves(game, state) as move}
+        {#each enumerateMoves(rules, state) as move}
             <ToolboxItem class="move" title="{move.actionName}({move.args.join(", ")}) for {move.player}" on:click={() => advanceState(move)} />
         {/each}
     </ToolboxSection>

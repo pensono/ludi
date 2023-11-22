@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { Action, Game, GameState } from "$lib/ludi/types";
+	import type { Action, Rules, GameState } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
     import TypeEditor from "./TypeEditor.svelte";
     import Input from "$lib/components/util/Input.svelte";
 
-    export let game: Game;
+    export let rules: Rules;
     export let state: GameState;
 
     let actionDetail: Action | null = null;
@@ -13,7 +13,7 @@
 
 <div>
     <ToolboxSection title="State">
-        {#each game.stateVariables as stateVariable}
+        {#each rules.stateVariables as stateVariable}
             <TypeEditor bind:title={stateVariable.name} bind:type={stateVariable.type} />
         {/each}
     </ToolboxSection>
@@ -22,7 +22,7 @@
     </ToolboxSection>
 
     <ToolboxSection title="Actions">
-        {#each game.actions as action}
+        {#each rules.actions as action}
             <ToolboxItem
                 class="move {actionDetail === action && 'detail-active'}"
                 title="{action.name}({action.parameters.map(p => p.name).join(", ")}) for {action.player}"
@@ -38,7 +38,7 @@
 
     
     <ToolboxSection title="Views">
-        {#each game.views as view}
+        {#each rules.views as view}
             <ToolboxItem title={view.name}>
                 {#each Object.entries(view.attributes) as [key, value]}
                     <p>{key}: {value}</p>

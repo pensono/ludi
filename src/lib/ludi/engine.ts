@@ -1,8 +1,8 @@
-import type { Action, Expression, Game, GameState, LValue, LudiType, Move, Parameter, Statement } from './types'
+import type { Action, Expression, Rules, GameState, LValue, LudiType, Move, Parameter, Statement } from './types'
 import * as builtins from './builtins';
 import { diagonalCoordinatesBetweenExclusive } from './builtins';
 
-export function initialize(game: Game, seed?: number) : GameState {
+export function initialize(rules: Rules, seed?: number) : GameState {
     let state: GameState = {
         position: {
             winner: null,
@@ -17,13 +17,13 @@ export function initialize(game: Game, seed?: number) : GameState {
     }
 
     // Default all state variables
-    for (const stateVariable of game.stateVariables) {
+    for (const stateVariable of rules.stateVariables) {
         state.position.variables[stateVariable.name] = defaultValue(stateVariable.type);
     }
 
-    if (game.setup) {
-        for (const statement of game.setup.statements) {
-            executeStatement(game, state, "initialize", {}, statement);
+    if (rules.setup) {
+        for (const statement of rules.setup.statements) {
+            executeStatement(rules, state, "initialize", {}, statement);
         }
     }
 
@@ -36,14 +36,14 @@ export function initialize(game: Game, seed?: number) : GameState {
     return state;
 }
 
-export function *enumerateMoves(game: Game, state: GameState) : IterableIterator<Move> {
+export function *enumerateMoves(rules: Rules, state: GameState) : IterableIterator<Move> {
     if (state.position.winner) {
         return;
     }
 
-    for (const role of enumerateType(game.playerType)) {
-        for (const action of game.actions) {
-            for (const args of legalArguments(game, state, action, role)) {
+    for (const role of enumerateType(rules.playerType)) {
+        for (const action of rules.actions) {
+            for (const args of legalArguments(rules, state, action, role)) {
                 yield {
                     actionName: action.name!,
                     player: role,
@@ -54,9 +54,9 @@ export function *enumerateMoves(game: Game, state: GameState) : IterableIterator
     }
 }
 
-function *legalArguments(game: Game, state: GameState, action: Action, role: string | null = null) : IterableIterator<any[]> {
+function *legalArguments(rules: Rules, state: GameState, action: Action, role: string | null = null) : IterableIterator<any[]> {
     if (action.player) {
-        const expectedPlayer = evaluateExpression(game, state, {}, action.player);
+        const expectedPlayer = evaluateExpression(rules, state, {}, action.player);
         if (role !== expectedPlayer) {
             return;
         }
@@ -67,10 +67,10 @@ function *legalArguments(game: Game, state: GameState, action: Action, role: str
         }
     }
 
-    yield* legalArgumentsImpl(game, state, action, role, action.parameters, []);
+    yield* legalArgumentsImpl(rules, state, action, role, action.parameters, []);
 }
 
-function *legalArgumentsImpl(game: Game, state: GameState, action: Action, role: string | null, remainingParameters: Parameter[], args: any[]) : IterableIterator<any[]> {
+function *legalArgumentsImpl(rules: Rules, state: GameState, action: Action, role: string | null, remainingParameters: Parameter[], args: any[]) : IterableIterator<any[]> {
     // There are many faster ways to do this, but this is easy to implement and fast enough for most games
     // Using something like SMT is ideal
     if (remainingParameters.length === 0) {
@@ -86,7 +86,7 @@ function *legalArgumentsImpl(game: Game, state: GameState, action: Action, role:
             throw new Error(`Action ${JSON.stringify(action)} has no player`);
         }
 
-        if (!executeBlock(game, state, action, role, args)) {
+        if (!executeBlock(rules, state, action, role, args)) {
             return;
         }
 
@@ -97,15 +97,15 @@ function *legalArgumentsImpl(game: Game, state: GameState, action: Action, role:
     const parameter = remainingParameters[0];
     const newRemainingParameters = remainingParameters.slice(1);
     for (const value of enumerateType(parameter.type)) {
-        yield* legalArgumentsImpl(game, state, action, role, newRemainingParameters, [...args, value]);
+        yield* legalArgumentsImpl(rules, state, action, role, newRemainingParameters, [...args, value]);
     }
 }
 
-export function execute(game: Game, state: GameState, role: string, statements: Statement[], locals: Record<string, any>): GameState | null {
+export function execute(rules: Rules, state: GameState, role: string, statements: Statement[], locals: Record<string, any>): GameState | null {
     const newState = structuredClone(state)
 
     for (const statement of statements) {
-        if (!executeStatement(game, newState, role, locals, statement)) {
+        if (!executeStatement(rules, newState, role, locals, statement)) {
             return null;
         }
     }
@@ -113,13 +113,13 @@ export function execute(game: Game, state: GameState, role: string, statements: 
     return newState;
 }
 
-export function playMove(game: Game, state: GameState, move: Move): GameState | null {
-    let action = game.actions.filter(a => a.name === move.actionName && move.player == evaluateExpression(game, state, {}, a.player))[0];
+export function playMove(rules: Rules, state: GameState, move: Move): GameState | null {
+    let action = rules.actions.filter(a => a.name === move.actionName && move.player == evaluateExpression(rules, state, {}, a.player))[0];
     if (!action) {
         throw Error(`Action ${move.actionName} not found`)
     }
 
-    const newState = executeBlock(game, state, action, move.player, move.args);
+    const newState = executeBlock(rules, state, action, move.player, move.args);
     if (!newState) {
         return null;
     }
@@ -127,13 +127,13 @@ export function playMove(game: Game, state: GameState, move: Move): GameState | 
     // Run available triggers
     // !! Scary! possible infinite loop!
     outer: while (true) {
-        for (const trigger of game.triggers) {
-            const argsIter = legalArguments(game, newState, trigger).next();
+        for (const trigger of rules.triggers) {
+            const argsIter = legalArguments(rules, newState, trigger).next();
             if (argsIter.done) {
                 continue;
             }
 
-            executeBlock(game, newState, trigger, null, argsIter.value, {inPlace: true});
+            executeBlock(rules, newState, trigger, null, argsIter.value, {inPlace: true});
 
             // Triggers are run from top to bottom, and each time one fires it begins again from the top
             continue outer;
@@ -142,12 +142,12 @@ export function playMove(game: Game, state: GameState, move: Move): GameState | 
         break;
     }
 
-    for (const winConditionName in game.winConditions) {
-        const winCondition = game.winConditions[winConditionName];
+    for (const winConditionName in rules.winConditions) {
+        const winCondition = rules.winConditions[winConditionName];
 
         // Just enumerate all players for now
-        for (const player of enumerateType(game.playerType)){
-            if (winCondition.conditions.every(c => evaluateExpression(game, newState, {player}, c.expression))) {
+        for (const player of enumerateType(rules.playerType)){
+            if (winCondition.conditions.every(c => evaluateExpression(rules, newState, {player}, c.expression))) {
                 newState.position.winner = player;
                 break;
             }
@@ -168,14 +168,14 @@ export function playMove(game: Game, state: GameState, move: Move): GameState | 
 }
 
 /** Returns the state which follows after playing `move`, or null if no valid state exists */
-export function executeBlock(game: Game, state: GameState, action: Action, role: string | null, args: any[], {inPlace} = {inPlace: false}): GameState | null {
+export function executeBlock(rules: Rules, state: GameState, action: Action, role: string | null, args: any[], {inPlace} = {inPlace: false}): GameState | null {
     if (state.position.winner) {
         return null;
     }
 
     const argsMap = action.parameters.reduce((locals, parameter, i) => ({...locals, [parameter.name]: args[i]}), {});
 
-    if (!action.conditions.every(condition => evaluateExpression(game, state, argsMap, condition.expression))) {
+    if (!action.conditions.every(condition => evaluateExpression(rules, state, argsMap, condition.expression))) {
         return null;
     }
 
@@ -184,7 +184,7 @@ export function executeBlock(game: Game, state: GameState, action: Action, role:
     }
 
     for (const statement of action.statements) {
-        if (!executeStatement(game, state, role, argsMap, statement)) {
+        if (!executeStatement(rules, state, role, argsMap, statement)) {
             return null;
         }
     }
@@ -205,12 +205,12 @@ export function rewindTo(state: GameState, ply: number) {
     }
 }
 
-export function toMove(game: Game, state: GameState, locals: Record<string, any>, statement: Statement): Move {
+export function toMove(rules: Rules, state: GameState, locals: Record<string, any>, statement: Statement): Move {
     if (statement.type != 'play') {
         throw new Error("Not a play statement")
     }
-    const player = evaluateExpression(game, state, locals, statement.player);
-    const args = statement.arguments.map(arg => evaluateExpression(game, state, locals, arg));
+    const player = evaluateExpression(rules, state, locals, statement.player);
+    const args = statement.arguments.map(arg => evaluateExpression(rules, state, locals, arg));
 
     // playMove will also execute triggers/evaluate wins/increase ply etc
     return {
@@ -220,28 +220,28 @@ export function toMove(game: Game, state: GameState, locals: Record<string, any>
     };
 }
 
-function executeStatement(game: Game, state: GameState, role: string | null, locals: Record<string, any>, statement: Statement) : boolean {
+function executeStatement(rules: Rules, state: GameState, role: string | null, locals: Record<string, any>, statement: Statement) : boolean {
     switch (statement.type) {
         case 'play': {
-            const player = evaluateExpression(game, state, locals, statement.player);
+            const player = evaluateExpression(rules, state, locals, statement.player);
             if (player != role) {
                 console.log("Player", player, "is not", role);
                 return false;
             }
 
-            let action = game.actions.filter(a => a.name === statement.actionName && player == evaluateExpression(game, state, {}, a.player))[0];
+            let action = rules.actions.filter(a => a.name === statement.actionName && player == evaluateExpression(rules, state, {}, a.player))[0];
             if (!action) {
                 throw Error(`Action ${statement.actionName} not found`)
             }
 
-            const args = statement.arguments.map(arg => evaluateExpression(game, state, locals, arg));
+            const args = statement.arguments.map(arg => evaluateExpression(rules, state, locals, arg));
 
             // playMove will also execute triggers/evaluate wins/increase ply etc
-            return executeBlock(game, state, action, player, args, {inPlace: true}) !== null;
+            return executeBlock(rules, state, action, player, args, {inPlace: true}) !== null;
         }
         case 'change': {
-            const variable = toReference(game, state, locals, statement.variable);
-            const newValue = evaluateExpression(game, state, locals, statement.value);
+            const variable = toReference(rules, state, locals, statement.variable);
+            const newValue = evaluateExpression(rules, state, locals, statement.value);
 
             // Changing a value always works when it's being set for the first time
             if (variable.hasValue() && variable.getValue() === newValue) {
@@ -252,8 +252,8 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
             return true;
         }
         case 'move': {
-            const from = toReference(game, state, locals, statement.from);
-            const to = toReference(game, state, locals, statement.to);
+            const from = toReference(rules, state, locals, statement.from);
+            const to = toReference(rules, state, locals, statement.to);
 
             if (statement.movements?.length) {
                 // TODO multi-dimensional
@@ -337,7 +337,7 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
             return true;
         }
         case 'remove': {
-            const variable = toReference(game, state, locals, statement.what);
+            const variable = toReference(rules, state, locals, statement.what);
 
             if (variable.getValue() === builtins.Variables.Empty) {
                 // Must remove something
@@ -348,24 +348,24 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
             return true;
         }
         case 'set': {
-            const variable = toReference(game, state, locals, statement.variable);
-            const newValue = evaluateExpression(game, state, locals, statement.value);
+            const variable = toReference(rules, state, locals, statement.variable);
+            const newValue = evaluateExpression(rules, state, locals, statement.value);
             variable.setValue(newValue);
             return true;
         }
         case 'remember': {
-            const value = evaluateExpression(game, state, locals, statement.value);
+            const value = evaluateExpression(rules, state, locals, statement.value);
             state.transientVariables[statement.variable] = value;
             return true;
         }
         case 'increase': {
-            const variable = toReference(game, state, locals, statement.variable);
+            const variable = toReference(rules, state, locals, statement.variable);
             if (typeof variable.getValue() !== 'number') {
                 // Typechecking should prevent this from happening
                 throw new Error(`Cannot increment a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${variable.getValue()}`);
             }
 
-            const amount = evaluateExpression(game, state, locals, statement.amount);
+            const amount = evaluateExpression(rules, state, locals, statement.amount);
             if (typeof amount !== 'number') {
                 // Typechecking should prevent this from happening
                 throw new Error(`Cannot increment by a non-number. This indicates an error in the engine. Value: ${amount}`);
@@ -375,13 +375,13 @@ function executeStatement(game: Game, state: GameState, role: string | null, loc
             return true;
         }
         case 'decrease': {
-            const variable = toReference(game, state, locals, statement.variable);
+            const variable = toReference(rules, state, locals, statement.variable);
             if (typeof variable.getValue() !== 'number') {
                 // Typechecking should prevent this from happening
                 throw new Error(`Cannot decrement a non-number. This indicates an error in the engine. Variable ${statement.variable}, Value: ${variable.getValue()}`);
             }
 
-            const amount = evaluateExpression(game, state, locals, statement.amount);
+            const amount = evaluateExpression(rules, state, locals, statement.amount);
             if (typeof amount !== 'number') {
                 // Typechecking should prevent this from happening
                 throw new Error(`Cannot decrement by a non-number. This indicates an error in the engine. Value: ${amount}`);
@@ -402,13 +402,13 @@ interface Reference {
     indexes: number[]
 }
 
-function toReference(game: Game, state: GameState, locals: Record<string, any>, lvalue: LValue): Reference {
+function toReference(rules: Rules, state: GameState, locals: Record<string, any>, lvalue: LValue): Reference {
     if (state.references[lvalue.name]) {
-        return toReference(game, state, locals, state.references[lvalue.name]);
+        return toReference(rules, state, locals, state.references[lvalue.name]);
     }
 
     // subtract one to one-index everything
-    let indexValues = lvalue.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
+    let indexValues = lvalue.indexes.map(index => evaluateExpression(rules, state, locals, index) - 1);
 
     let target = state.position.variables;
     let index: any = lvalue.name;
@@ -432,7 +432,7 @@ function toReference(game: Game, state: GameState, locals: Record<string, any>, 
     };
 }
 
-export function evaluateExpression(game: Game, state: GameState, locals: Record<string, any>, expression: Expression) : any {
+export function evaluateExpression(rules: Rules, state: GameState, locals: Record<string, any>, expression: Expression) : any {
     switch (expression.type) {
         case 'constant':
             return expression.value;
@@ -443,13 +443,13 @@ export function evaluateExpression(game: Game, state: GameState, locals: Record<
                 throw new Error(`Function ${expression.name} not found when evaluating ${JSON.stringify(expression)}. This indicates an error in the engine.`);
             }
 
-            const args = expression.arguments.map(arg => evaluateExpression(game, state, locals, arg));
+            const args = expression.arguments.map(arg => evaluateExpression(rules, state, locals, arg));
             return func.invoke(state, args);
         }
         case 'identifier': {
             const localValue = locals[expression.name];
             const stateValue = state.position.variables[expression.name];
-            const constantValue = game.constants[expression.name];
+            const constantValue = rules.constants[expression.name];
             const transientValue = state.transientVariables[expression.name];
 
             if ([transientValue, localValue, stateValue, constantValue].filter(v => v !== undefined).length > 1) {
@@ -464,8 +464,8 @@ export function evaluateExpression(game: Game, state: GameState, locals: Record<
             return value;
         }
         case 'index': {
-            let value = evaluateExpression(game, state, locals, {type: 'identifier', name: expression.variable});
-            const indexes = expression.indexes.map(index => evaluateExpression(game, state, locals, index) - 1);
+            let value = evaluateExpression(rules, state, locals, {type: 'identifier', name: expression.variable});
+            const indexes = expression.indexes.map(index => evaluateExpression(rules, state, locals, index) - 1);
 
             for (const index of indexes) {
                 value = value[index];
@@ -478,15 +478,15 @@ export function evaluateExpression(game: Game, state: GameState, locals: Record<
     }
 }
 
-export function nextPlayer(game: Game, currentPlayers: string[]): string | null {
-    const allPlayers = enumerateType(game.constants["Player"]);
+export function nextPlayer(rules: Rules, currentPlayers: string[]): string | null {
+    const allPlayers = enumerateType(rules.constants["Player"]);
     const nextPlayer = allPlayers.filter(p => !currentPlayers.includes(p))[0];
 
     return nextPlayer;
 }
 
-export function unfilledPlayers(game: Game, currentPlayers: string[]): string[] {
-    const allPlayers = enumerateType(game.constants["Player"]);
+export function unfilledPlayers(rules: Rules, currentPlayers: string[]): string[] {
+    const allPlayers = enumerateType(rules.constants["Player"]);
     return allPlayers.filter(p => !currentPlayers.includes(p));
 }
 
@@ -499,6 +499,6 @@ export function defaultValue(type: LudiType) {
     return builtins.types[type.name].defaultValue(type);
 }
 
-export function typeOfVariable(game: Game, variableName: string) {
-    return game.stateVariables.find(s => s.name === variableName)?.type;
+export function typeOfVariable(rules: Rules, variableName: string) {
+    return rules.stateVariables.find(s => s.name === variableName)?.type;
 }

@@ -12,9 +12,9 @@
         const convex = new ConvexClient(PUBLIC_CONVEX_URL);
 
         const gameText = (await fetch(`/games/${gameName}.ludi`)).text();
-        const game = fromString(await gameText);
+        const rules = fromString(await gameText);
 
-        const liveGameId = await convex.mutation(api.live_games.newGame, { game });
+        const liveGameId = await convex.mutation(api.live_games.newGame, { rules });
 
         goto(`/play/live/${liveGameId}`);
     }

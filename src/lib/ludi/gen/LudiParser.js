@@ -180,7 +180,7 @@ export default class LudiParser extends antlr4.Parser {
                              null, null, null, null, null, null, null, null, 
                              "QUOTED_STRING", "IDENTIFIER", "NUMBER", "WS", 
                              "COMMENT" ];
-    static ruleNames = [ "game", "interaction", "definition", "players", 
+    static ruleNames = [ "rules", "interaction", "definition", "players", 
                          "action", "trigger", "win", "loss", "setup", "kind", 
                          "state_definition", "view", "statement", "when", 
                          "parameterList", "expression", "lvalue", "typeExpression", 
@@ -230,9 +230,9 @@ export default class LudiParser extends antlr4.Parser {
 
 
 
-	game() {
-	    let localctx = new GameContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 0, LudiParser.RULE_game);
+	rules() {
+	    let localctx = new RulesContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 0, LudiParser.RULE_rules);
 	    var _la = 0;
 	    try {
 	        this.enterOuterAlt(localctx, 1);
@@ -1777,7 +1777,7 @@ LudiParser.NUMBER = 50;
 LudiParser.WS = 51;
 LudiParser.COMMENT = 52;
 
-LudiParser.RULE_game = 0;
+LudiParser.RULE_rules = 0;
 LudiParser.RULE_interaction = 1;
 LudiParser.RULE_definition = 2;
 LudiParser.RULE_players = 3;
@@ -1801,7 +1801,7 @@ LudiParser.RULE_viewAttribute = 20;
 LudiParser.RULE_identifier = 21;
 LudiParser.RULE_number = 22;
 
-class GameContext extends antlr4.ParserRuleContext {
+class RulesContext extends antlr4.ParserRuleContext {
 
     constructor(parser, parent, invokingState) {
         if(parent===undefined) {
@@ -1812,7 +1812,7 @@ class GameContext extends antlr4.ParserRuleContext {
         }
         super(parent, invokingState);
         this.parser = parser;
-        this.ruleIndex = LudiParser.RULE_game;
+        this.ruleIndex = LudiParser.RULE_rules;
     }
 
 	EOF() {
@@ -1832,19 +1832,19 @@ class GameContext extends antlr4.ParserRuleContext {
 
 	enterRule(listener) {
 	    if(listener instanceof LudiListener ) {
-	        listener.enterGame(this);
+	        listener.enterRules(this);
 		}
 	}
 
 	exitRule(listener) {
 	    if(listener instanceof LudiListener ) {
-	        listener.exitGame(this);
+	        listener.exitRules(this);
 		}
 	}
 
 	accept(visitor) {
 	    if ( visitor instanceof LudiVisitor ) {
-	        return visitor.visitGame(this);
+	        return visitor.visitRules(this);
 	    } else {
 	        return visitor.visitChildren(this);
 	    }
@@ -3967,7 +3967,7 @@ class NumberContext extends antlr4.ParserRuleContext {
 
 
 
-LudiParser.GameContext = GameContext; 
+LudiParser.RulesContext = RulesContext; 
 LudiParser.InteractionContext = InteractionContext; 
 LudiParser.DefinitionContext = DefinitionContext; 
 LudiParser.PlayersContext = PlayersContext; 

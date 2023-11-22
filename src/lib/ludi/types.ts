@@ -1,6 +1,6 @@
 
 
-export interface Game {
+export interface Rules {
     setup?: Action;
     playerType: LudiType;
     actions: Action[];

@@ -5,12 +5,12 @@ import antlr4 from 'antlr4';
 // This class defines a complete listener for a parse tree produced by LudiParser.
 export default class LudiListener extends antlr4.tree.ParseTreeListener {
 
-	// Enter a parse tree produced by LudiParser#game.
-	enterGame(ctx) {
+	// Enter a parse tree produced by LudiParser#rules.
+	enterRules(ctx) {
 	}
 
-	// Exit a parse tree produced by LudiParser#game.
-	exitGame(ctx) {
+	// Exit a parse tree produced by LudiParser#rules.
+	exitRules(ctx) {
 	}
 
 

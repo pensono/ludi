@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { typeOfVariable } from "$lib/ludi/engine";
-	import type { Game, GamePosition, GameState, Move, Statement, View } from "$lib/ludi/types";
+	import type { Rules, GamePosition, GameState, Move, Statement, View } from "$lib/ludi/types";
     import MiddleLines from "../svg/MiddleLines.svelte";
     import InnerLines from "../svg/InnerLines.svelte";
 	import ViewElement from "./ViewElement.svelte";
@@ -8,7 +8,7 @@
 	import { gridCoordinates } from "./utils";
 
     export let positionStyle: string;
-    export let game: Game;
+    export let rules: Rules;
     export let state: GameState;
     export let previewPosition: GamePosition | null;
     export let runStatements: (statementList: Statement[], locals: Record<string, any>) => void;
@@ -20,8 +20,8 @@
     
     $: variable = element.attributes["show"];
     $: grid = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
-    $: width = typeOfVariable(game, variable)?.parameters.width;
-    $: height = typeOfVariable(game, variable)?.parameters.height;
+    $: width = typeOfVariable(rules, variable)?.parameters.width;
+    $: height = typeOfVariable(rules, variable)?.parameters.height;
 
     $: lastMoveElement = element.children.find(c => c.attributes["useFor"] == "LastMove");
     $: lastMoveCoordinates = state.history.length > 0 ? state.history[state.history.length - 1].move.args : null;
@@ -165,13 +165,13 @@
                 class:dragging
                 style:--x={x}
                 style:--y={y}>
-                <ViewElement bind:game bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
+                <ViewElement bind:rules bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
             </div>
         {/each}
         <!-- Super hacky -->
         {#if lastMoveElement && lastMoveCoordinates && `[${x},${y}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
             <div class="overlay" style:--x={x} style:--y={y}>
-                <ViewElement bind:game bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
+                <ViewElement bind:rules bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
             </div>
         {/if}
     {/each}

@@ -8,7 +8,7 @@ grammar Ludi;
 // - Use english words, but computer syntax
 
 // Top level .ludi file
-game: definition* EOF;
+rules: definition* EOF;
 
 // Top level "code" within a view
 interaction: statements+=statement ('or' statements+=statement)*;

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Game, GameState, View } from "$lib/ludi/types";
+	import type { Rules, GameState, View } from "$lib/ludi/types";
 
     export let positionStyle: string;
-    export let game: Game;
+    export let rules: Rules;
     export let state: GameState;
     export let element: View;
     $: file = element.attributes["file"];

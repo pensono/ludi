@@ -4,13 +4,13 @@
 	import { execute, initialize, playMove, toMove } from "$lib/ludi/engine";
     import { Variables } from "$lib/ludi/builtins";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Game, GameState, Statement } from '$lib/ludi/types';
+	import type { Rules, GameState, Statement } from '$lib/ludi/types';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import Meta from '$lib/components/util/Meta.svelte';
 
     export let data;
 
-    let game: Game | undefined;
+    let rules: Rules | undefined;
     let state: GameState | undefined;
 
     onMount(() => {
@@ -19,15 +19,15 @@
 
     async function loadGame() {
         let gameText = await fetch(`/games/${data.gameName}.ludi`).then(r => r.text());
-        game = fromString(gameText);
-        state = initialize(game);
+        rules = fromString(gameText);
+        state = initialize(rules);
     }
     
     function playMove_(statements: Statement[], locals: Record<string, any>) {
         for (const statement of statements) {
-            const move = toMove(game!, state!, locals, statement);
+            const move = toMove(rules!, state!, locals, statement);
 
-            const newState = playMove(game!, state!, move);
+            const newState = playMove(rules!, state!, move);
 
             // Legal move
             if (!newState) {
@@ -40,7 +40,7 @@
     }
     
     function reset() {
-        state = initialize(game!);
+        state = initialize(rules!);
     }
 </script>
 
@@ -48,13 +48,13 @@
 
 <RootLayout logoColor="#000">
     <p slot="nav-center">
-        {#if game}
-            {state?.position.variables[Variables.CurrentPlayer]} to play
+        {#if rules && state}
+            {state.position.variables[Variables.CurrentPlayer]} to play
         {/if}
     </p>
     <main>
-        {#if game && state}
-            <GameScreen bind:game={game} bind:state={state} runStatements={playMove_} reset={reset} />
+        {#if rules && state}
+            <GameScreen bind:rules={rules} bind:state={state} runStatements={playMove_} reset={reset} />
         {/if}
     </main>
 </RootLayout>

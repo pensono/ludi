@@ -3,7 +3,7 @@
     import { api } from "$convex/_generated/api";
     import { onDestroy } from 'svelte';
 	import GameScreen from "$lib/components/GameScreen.svelte";
-	import type { Game, GameState, Move, Statement } from '$lib/ludi/types';
+	import type { Rules, GameState, Move, Statement } from '$lib/ludi/types';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import type { GameParticipant } from '$lib/realtime/types.js';
     import Participant from './Participant.svelte';
@@ -14,14 +14,14 @@
 
     export let data;
 
-    let game: Game | undefined;
+    let rules: Rules | undefined;
     let state: GameState | undefined;
     let participants: GameParticipant[] | undefined;
 
     const localParticipantId = getParticipantId();
 
     $: localParticipant = participants?.find(p => p.id === localParticipantId);
-    $: remainingParticipants = game && unfilledPlayers(game, (participants ?? []).map(p => p.role));
+    $: remainingParticipants = rules && unfilledPlayers(rules, (participants ?? []).map(p => p.role));
 
     const convex = new ConvexClient(PUBLIC_CONVEX_URL);
 
@@ -30,7 +30,7 @@
     });
     
     convex.onUpdate(api.live_games.get, { id: data.gameId}, (liveGame) => {
-        game = game ?? liveGame.game; // Only update once
+        rules = rules ?? liveGame.rules; // Only update once
         state = liveGame.state;
         participants = liveGame.participants;
     });
@@ -40,7 +40,7 @@
     async function runStatements(statements: Statement[], locals: Record<string, any>) {
         for (const statement of statements) {
             // Test if this is legal for the local player
-            const newState = execute(game!, state!, localParticipant!.role, [statement], locals);
+            const newState = execute(rules!, state!, localParticipant!.role, [statement], locals);
 
             // Legal move
             if (!newState) {
@@ -65,8 +65,8 @@
 
 <RootLayout logoColor="#000">
     <main>
-        {#if game && state}
-            <GameScreen bind:game={game} state={state} runStatements={runStatements} reset={reset} />
+        {#if rules && state}
+            <GameScreen bind:rules={rules} state={state} runStatements={runStatements} reset={reset} />
         {/if}
         
         {#if participants}

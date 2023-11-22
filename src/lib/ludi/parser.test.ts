@@ -4,27 +4,27 @@ import { ludi } from './parser';
 
 describe('games can parse', () => {
 	it(`number-guessing.ludi parses`, () => {
-		const game = fromFile(`./static/games/number-guessing.ludi`);
+		const rules = fromFile(`./static/games/number-guessing.ludi`);
 		
-		expect(game.stateVariables).toEqual(expect.arrayContaining([
+		expect(rules.stateVariables).toEqual(expect.arrayContaining([
 				{ name: "HiddenNumber", type: { name: "Number", parameters: { min: 1, max: 10 } } },
 				{ name: "RemainingGuesses", type: { name: "Number", parameters: {min: 0, max: 10 } } },
 			])
 		);
 	});
 	it(`tic-tac-toe.ludi parses`, () => {
-		const game = fromFile(`./static/games/tic-tac-toe.ludi`);
+		const rules = fromFile(`./static/games/tic-tac-toe.ludi`);
 	});
 });
 
 describe('prescience', () => {
 	it(`and/or and operators`, () => {
-		const game = ludi`
+		const rules = ludi`
 		action Test():
 			when x = 1 and y = 2
 		`;
 		
-		expect(game.actions[0].conditions).toEqual(
+		expect(rules.actions[0].conditions).toEqual(
 			[
 				{
 					expression: {

@@ -6,8 +6,8 @@ import antlr4 from 'antlr4';
 
 export default class LudiVisitor extends antlr4.tree.ParseTreeVisitor {
 
-	// Visit a parse tree produced by LudiParser#game.
-	visitGame(ctx) {
+	// Visit a parse tree produced by LudiParser#rules.
+	visitRules(ctx) {
 	  return this.visitChildren(ctx);
 	}
 

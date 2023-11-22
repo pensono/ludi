@@ -5,10 +5,10 @@
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
 	import { initialize, execute as runStatements_ } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Game, GamePosition, GameState, Move, Statement } from '$lib/ludi/types';
+	import type { Rules, GamePosition, GameState, Move, Statement } from '$lib/ludi/types';
 
     let selectedGame = "/games/tic-tac-toe.ludi";
-    let game: Game | undefined;
+    let rules: Rules | undefined;
     let state: GameState | undefined;
     let previewPosition: GamePosition | null = null;
 
@@ -18,12 +18,12 @@
 
     async function loadGame() {
         let gameText = await fetch(selectedGame).then(r => r.text());
-        game = fromString(gameText);
-        state = initialize(game);
+        rules = fromString(gameText);
+        state = initialize(rules);
     }
 
     function runStatements(statements: Statement[], locals: Record<string, any>) {
-        const newState = runStatements_(game!, state!, statements, locals);
+        const newState = runStatements_(rules!, state!, statements, locals);
 
         // Legal move
         if (newState) {
@@ -32,7 +32,7 @@
     }
     
     function reset() {
-        state = initialize(game!);
+        state = initialize(rules!);
     }
 </script>
 
@@ -48,10 +48,10 @@
     </nav>
     
     <main>
-        {#if game && state}
-            <ViewToolbox bind:game={game} bind:state={state} bind:previewPosition={previewPosition} />
-            <GameScreen bind:game={game} state={state} bind:previewPosition={previewPosition} runStatements={runStatements} reset={reset} />
-            <EditToolbox bind:game={game} bind:state={state} />
+        {#if rules && state}
+            <ViewToolbox bind:rules={rules} bind:state={state} bind:previewPosition={previewPosition} />
+            <GameScreen bind:rules={rules} state={state} bind:previewPosition={previewPosition} runStatements={runStatements} reset={reset} />
+            <EditToolbox bind:rules={rules} bind:state={state} />
         {/if}
     </main>
 </div>

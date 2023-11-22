@@ -1,6 +1,6 @@
 // @ts-nocheck -- Antlr makes typechecking in this file a shitshow
 import { CharStream, CommonTokenStream, ErrorListener }  from 'antlr4';
-import type { Action, Condition, Expression, FunctionCallExpression, Game, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, RememberStatement, StateVariable, View } from './types'
+import type { Action, Condition, Expression, FunctionCallExpression, Rules, IdentifierExpression, IndexExpression, LValue, LudiType, Parameter, RememberStatement, StateVariable, View } from './types'
 import LudiLexer from './gen/LudiLexer';
 // import LudiParser, { ActionContext, ChangeStatementContext, ComparisonExpressionContext, DecreaseStatementContext, FunctionCallExpressionContext, GameContext, IdentifierExpressionContext, IncreaseStatementContext, NumberExpressionContext, ParameterListContext, ParameterizedTypeExpressionContext, SetStatementContext, SetupContext, TypeExpressionContext } from './gen/LudiParser';
 import LudiParser from './gen/LudiParser';
@@ -21,16 +21,16 @@ export interface Position {
     column: number;
 }
 
-export function fromString(input: string): Game {
+export function fromString(input: string): Rules {
     return fromStream(new CharStream(input))
 }
 
-export function ludi(strings: TemplateStringsArray, ...values): Game {
+export function ludi(strings: TemplateStringsArray, ...values): Rules {
     return fromString(String.raw({ raw:strings }, values));
 }
 
 /** Internal use only */
-export function fromStream(input: CharStream): Game {
+export function fromStream(input: CharStream): Rules {
     const lexer = new LudiLexer(input);
     const tokens = new CommonTokenStream(lexer);
     const parser = new LudiParser(tokens);
@@ -38,7 +38,7 @@ export function fromStream(input: CharStream): Game {
     const errorListener = new CollectingErrorListener();
     parser.addErrorListener(errorListener);
 
-    var gameContext = parser.game();
+    var gameContext = parser.rules();
 
     if (errorListener.errors.length > 0) {
         throw new Error(errorListener.errors.join('\n'));
@@ -72,7 +72,7 @@ export function parseInteraction(input: string): Statement[] {
     return statements.statements.map(s => new StatementVisitor().visit(s));
 }
 
-function handleGame(ctx: any): Game {
+function handleGame(ctx: any): Rules {
     let setup: Action | undefined = undefined;
     let actions: Action[] = [];
     let triggers: Action[] = [];
