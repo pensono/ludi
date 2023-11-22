@@ -1,4 +1,4 @@
-name: 'CI'
+name: 'Validation'
 on: 
   push:
     branches-ignore:
@@ -6,7 +6,8 @@ on:
   pull_request:
 
 jobs:
-  'Unit Test':
+  test-unit:
+    name: "Unit Test"
     runs-on: ubuntu-latest
 
     permissions:
@@ -24,7 +25,8 @@ jobs:
     - name: Run Tests
       run: npx vitest
 
-  'Playwright Test':
+  test-playwright:
+    name: "Playwright Test"
     runs-on: ubuntu-latest
 
     permissions:
