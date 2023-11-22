@@ -30,6 +30,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+    
+    steps:
     - uses: actions/checkout@v2
     - name: 'Install Node'
       uses: actions/setup-node@v2
