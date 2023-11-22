@@ -10,10 +10,11 @@
     export let reset: () => void;
 
     $: position = previewPosition ?? state.position;
+    $: rootElement = rules.view;
 </script>
 
 <div class="container">
-    {#each rules.views as view}
+    {#each rootElement?.children || [] as view}
         <ViewElement bind:rules bind:state bind:previewPosition bind:element={view} runStatements={runStatements} />
     {/each}
 

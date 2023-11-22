@@ -9,7 +9,7 @@ export interface Rules {
     winConditions: Record<string, Action>;
     stateVariables: StateVariable[];
     constants: Record<string, any>;
-    views: View[];
+    view?: View;
 }
 
 export interface GameState {

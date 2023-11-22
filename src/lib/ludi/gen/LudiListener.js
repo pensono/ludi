@@ -104,15 +104,6 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by LudiParser#view.
-	enterView(ctx) {
-	}
-
-	// Exit a parse tree produced by LudiParser#view.
-	exitView(ctx) {
-	}
-
-
 	// Enter a parse tree produced by LudiParser#ChangeStatement.
 	enterChangeStatement(ctx) {
 	}

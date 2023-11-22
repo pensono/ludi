@@ -90,7 +90,7 @@ loss NoMorePieces() for player:
     when Count(Board, player) = 0
 
 // or play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer
-view:
+<view>
     <board
         show="Board"
         drag="play Capture(xStart, yStart, xEnd, yEnd) for CurrentPlayer or play MoveNormal(xStart, yStart, xEnd, yEnd) for CurrentPlayer or play CaptureKing(xStart, yStart, xEnd, yEnd) for CurrentPlayer or play MoveNormalKing(xStart, yStart, xEnd, yEnd) for CurrentPlayer"
@@ -105,3 +105,4 @@ view:
         <image useFor="WhiteKing" file="white-token.svg" align="Center" size="90%" />
         <image useFor="WhiteKing" file="crown.svg" align="Center" size="60%" />
     </board>
+</view>

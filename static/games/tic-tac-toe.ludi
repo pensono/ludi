@@ -14,8 +14,9 @@ action PlacePiece(x a Number<1, 3>, y a Number<1, 3>) for CurrentPlayer:
 win 3InARow() for player:
     when InARow(player, Board, 3)
 
-view:
+<view>
     <board show="Board" clickSquare="play PlacePiece(x, y) for CurrentPlayer" align="Center" size="75%" innerLines="#000">
         <image useFor="X" file="x.svg" align="Center" size="100%" />
         <image useFor="O" file="o.svg" align="Center" size="100%" />
     </board>
+</view>

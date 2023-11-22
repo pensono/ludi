@@ -22,7 +22,7 @@ definition
     | loss
     | kind
     | state_definition
-    | view;
+    | view=viewElement;
 
 players: 'players' type=typeExpression;
 
@@ -42,8 +42,6 @@ kind: 'kind' name=identifier 'a' type=typeExpression;
 
 // Must name state_definition to avoid conflicts with antlr internals
 state_definition: 'state' name=identifier 'a' type=typeExpression;
-
-view: 'view' ':' elements+=viewElement*;
 
 statement
     : 'change' lvalue 'to' expression # ChangeStatement // change x from Y to Z ??

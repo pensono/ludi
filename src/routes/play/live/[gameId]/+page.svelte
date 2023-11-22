@@ -2,7 +2,7 @@
     import { ConvexClient } from "convex/browser";
     import { api } from "$convex/_generated/api";
     import { onDestroy } from 'svelte';
-	import GameScreen from "$lib/components/GameScreen.svelte";
+	import RootView from "$lib/components/views/RootView.svelte";
 	import type { Rules, GameState, Move, Statement } from '$lib/ludi/types';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import type { GameParticipant } from '$lib/realtime/types.js';
@@ -66,7 +66,7 @@
 <RootLayout logoColor="#000">
     <main>
         {#if rules && state}
-            <GameScreen bind:rules={rules} state={state} runStatements={runStatements} reset={reset} />
+            <RootView bind:rules={rules} state={state} runStatements={runStatements} reset={reset} />
         {/if}
         
         {#if participants}

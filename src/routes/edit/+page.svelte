@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-	import GameScreen from "$lib/components/GameScreen.svelte";
+	import RootView from "$lib/components/views/RootView.svelte";
 	import EditToolbox from "$lib/components/editor/EditToolbox.svelte";
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
 	import { initialize, execute as runStatements_ } from "$lib/ludi/engine";
@@ -50,7 +50,7 @@
     <main>
         {#if rules && state}
             <ViewToolbox bind:rules={rules} bind:state={state} bind:previewPosition={previewPosition} />
-            <GameScreen bind:rules={rules} state={state} bind:previewPosition={previewPosition} runStatements={runStatements} reset={reset} />
+            <RootView bind:rules={rules} state={state} bind:previewPosition={previewPosition} runStatements={runStatements} reset={reset} />
             <EditToolbox bind:rules={rules} bind:state={state} />
         {/if}
     </main>

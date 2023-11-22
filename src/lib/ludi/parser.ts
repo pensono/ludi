@@ -80,7 +80,7 @@ function handleGame(ctx: any): Rules {
     let stateVariables: StateVariable[] = [];
     let playerType: LudiType = undefined;
     let constants: Record<string, any> = {};
-    let views: View[] = [];
+    let view: View = null;
 
     for (const definition of ctx.definition()) {
         if (definition.setup()) {
@@ -137,8 +137,8 @@ function handleGame(ctx: any): Rules {
                 name: 'CurrentPlayer',
                 type: playerType
             });
-        } else if (definition.view()) {
-            views = definition.view().elements.map((v: any) => new ViewVisitor().visit(v));
+        } else if (definition.view) {
+            view = new ViewVisitor().visit(definition.view);
         }
     }
 
@@ -150,7 +150,7 @@ function handleGame(ctx: any): Rules {
         stateVariables,
         playerType,
         constants,
-        views
+        view
     }
 }
 

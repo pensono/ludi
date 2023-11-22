@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-	import GameScreen from "$lib/components/GameScreen.svelte";
+	import RootView from "$lib/components/views/RootView.svelte";
 	import { execute, initialize, playMove, toMove } from "$lib/ludi/engine";
     import { Variables } from "$lib/ludi/builtins";
 	import { fromString } from "$lib/ludi/parser";
@@ -54,7 +54,7 @@
     </p>
     <main>
         {#if rules && state}
-            <GameScreen bind:rules={rules} bind:state={state} runStatements={playMove_} reset={reset} />
+            <RootView bind:rules={rules} bind:state={state} runStatements={playMove_} reset={reset} />
         {/if}
     </main>
 </RootLayout>

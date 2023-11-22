@@ -14,8 +14,8 @@
     $: positionStyle = calculatePositionStyle(element);
 
     function calculatePositionStyle(element: View) : string {
-        const size = parseParts(element.attributes.size);
-        const alignment = parseParts(element.attributes.align);
+        const size = parseParts(element.attributes.size ?? "100%");
+        const alignment = parseParts(element.attributes.align ?? "Center");
 
         return `
             position: absolute;
