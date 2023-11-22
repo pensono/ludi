@@ -6,13 +6,11 @@ on:
   pull_request:
 
 jobs:
-  test:
+  'Unit Test':
     runs-on: ubuntu-latest
 
     permissions:
-      # Required to checkout the code
       contents: read
-      # Required to put a comment into the pull-request
       pull-requests: write
 
     steps:
@@ -23,10 +21,23 @@ jobs:
         node-version: 18
     - name: 'Install Deps'
       run: npm ci
+    - name: Run Tests
+      run: npx vitest
+
+  'Playwright Test':
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+    - uses: actions/checkout@v2
+    - name: 'Install Node'
+      uses: actions/setup-node@v2
+      with:
+        node-version: 18
+    - name: 'Install Deps'
+      run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-
-    - name: Unit Tests
-      run: npx run test:unit
-    - name: Playwright Tests
+    - name: Run Tests
       run: npx playwright test
