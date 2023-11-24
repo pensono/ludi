@@ -13,6 +13,14 @@
     let rules: Rules | undefined;
     let state: GameState | undefined;
 
+    let gameBackground: string | undefined;
+    let gameForeground: string | undefined;
+    let backgroundColor : string;
+    let foregroundColor : string;
+
+    $: backgroundColor = gameBackground || "#fff"
+    $: foregroundColor = gameForeground || "#000"
+
     onMount(() => {
         loadGame();
     });
@@ -44,17 +52,17 @@
     }
 </script>
 
-<Meta backgroundColor="#fff" title="{data.gameName}" />
+<Meta backgroundColor={backgroundColor} title="{data.gameName}" />
 
-<RootLayout logoColor="#000">
-    <p slot="nav-center">
+<RootLayout logoColor={foregroundColor}>
+    <p slot="nav-center" style:--foreground-color={foregroundColor}>
         {#if rules && state}
             {state.position.variables[Variables.CurrentPlayer]} to play
         {/if}
     </p>
     <main>
         {#if rules && state}
-            <RootView bind:rules={rules} bind:state={state} runStatements={playMove_} reset={reset} />
+            <RootView bind:rules={rules} bind:state={state} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} runStatements={playMove_} reset={reset} />
         {/if}
     </main>
 </RootLayout>
@@ -68,7 +76,7 @@
     }
 
     p {
-        color: #000;
+        color: var(--foreground-color);
         margin: 0;
         font-size: 2em;
         white-space: nowrap;

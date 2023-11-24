@@ -9,8 +9,13 @@
     export let runStatements: (statementList: Statement[], locals: Record<string, any>) => void;
     export let reset: () => void;
 
+    export let backgroundColor: string | undefined;
+    export let foregroundColor: string | undefined;
+
     $: position = previewPosition ?? state.position;
     $: rootElement = rules.view;
+    $: backgroundColor = rootElement?.attributes["background"];
+    $: foregroundColor = rootElement?.attributes["foreground"];
 </script>
 
 <div class="container">

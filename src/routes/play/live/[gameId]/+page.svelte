@@ -11,12 +11,21 @@
 	import Share from '$lib/components/util/Share.svelte';
 	import { execute, playMove, toMove, unfilledPlayers } from '$lib/ludi/engine.js';
     import RootLayout from '$lib/components/layout/RootLayout.svelte';
+	import Meta from "$lib/components/util/Meta.svelte";
 
     export let data;
 
     let rules: Rules | undefined;
     let state: GameState | undefined;
     let participants: GameParticipant[] | undefined;
+    
+    let gameBackground: string | undefined;
+    let gameForeground: string | undefined;
+    let backgroundColor : string;
+    let foregroundColor : string;
+
+    $: backgroundColor = gameBackground || "#fff"
+    $: foregroundColor = gameForeground || "#000"
 
     const localParticipantId = getParticipantId();
 
@@ -63,10 +72,12 @@
     }
 </script>
 
-<RootLayout logoColor="#000">
+<Meta backgroundColor={backgroundColor} title="Live" />
+
+<RootLayout logoColor={foregroundColor}>
     <main>
         {#if rules && state}
-            <RootView bind:rules={rules} state={state} runStatements={runStatements} reset={reset} />
+            <RootView bind:rules={rules} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} state={state} runStatements={runStatements} reset={reset} />
         {/if}
         
         {#if participants}
@@ -81,15 +92,6 @@
         {/if}
     </main>
 </RootLayout>
-
-<svelte:head>
-    <style>
-        html {
-            background-color: #fff !important;
-        }
-    </style>
-</svelte:head>
-
 
 <style lang="scss">
     main {
