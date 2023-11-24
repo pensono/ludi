@@ -17,7 +17,7 @@
     let mousePositionStyle = '';
     let draggedPieceCoordinates: null | {x: number, y: number} = null;
     let board: HTMLDivElement;
-    
+        
     $: variable = element.attributes["show"];
     $: grid = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
     $: width = typeOfVariable(rules, variable)?.parameters.width;
@@ -62,8 +62,11 @@
     }
     
     function pointerDown(event: PointerEvent | TouchEvent) {
-        updateDragCoordinates(event);
+                updateDragCoordinates(event);
         const boardCoordinates = toBoardCoordinates(getClientCoordinates(event));
+        
+        clickSquare(boardCoordinates.x, boardCoordinates.y);
+
         if (element.attributes["drag"]) {
             draggedPieceCoordinates = boardCoordinates;
         }
@@ -154,9 +157,10 @@
             data-y={y}
             on:click={() => clickSquare(x, y)}
             on:pointerdown|preventDefault={pointerDown}
-            on:pointerup={pointerUp}
-            on:touchstart|preventDefault={pointerDown}
-            on:touchend|preventDefault={pointerUp}/>
+            on:pointerup|preventDefault={pointerUp}
+            on:touchstart={pointerDown}
+            on:touchend={pointerUp}
+        />
     {/each}
     
     {#each gridCoordinates(width, height) as {x, y}}
