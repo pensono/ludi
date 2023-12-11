@@ -38,13 +38,13 @@
 
     
     <ToolboxSection title="Views">
-        {#each rules.views as view}
-            <ToolboxItem title={view.name}>
-                {#each Object.entries(view.attributes) as [key, value]}
+        {#if rules.view}
+            <ToolboxItem title={rules.view.name}>
+                {#each Object.entries(rules.view.attributes) as [key, value]}
                     <p>{key}: {value}</p>
                 {/each}
             </ToolboxItem>
-        {/each}
+        {/if}
     </ToolboxSection>
 </div>
 

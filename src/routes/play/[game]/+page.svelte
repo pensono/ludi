@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 	import RootView from "$lib/components/views/RootView.svelte";
-	import { execute, initialize, playMove, toMove } from "$lib/ludi/engine";
+	import { initialize, playMove, toMove } from "$lib/ludi/engine";
     import { Variables } from "$lib/ludi/builtins";
 	import { fromString } from "$lib/ludi/parser";
 	import type { Rules, GameState, Statement } from '$lib/ludi/types';

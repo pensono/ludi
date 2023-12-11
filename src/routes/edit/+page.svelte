@@ -3,9 +3,11 @@
 	import RootView from "$lib/components/views/RootView.svelte";
 	import EditToolbox from "$lib/components/editor/EditToolbox.svelte";
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
-	import { initialize, execute as runStatements_ } from "$lib/ludi/engine";
+	import { initialize, toMove, playMove } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
 	import type { Rules, GamePosition, GameState, Move, Statement } from '$lib/ludi/types';
+	import Meta from '$lib/components/util/Meta.svelte';
+	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 
     let selectedGame = "/games/tic-tac-toe.ludi";
     let rules: Rules | undefined;
@@ -23,11 +25,18 @@
     }
 
     function runStatements(statements: Statement[], locals: Record<string, any>) {
-        const newState = runStatements_(rules!, state!, statements, locals);
+        for (const statement of statements) {
+            const move = toMove(rules!, state!, locals, statement);
 
-        // Legal move
-        if (newState) {
+            const newState = playMove(rules!, state!, move);
+
+            // Legal move
+            if (!newState) {
+                continue;
+            }
+            
             state = newState;
+            break;
         }
     }
     
@@ -36,16 +45,15 @@
     }
 </script>
 
-<div class="wrapper">
-    <nav>
-        <h1><a href="/">Ludi</a></h1>
-        <select bind:value={selectedGame} on:change={loadGame}>
-            <option value="/games/number-guessing.ludi">Number Guessing</option>
-            <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
-            <option value="/games/checkers.ludi">Checkers</option>
-            <option value="/games/gomoku.ludi">Gomoku</option>
-        </select>
-    </nav>
+<Meta backgroundColor="#fff" title="Edit" />
+
+<RootLayout logoColor="#000">
+    <select slot="nav-right" bind:value={selectedGame} on:change={loadGame}>
+        <option value="/games/number-guessing.ludi">Number Guessing</option>
+        <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
+        <option value="/games/checkers.ludi">Checkers</option>
+        <option value="/games/gomoku.ludi">Gomoku</option>
+    </select>
     
     <main>
         {#if rules && state}
@@ -54,19 +62,9 @@
             <EditToolbox bind:rules={rules} bind:state={state} />
         {/if}
     </main>
-</div>
+</RootLayout>
 
 <style lang="scss">
-    .wrapper {
-        display: flex;
-        flex-direction: column;
-
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
 
     main {
         flex-grow: 1;
@@ -74,6 +72,10 @@
         display: flex;
         flex-direction: row; 
         overflow: hidden;
+
+        color: #000;
+
+        border-top: 1px solid #ccc;
     }
     
 
