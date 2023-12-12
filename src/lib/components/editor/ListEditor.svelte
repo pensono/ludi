@@ -40,7 +40,7 @@
         font-size: 16px;
         vertical-align: bottom;
         padding: var(--input-padding);
-        color: var(--detail-text-color);
+        color: var(--color-detail);
         display: none;
     }
 
@@ -50,7 +50,7 @@
 
     .detail {
         font-size: var(--detail-text-size);
-        color: var(--detail-text-color);
+        color: var(--color-detail);
         cursor: pointer;
     }
 </style>

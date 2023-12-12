@@ -9,7 +9,7 @@
 
 <style lang="scss">
     div {
-        color: var(--detail-text-color);
+        color: var(--color-detail);
         margin: 0;
     }
 

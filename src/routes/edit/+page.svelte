@@ -13,6 +13,14 @@
     let rules: Rules | undefined;
     let state: GameState | undefined;
     let previewPosition: GamePosition | null = null;
+    
+    let gameBackground: string | undefined;
+    let gameForeground: string | undefined;
+    let backgroundColor : string;
+    let foregroundColor : string;
+
+    $: backgroundColor = gameBackground || "#fff"
+    $: foregroundColor = gameForeground || "#000"
 
     onMount(() => {
         loadGame();
@@ -45,9 +53,9 @@
     }
 </script>
 
-<Meta backgroundColor="#fff" title="Edit" />
+<Meta backgroundColor={backgroundColor} foregroundColor={foregroundColor} title="Edit" />
 
-<RootLayout logoColor="#000">
+<RootLayout>
     <select slot="nav-right" bind:value={selectedGame} on:change={loadGame}>
         <option value="/games/number-guessing.ludi">Number Guessing</option>
         <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
@@ -58,7 +66,7 @@
     <main>
         {#if rules && state}
             <ViewToolbox bind:rules={rules} bind:state={state} bind:previewPosition={previewPosition} />
-            <RootView bind:rules={rules} state={state} bind:previewPosition={previewPosition} runStatements={runStatements} reset={reset} />
+            <RootView bind:rules={rules} state={state} bind:previewPosition={previewPosition} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} runStatements={runStatements} reset={reset} />
             <EditToolbox bind:rules={rules} bind:state={state} />
         {/if}
     </main>
@@ -75,23 +83,9 @@
 
         color: #000;
 
-        border-top: 1px solid #ccc;
-    }
-    
-
-    h1 {
-        margin: .5rem;
-    }
-    
-    h1 a {
-        text-decoration: none;
-        color: #000;
-    }
-    
-    nav {
-        display: flex;
-        justify-content: space-between;
-        padding: .2rem;
-        border-bottom: 1px solid #ccc;
+        border-top: 1px solid  var(--color-divider);
+        // border-top: 1px solid color-mix(in rgb, var(--color-background) 50%, var(--color-foreground) 50%);
+        // border-top: 1px solid color-mix(in lch, var(--color-background) 50%, var(--color-foreground));
+        // border-top: 1px solid var(--color-foreground);
     }
 </style>

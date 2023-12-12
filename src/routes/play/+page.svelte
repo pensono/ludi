@@ -20,7 +20,7 @@
     }
 </script>
 
-<Meta backgroundColor="var(--color-background)" title="Play" />
+<Meta backgroundColor="var(--brand-color-background)" foregroundColor="var(--brand-color-foreground)" title="Play" />
 
 <SingleLayout>
     <h1>Play a game</h1>

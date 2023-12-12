@@ -26,16 +26,18 @@
         border: 1px solid transparent;
         border-radius: 4px;
         font-family: var(--mono-font);
+
+        background-color: transparent;
     }
 
     input:hover {
-        border: 1px solid var(--border-color);
+        border: 1px solid var(--color-divider);
         transition: border 100ms;
     }
 
     input:focus {
         outline: none;
-        border: 1px solid var(--border-color);
+        border: 1px solid var(--color-divider);
     }
 
     input[type="number"] {

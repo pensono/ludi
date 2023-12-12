@@ -16,10 +16,14 @@
         padding: 0;
         font-family: Geist;
 
-        --border-color: #ccc;
-        --hover-color: #eee;
-        --active-color: rgb(207, 222, 243);
-        --detail-text-color: #666;
+        background-color: var(--color-background);
+        color: var(--color-foreground);
+
+        --color-divider: color-mix(in lch, var(--color-background) 80%, var(--color-foreground));
+        --color-hover: color-mix(in lch, var(--color-background) 80%, var(--color-foreground));
+        --color-active: color-mix(in lch, var(--color-background) 72%, var(--color-foreground));
+        --color-detail: color-mix(in lch, var(--color-background) 50%, var(--color-foreground));
+
         --detail-text-size: .8rem;
 
         --mono-font: monospace;
@@ -32,11 +36,9 @@
         --desktop-width: 1000px;
         
         // https://pigment.shapefactory.co/?a=0E7144&b=80A11D
-        --color-background: #036134;
-        --color-foreground: #A3C23A;
-
-        color: var(--color-foreground);
-
+        --brand-color-background: #036134;
+        --brand-color-foreground: #A3C23A;
+        
         // --color-background: #52791E;
         // --color-foreground: #A4D759;
         
@@ -48,6 +50,7 @@
         
         // --color-background: #323D21;
         // --color-foreground: #D6ADA9;
+
     
         @font-face {
             font-family: 'Geist';

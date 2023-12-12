@@ -3,7 +3,7 @@
 	import Meta from "$lib/components/util/Meta.svelte";
 </script>
 
-<Meta backgroundColor="var(--color-background)" title="Ludi" />
+<Meta backgroundColor="var(--brand-color-background)" foregroundColor="var(--brand-color-foreground)" title="Play" />
 
 <div class="wrap">
     <h1><div class="logoWrap"><Logo color="var(--color-foreground)" capWidth animate/></div></h1>

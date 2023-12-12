@@ -16,19 +16,19 @@
         border: 1px solid transparent;
         border-radius: 4px;
         background: none;
-        color: var(--detail-text-color);
+        color: var(--color-detail);
         appearance: none;
         line-height: normal;
     }
 
     select:hover {
-        border: 1px solid var(--border-color);
+        border: 1px solid var(--color-divider);
         transition: border 100ms;
         appearance:auto;
     }
 
     select:focus {
         outline: none;
-        border: 1px solid var(--border-color);
+        border: 1px solid var(--color-divider);
     }
 </style>

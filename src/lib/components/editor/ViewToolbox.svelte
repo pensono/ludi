@@ -55,12 +55,15 @@
     div {
         width: 25rem;
 
-        border-right: 1px var(--border-color) solid;
+        border-right: 1px var(--color-divider) solid;
         overflow-y: auto;
         overflow-x: hidden;
+        
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-detail) transparent;
     }
 
     :global(.move:hover) {
-        background: var(--hover-color);
+        background: var(--color-hover);
     }
 </style>

@@ -64,13 +64,16 @@
     div {
         width: 22rem;
 
-        border-left: 1px var(--border-color) solid;
+        border-left: 1px var(--color-divider) solid;
         overflow-y: auto;
         overflow-x: hidden;
+        
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-detail) transparent;
     }
 
     :global(.detail-active) {
-        background-color: var(--active-color);
+        background-color: var(--color-active);
     }
 
     * {
