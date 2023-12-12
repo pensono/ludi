@@ -32,13 +32,13 @@
 
     .logoWrap {
         height: 2rem;
+        width: fit-content;
         padding: 1rem;
     }
     
     nav {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        padding-bottom: .2rem;
     }
 
     .nav-item {

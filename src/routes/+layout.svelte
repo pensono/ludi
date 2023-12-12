@@ -50,7 +50,6 @@
         
         // --color-background: #323D21;
         // --color-foreground: #D6ADA9;
-
     
         @font-face {
             font-family: 'Geist';
