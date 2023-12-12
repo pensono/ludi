@@ -19,10 +19,10 @@
         background-color: var(--color-background);
         color: var(--color-foreground);
 
-        --color-divider: color-mix(in lch, var(--color-background) 80%, var(--color-foreground));
-        --color-hover: color-mix(in lch, var(--color-background) 80%, var(--color-foreground));
-        --color-active: color-mix(in lch, var(--color-background) 72%, var(--color-foreground));
-        --color-detail: color-mix(in lch, var(--color-background) 50%, var(--color-foreground));
+        --color-divider: color-mix(in xyz, var(--color-background) 80%, var(--color-foreground));
+        --color-hover: color-mix(in xyz, var(--color-background) 80%, var(--color-foreground));
+        --color-active: color-mix(in xyz, var(--color-background) 60%, var(--color-foreground));
+        --color-detail: color-mix(in xyz, var(--color-background) 40%, var(--color-foreground));
 
         --detail-text-size: .8rem;
 
