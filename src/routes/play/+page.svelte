@@ -31,7 +31,7 @@
             <a href="/play/tic-tac-toe">One Device</a>
             <a href="#" on:click={() => playLive('tic-tac-toe')}>Online</a>
         </div>
-    </ExpandingListItem>
+    </ExpandingListItem>    
     
     <ExpandingListItem>
         <h2 slot="header">Checkers</h2>

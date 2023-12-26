@@ -12,6 +12,7 @@
 	import { execute, playMove, toMove, unfilledPlayers } from '$lib/ludi/engine.js';
     import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import Meta from "$lib/components/util/Meta.svelte";
+	import NavbarThirds from "$lib/components/layout/NavbarThirds.svelte";
 
     export let data;
 
@@ -72,9 +73,11 @@
     }
 </script>
 
-<Meta backgroundColor={backgroundColor} title="Live" />
+<Meta {backgroundColor} {foregroundColor} title="Live" />
 
-<RootLayout logoColor={foregroundColor}>
+<RootLayout>
+    <NavbarThirds slot="nav" logoColor={foregroundColor} />
+
     <main>
         {#if rules && state}
             <RootView bind:rules={rules} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} state={state} runStatements={runStatements} reset={reset} />

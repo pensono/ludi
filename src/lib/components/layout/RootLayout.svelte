@@ -1,20 +1,13 @@
 <script lang="ts">
-	import Logo from "../Logo.svelte";
-
-    export let logoColor: string = "var(--color-foreground)";
+	import NavbarThirds from "./NavbarThirds.svelte";
 </script>
 
 <div class="wrapper">
-    <nav>
-        <a href="/" class="logoWrap nav-item left"><Logo color="{logoColor}" /></a>
-        <div class="nav-item center">
-            <slot name="nav-center"></slot>
-        </div>
-        <div class="nav-item right">
-            <slot name="nav-right"></slot>
-        </div>
-    </nav>
-    
+    {#if !$$slots.nav}
+        <NavbarThirds />
+    {:else}
+        <slot name="nav" />
+    {/if}    
     <slot></slot>
 </div>
 
@@ -28,31 +21,5 @@
         bottom: 0;
         left: 0;
         right: 0;
-    }
-
-    .logoWrap {
-        height: 2rem;
-        width: fit-content;
-        padding: 1rem;
-    }
-    
-    nav {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .nav-item {
-        display: flex;
-        align-items: center;
-
-        &.left {
-            justify-content: flex-start;
-        }
-        &.center {
-            justify-content: center;
-        }
-        &.right {
-            justify-content: flex-end;
-        }
     }
 </style>

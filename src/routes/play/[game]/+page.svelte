@@ -7,6 +7,7 @@
 	import type { Rules, GameState, Statement } from '$lib/ludi/types';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import Meta from '$lib/components/util/Meta.svelte';
+	import NavbarThirds from '$lib/components/layout/NavbarThirds.svelte';
 
     export let data;
 
@@ -52,14 +53,17 @@
     }
 </script>
 
-<Meta backgroundColor={backgroundColor} title="{data.gameName}" />
+<Meta {backgroundColor} {foregroundColor} title="{data.gameName}" />
 
-<RootLayout logoColor={foregroundColor}>
-    <p slot="nav-center" style:--foreground-color={foregroundColor}>
-        {#if rules && state}
-            {state.position.variables[Variables.CurrentPlayer]} to play
-        {/if}
-    </p>
+<RootLayout>
+    <NavbarThirds slot="nav" logoColor={foregroundColor}>
+        <p slot="center" style:--foreground-color={foregroundColor}>
+            {#if rules && state}
+                {state.position.variables[Variables.CurrentPlayer]} to play
+            {/if}
+        </p>
+    </NavbarThirds>
+
     <main>
         {#if rules && state}
             <RootView bind:rules={rules} bind:state={state} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} runStatements={playMove_} reset={reset} />

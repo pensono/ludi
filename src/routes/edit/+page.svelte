@@ -8,6 +8,7 @@
 	import type { Rules, GamePosition, GameState, Move, Statement } from '$lib/ludi/types';
 	import Meta from '$lib/components/util/Meta.svelte';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
+	import NavbarAcross from '$lib/components/layout/NavbarAcross.svelte';
 
     let selectedGame = "/games/tic-tac-toe.ludi";
     let rules: Rules | undefined;
@@ -56,13 +57,20 @@
 <Meta backgroundColor={backgroundColor} foregroundColor={foregroundColor} title="Edit" />
 
 <RootLayout>
-    <select slot="nav-right" bind:value={selectedGame} on:change={loadGame}>
-        <option value="/games/number-guessing.ludi">Number Guessing</option>
-        <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
-        <option value="/games/checkers.ludi">Checkers</option>
-        <option value="/games/gomoku.ludi">Gomoku</option>
-    </select>
-    
+    <NavbarAcross slot="nav">
+        <select slot="right" bind:value={selectedGame} on:change={loadGame}>
+            <option value="/games/number-guessing.ludi">Number Guessing</option>
+            <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
+            <option value="/games/checkers.ludi">Checkers</option>
+            <option value="/games/gomoku.ludi">Gomoku</option>
+        </select>
+        <nav slot="across">
+            <a href="#edit">Editor</a>
+            <a href="#code">Code</a>
+            <a href="#art">Art</a>
+        </nav>    
+    </NavbarAcross>
+
     <main>
         {#if rules && state}
             <ViewToolbox bind:rules={rules} bind:state={state} bind:previewPosition={previewPosition} />
@@ -87,5 +95,17 @@
         // border-top: 1px solid color-mix(in rgb, var(--color-background) 50%, var(--color-foreground) 50%);
         // border-top: 1px solid color-mix(in lch, var(--color-background) 50%, var(--color-foreground));
         // border-top: 1px solid var(--color-foreground);
+    }
+
+    nav {
+        margin-left: 2rem;
+    }
+
+    nav a {
+        margin-right: 1.5rem;
+
+        color: var(--color-foreground);
+        text-decoration: none;
+        font-size: 1.25rem;
     }
 </style>
