@@ -5,12 +5,15 @@
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
 	import { initialize, toMove, playMove } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Rules, GamePosition, GameState, Move, Statement } from '$lib/ludi/types';
+	import type { Rules, GamePosition, GameState, Statement } from '$lib/ludi/types';
 	import Meta from '$lib/components/util/Meta.svelte';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import NavbarAcross from '$lib/components/layout/NavbarAcross.svelte';
+	import { page } from '$app/stores';
+	import CodeEditor from '$lib/components/ui/CodeEditor.svelte';
 
     let selectedGame = "/games/tic-tac-toe.ludi";
+    let ruleSource: string = "";
     let rules: Rules | undefined;
     let state: GameState | undefined;
     let previewPosition: GamePosition | null = null;
@@ -22,14 +25,15 @@
 
     $: backgroundColor = gameBackground || "#fff"
     $: foregroundColor = gameForeground || "#000"
+    $: hash = $page.url.hash;
 
     onMount(() => {
         loadGame();
     });
 
     async function loadGame() {
-        let gameText = await fetch(selectedGame).then(r => r.text());
-        rules = fromString(gameText);
+        ruleSource = await fetch(selectedGame).then(r => r.text());
+        rules = fromString(ruleSource);
         state = initialize(rules);
     }
 
@@ -65,23 +69,26 @@
             <option value="/games/gomoku.ludi">Gomoku</option>
         </select>
         <nav slot="across">
-            <a href="#edit">Editor</a>
+            <a href="#">Editor</a>
             <a href="#code">Code</a>
             <a href="#art">Art</a>
         </nav>    
     </NavbarAcross>
 
     <main>
-        {#if rules && state}
-            <ViewToolbox bind:rules={rules} bind:state={state} bind:previewPosition={previewPosition} />
-            <RootView bind:rules={rules} state={state} bind:previewPosition={previewPosition} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} runStatements={runStatements} reset={reset} />
-            <EditToolbox bind:rules={rules} bind:state={state} />
+        {#if hash === "#code"}
+            <CodeEditor bind:value={ruleSource} />
+        {:else} <!-- editor -->
+            {#if rules && state}
+                <ViewToolbox bind:rules={rules} bind:state={state} bind:previewPosition={previewPosition} />
+                <RootView bind:rules={rules} state={state} bind:previewPosition={previewPosition} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} runStatements={runStatements} reset={reset} />
+                <EditToolbox bind:rules={rules} bind:state={state} />
+            {/if}
         {/if}
     </main>
 </RootLayout>
 
 <style lang="scss">
-
     main {
         flex-grow: 1;
 
