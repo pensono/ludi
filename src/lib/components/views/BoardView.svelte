@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { typeOfVariable } from "$lib/ludi/engine";
-	import type { Rules, GamePosition, GameState, Move, Statement, View } from "$lib/ludi/types";
+	import type { Rules, GamePosition, GameState, Move, Statement, View, Context } from "$lib/ludi/types";
     import MiddleLines from "../svg/MiddleLines.svelte";
     import InnerLines from "../svg/InnerLines.svelte";
 	import ViewElement from "./ViewElement.svelte";
@@ -8,10 +8,8 @@
 	import { gridCoordinates } from "./utils";
 
     export let positionStyle: string;
-    export let rules: Rules;
-    export let state: GameState;
+    export let context: Context;
     export let previewPosition: GamePosition | null;
-    export let runStatements: (statementList: Statement[], locals: Record<string, any>) => void;
     export let element: View;
 
     let mousePositionStyle = '';
@@ -19,12 +17,12 @@
     let board: HTMLDivElement;
         
     $: variable = element.attributes["show"];
-    $: grid = previewPosition ? previewPosition.variables[variable] : state.position.variables[variable];
-    $: width = typeOfVariable(rules, variable)?.parameters.width;
-    $: height = typeOfVariable(rules, variable)?.parameters.height;
+    $: grid = previewPosition ? previewPosition.variables[variable] : context.state.position.variables[variable];
+    $: width = typeOfVariable(context.rules, variable)?.parameters.width;
+    $: height = typeOfVariable(context.rules, variable)?.parameters.height;
 
     $: lastMoveElement = element.children.find(c => c.attributes["useFor"] == "LastMove");
-    $: lastMoveCoordinates = state.history.length > 0 ? state.history[state.history.length - 1].move.args : null;
+    $: lastMoveCoordinates = context.state.history.length > 0 ? context.state.history[context.state.history.length - 1].move.args : null;
 
     function clickSquare(x: number, y: number) {
         // TODO Sad to do so much eval here, will need to fix this eventually
@@ -34,7 +32,7 @@
         }
 
         const statements = parseInteraction(statementsString);
-        runStatements(statements, { x, y });
+        context.runStatements(statements, { x, y });
     }
 
     function getClientCoordinates(event: PointerEvent | TouchEvent) : {x: number, y: number} {
@@ -94,7 +92,7 @@
             xEnd: boardCoordinates.x,
             yEnd: boardCoordinates.y 
         };
-        runStatements(statements, parameters);
+        context.runStatements(statements, parameters);
 
         draggedPieceCoordinates = null;
     }
@@ -171,13 +169,13 @@
                 class:dragging
                 style:--x={x}
                 style:--y={y}>
-                <ViewElement bind:rules bind:state previewPosition={previewPosition} element={element} runStatements={runStatements} />
+                <ViewElement bind:context previewPosition={previewPosition} element={element} />
             </div>
         {/each}
         <!-- Super hacky -->
         {#if lastMoveElement && lastMoveCoordinates && `[${x},${y}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
             <div class="overlay" style:--x={x} style:--y={y}>
-                <ViewElement bind:rules bind:state previewPosition={previewPosition} element={lastMoveElement} runStatements={runStatements} />
+                <ViewElement previewPosition={previewPosition} element={lastMoveElement} />
             </div>
         {/if}
     {/each}

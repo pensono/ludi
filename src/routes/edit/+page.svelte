@@ -5,7 +5,7 @@
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
 	import { initialize, toMove, playMove } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Rules, GamePosition, GameState, Statement } from '$lib/ludi/types';
+	import type { Rules, GamePosition, GameState, Statement, Context, Move } from '$lib/ludi/types';
 	import Meta from '$lib/components/util/Meta.svelte';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import NavbarAcross from '$lib/components/layout/NavbarAcross.svelte';
@@ -14,8 +14,7 @@
 
     let selectedGame = "/games/tic-tac-toe.ludi";
     let ruleSource: string = "";
-    let rules: Rules | undefined;
-    let state: GameState | undefined;
+    let context: Context | undefined;
     let previewPosition: GamePosition | null = null;
     
     let gameBackground: string | undefined;
@@ -33,28 +32,32 @@
 
     async function loadGame() {
         ruleSource = await fetch(selectedGame).then(r => r.text());
-        rules = fromString(ruleSource);
-        state = initialize(rules);
-    }
+        let rules = fromString(ruleSource);
+        let state = initialize(rules);
 
-    function runStatements(statements: Statement[], locals: Record<string, any>) {
-        for (const statement of statements) {
-            const move = toMove(rules!, state!, locals, statement);
+        context = {
+            rules,
+            state,
+            playMove(move: Move) { },
+            runStatements(statements: Statement[], locals: Record<string, any>) {
+                for (const statement of statements) {
+                    const move = toMove(context!.rules, context!.state, locals, statement);
 
-            const newState = playMove(rules!, state!, move);
+                    const newState = playMove(context!.rules, context!.state, move);
 
-            // Legal move
-            if (!newState) {
-                continue;
+                    // Legal move
+                    if (!newState) {
+                        continue;
+                    }
+                    
+                    context!.state = newState;
+                    break;
+                }
+            },
+            reset() {
+                state = initialize(context!.rules);
             }
-            
-            state = newState;
-            break;
         }
-    }
-    
-    function reset() {
-        state = initialize(rules!);
     }
 </script>
 
@@ -79,10 +82,10 @@
         {#if hash === "#code"}
             <CodeEditor bind:value={ruleSource} />
         {:else} <!-- editor -->
-            {#if rules && state}
-                <ViewToolbox bind:rules={rules} bind:state={state} bind:previewPosition={previewPosition} />
-                <RootView bind:rules={rules} state={state} bind:previewPosition={previewPosition} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} runStatements={runStatements} reset={reset} />
-                <EditToolbox bind:rules={rules} bind:state={state} />
+            {#if context}
+                <ViewToolbox bind:context bind:previewPosition={previewPosition} />
+                <RootView bind:context bind:previewPosition={previewPosition} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} />
+                <EditToolbox  bind:context />
             {/if}
         {/if}
     </main>

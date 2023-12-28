@@ -1,18 +1,17 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 	import RootView from "$lib/components/views/RootView.svelte";
-	import { initialize, playMove, toMove } from "$lib/ludi/engine";
+	import { initialize, playMove as playMove_, toMove } from "$lib/ludi/engine";
     import { Variables } from "$lib/ludi/builtins";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Rules, GameState, Statement } from '$lib/ludi/types';
+	import type { Rules, GameState, Statement, Context, Move } from '$lib/ludi/types';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import Meta from '$lib/components/util/Meta.svelte';
 	import NavbarThirds from '$lib/components/layout/NavbarThirds.svelte';
 
     export let data;
 
-    let rules: Rules | undefined;
-    let state: GameState | undefined;
+    let context: Context | undefined;
 
     let gameBackground: string | undefined;
     let gameForeground: string | undefined;
@@ -28,28 +27,35 @@
 
     async function loadGame() {
         let gameText = await fetch(`/games/${data.gameName}.ludi`).then(r => r.text());
-        rules = fromString(gameText);
-        state = initialize(rules);
-    }
-    
-    function playMove_(statements: Statement[], locals: Record<string, any>) {
-        for (const statement of statements) {
-            const move = toMove(rules!, state!, locals, statement);
+        let rules = fromString(gameText);
+        let state = initialize(rules);
 
-            const newState = playMove(rules!, state!, move);
+        context = {
+            rules,
+            state,
+            playMove(move: Move) {
+                console.log("playMove")
+            },
+            runStatements(statements: Statement[], locals: Record<string, any>) {
+                console.log("run statements")
+                for (const statement of statements) {
+                    const move = toMove(context!.rules, context!.state, locals, statement);
 
-            // Legal move
-            if (!newState) {
-                continue;
+                    const newState = playMove_(context!.rules, context!.state, move);
+
+                    // Legal move
+                    if (!newState) {
+                        continue;
+                    }
+                    
+                    context!.state = newState;
+                    break;
+                }
+            },            
+            reset() {
+                context!.state = initialize(context!.rules);
             }
-            
-            state = newState;
-            break;
         }
-    }
-    
-    function reset() {
-        state = initialize(rules!);
     }
 </script>
 
@@ -58,15 +64,15 @@
 <RootLayout>
     <NavbarThirds slot="nav" logoColor={foregroundColor}>
         <p slot="center" style:--foreground-color={foregroundColor}>
-            {#if rules && state}
-                {state.position.variables[Variables.CurrentPlayer]} to play
+            {#if context}
+                {context.state.position.variables[Variables.CurrentPlayer]} to play
             {/if}
         </p>
     </NavbarThirds>
 
     <main>
-        {#if rules && state}
-            <RootView bind:rules={rules} bind:state={state} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} runStatements={playMove_} reset={reset} />
+        {#if context}
+            <RootView bind:context bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} />
         {/if}
     </main>
 </RootLayout>

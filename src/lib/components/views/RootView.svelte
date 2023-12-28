@@ -1,26 +1,23 @@
 <script lang="ts">
-	import type { Rules, GamePosition, GameState, Statement } from "$lib/ludi/types";
+	import type { Rules, GamePosition, Context } from "$lib/ludi/types";
 	import ViewElement from "$lib/components/views/ViewElement.svelte";
 	import { slide, fade } from "svelte/transition";
 
-    export let rules: Rules;
-    export let state: GameState;
+    export let context: Context;
     export let previewPosition: GamePosition | null = null;
-    export let runStatements: (statementList: Statement[], locals: Record<string, any>) => void;
-    export let reset: () => void;
 
     export let backgroundColor: string | undefined;
     export let foregroundColor: string | undefined;
 
-    $: position = previewPosition ?? state.position;
-    $: rootElement = rules.view;
+    $: position = previewPosition ?? context.state.position;
+    $: rootElement = context.rules.view;
     $: backgroundColor = rootElement?.attributes["background"];
     $: foregroundColor = rootElement?.attributes["foreground"];
 </script>
 
 <div class="container">
     {#each rootElement?.children || [] as view}
-        <ViewElement bind:rules bind:state bind:previewPosition bind:element={view} runStatements={runStatements} />
+        <ViewElement bind:context bind:previewPosition bind:element={view} />
     {/each}
 
     <!-- 
@@ -34,7 +31,7 @@
             {position.winner} Wins!
         </div>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div transition:slide class="banner bottom" on:click={reset}>
+        <div transition:slide class="banner bottom" on:click={context.reset}>
             Play Again
         </div>
     {/if}

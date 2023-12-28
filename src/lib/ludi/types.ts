@@ -1,4 +1,10 @@
-
+export interface Context {
+    rules: Rules;
+    state: GameState;
+    playMove: (move: Move) => void;
+    runStatements: (statementList: Statement[], locals: Record<string, any>) => void;
+    reset: () => void;
+}
 
 export interface Rules {
     setup?: Action;

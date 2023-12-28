@@ -1,27 +1,26 @@
 <script lang="ts">
-	import { enumerateMoves, executeBlock, rewindTo, typeOfVariable } from "$lib/ludi/engine";
-	import type { Rules, GamePosition, GameState, Move } from "$lib/ludi/types";
+	import { enumerateMoves, executeBlock, playMove, rewindTo, typeOfVariable } from "$lib/ludi/engine";
+	import type { Rules, GamePosition, GameState, Move, Context } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
 	import GridDisplay from "./GridDisplay.svelte";
 
-    export let rules: Rules;
-    export let state: GameState;
+    export let context: Context;
     export let previewPosition: GamePosition | null;
 
     function advanceState(move: Move) {
-        state = executeBlock(rules, state, move);
+        context.state = playMove(context.rules, context.state, move)!;
     }
 
     function rewindState(ply: number) {
-        state = rewindTo(state, ply);
+        context.state = rewindTo(context.state, ply);
     }
 </script>
 
 <div>
     <ToolboxSection title="Current State">
-        {#each Object.entries(state.position.variables) as [key, value]}
-            {@const type = typeOfVariable(rules, key)?.name}
+        {#each Object.entries(context.state.position.variables) as [key, value]}
+            {@const type = typeOfVariable(context.rules, key)?.name}
             {#if type == 'Grid'}
                 <ToolboxItem title="{key}">
                     <GridDisplay value={value} />
@@ -30,17 +29,17 @@
                 <ToolboxItem title="{key}: {value}" />
             {/if}
         {/each}
-        <ToolboxItem title="Winner: {state.position.winner ? state.position.winner : "None"}" />
+        <ToolboxItem title="Winner: {context.state.position.winner ? context.state.position.winner : "None"}" />
     </ToolboxSection>
     
     <ToolboxSection title="Available Moves">
-        {#each enumerateMoves(rules, state) as move}
+        {#each enumerateMoves(context.rules, context.state) as move}
             <ToolboxItem class="move" title="{move.actionName}({move.args.join(", ")}) for {move.player}" on:click={() => advanceState(move)} />
         {/each}
     </ToolboxSection>
 
     <ToolboxSection title="Played Moves">
-        {#each state.history as historyItem}
+        {#each context.state.history as historyItem}
             <ToolboxItem 
                 class="move"
                 title="{historyItem.ply}. {historyItem.move.actionName}({historyItem.move.args.join(", ")}) for {historyItem.move.player}"

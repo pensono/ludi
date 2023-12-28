@@ -3,7 +3,7 @@
     import { api } from "$convex/_generated/api";
     import { onDestroy } from 'svelte';
 	import RootView from "$lib/components/views/RootView.svelte";
-	import type { Rules, GameState, Move, Statement } from '$lib/ludi/types';
+	import type { Rules, GameState, Move, Statement, Context } from '$lib/ludi/types';
     import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import type { GameParticipant } from '$lib/realtime/types.js';
     import Participant from './Participant.svelte';
@@ -16,8 +16,7 @@
 
     export let data;
 
-    let rules: Rules | undefined;
-    let state: GameState | undefined;
+    let context: Context | undefined;
     let participants: GameParticipant[] | undefined;
     
     let gameBackground: string | undefined;
@@ -31,7 +30,7 @@
     const localParticipantId = getParticipantId();
 
     $: localParticipant = participants?.find(p => p.id === localParticipantId);
-    $: remainingParticipants = rules && unfilledPlayers(rules, (participants ?? []).map(p => p.role));
+    $: remainingParticipants = context?.rules && unfilledPlayers(context.rules, (participants ?? []).map(p => p.role));
 
     const convex = new ConvexClient(PUBLIC_CONVEX_URL);
 
@@ -40,37 +39,38 @@
     });
     
     convex.onUpdate(api.live_games.get, { id: data.gameId}, (liveGame) => {
-        rules = rules ?? liveGame.rules; // Only update once
-        state = liveGame.state;
+        context = {
+            rules: context?.rules ?? liveGame.rules, // Only update once
+            state: liveGame.state,
+            playMove(move: Move) { },
+            async runStatements(statements: Statement[], locals: Record<string, any>) {
+                for (const statement of statements) {
+                    // Test if this is legal for the local player
+                    const newState = execute(context!.rules, context!.state, localParticipant!.role, [statement], locals);
+
+                    // Legal move
+                    if (!newState) {
+                        continue;
+                    }
+                    
+                    context!.state = newState;
+                    await convex.mutation(api.live_games.executeStatements, { 
+                        liveGameId: data.gameId, 
+                        participantId: localParticipantId, 
+                        statements: [statement],
+                        locals,
+                    });
+                    break;
+                }
+            },            
+            async reset() {
+                await convex.mutation(api.live_games.reset, { liveGameId: data.gameId });
+            }
+        }
         participants = liveGame.participants;
     });
 
     convex.mutation(api.live_games.join, { liveGameId: data.gameId, participantId: localParticipantId });
-
-    async function runStatements(statements: Statement[], locals: Record<string, any>) {
-        for (const statement of statements) {
-            // Test if this is legal for the local player
-            const newState = execute(rules!, state!, localParticipant!.role, [statement], locals);
-
-            // Legal move
-            if (!newState) {
-                continue;
-            }
-            
-            state = newState;
-            await convex.mutation(api.live_games.executeStatements, { 
-                liveGameId: data.gameId, 
-                participantId: localParticipantId, 
-                statements: [statement],
-                locals,
-            });
-            break;
-        }
-    }
-    
-    async function reset() {
-        await convex.mutation(api.live_games.reset, { liveGameId: data.gameId });
-    }
 </script>
 
 <Meta {backgroundColor} {foregroundColor} title="Live" />
@@ -79,14 +79,14 @@
     <NavbarThirds slot="nav" logoColor={foregroundColor} />
 
     <main>
-        {#if rules && state}
-            <RootView bind:rules={rules} bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} state={state} runStatements={runStatements} reset={reset} />
+        {#if context}
+            <RootView bind:context bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} />
         {/if}
         
         {#if participants}
             <div class="players">
                 {#each participants as participant}
-                    <Participant bind:participant isLocal={participant.id === localParticipantId} currentParticipant={state?.position.variables["CurrentPlayer"]} />
+                    <Participant bind:participant isLocal={participant.id === localParticipantId} currentParticipant={context?.state.position.variables["CurrentPlayer"]} />
                 {/each}
                 {#if remainingParticipants && remainingParticipants?.length > 0}
                     <Share text="Invite" />

@@ -1,22 +1,21 @@
 <script lang="ts">
     import { executeBlock } from "$lib/ludi/engine";
-    import type { Rules, GameState, View } from "$lib/ludi/types";
+    import type { Rules, GameState, View, Context } from "$lib/ludi/types";
     import { parseParts, toSize } from "./utils";
 
     export let positionStyle: string;
-    export let rules: Rules;
-    export let state: GameState;
+    export let context: Context;
     export let element: View;
     $: variable = element.attributes["data"];
 
     function click() {
         // TODO Sad to do so much eval here, will need to fix this eventually
         const moveExpression = element.attributes["click"];
-        const move = parseAndEvaluateMove(rules, state, moveExpression, { });
+        const move = parseAndEvaluateMove(context.rules, context.state, moveExpression, { });
 
         // TODO use some sort of disabled state instead?
         if (move != null) {
-            state = executeBlock(rules, state, move);
+            context.state = executeBlock(context.rules, context.state, move);
         }
     }
 
