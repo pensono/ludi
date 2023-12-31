@@ -6,7 +6,7 @@
 
 
 <svelte:head>
-    <title>{title}</title>
+    <title>{title ? `${title} - Ludi` : "Ludi"}</title>
     {@html `<style>:root {--color-background: ${backgroundColor};--color-foreground: ${foregroundColor}}</style>`}
 
     <!-- For the title bar on iOS Safari. If the theme-color is also present in site.webmanifest, then it will not work. -->

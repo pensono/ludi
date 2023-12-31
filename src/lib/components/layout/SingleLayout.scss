@@ -1,0 +1,23 @@
+body {
+    color: var(--color-foreground);
+    font-size: 1.25rem;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: normal;
+}
+
+h2 {
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: normal;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

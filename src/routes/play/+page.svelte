@@ -51,21 +51,16 @@
 </SingleLayout>
 
 <style lang="scss">
+    @use '$lib/components/layout/SingleLayout.scss';
+
     h1 {
-        font-size: 3rem;
         text-align: center;
-        font-weight: normal;
     }
 
     h2 {
         display: block;
-        text-decoration: none;
         margin: 0;
         margin-top: 1rem;
-
-        font-size: 2rem;
-        font-weight: normal;
-        color: var(--color-foreground);
     }
 
     h2:hover {
