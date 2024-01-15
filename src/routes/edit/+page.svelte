@@ -10,7 +10,7 @@
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
 	import { initialize, toMove, playMove } from "$lib/ludi/engine";
 	import { fromString } from "$lib/ludi/parser";
-	import type { Rules, GamePosition, GameState, Statement, Context, Move } from '$lib/ludi/types';
+	import type { GamePosition, Statement, Context, Move } from '$lib/ludi/types';
 	import Meta from '$lib/components/util/Meta.svelte';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import NavbarAcross from '$lib/components/layout/NavbarAcross.svelte';
@@ -67,7 +67,7 @@
     async function playGame() {
         const convex = new ConvexClient(PUBLIC_CONVEX_URL);
         
-        const ruleId = await convex.mutation(api.rules.create, { text: ruleSource })
+        const ruleId = await convex.mutation(api.rules.create, { source: ruleSource })
 
         console.log("created", ruleId)
         

@@ -12,9 +12,9 @@ export const get = query({
 });
 
 export const create = mutation({
-  args: { text: v.string() },
-  handler: async (ctx, { text }) => {
-    const rules = await ctx.db.insert("rules", {text});
+  args: { source: v.string() },
+  handler: async (ctx, { source }) => {
+    const rules = await ctx.db.insert("rules", {text: source});
 
     return rules;
   },

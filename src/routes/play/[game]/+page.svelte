@@ -11,8 +11,6 @@
 
     export let data;
 
-    let context: Context | undefined;
-
     let gameBackground: string | undefined;
     let gameForeground: string | undefined;
     let backgroundColor : string;
@@ -20,41 +18,34 @@
 
     $: backgroundColor = gameBackground || "#fff"
     $: foregroundColor = gameForeground || "#000"
+    
+    const rules = fromString(data.rulesSource);
+    const state = initialize(rules);
 
-    onMount(() => {
-        loadGame();
-    });
+    let context: Context = {
+        rules,
+        state,
+        playMove(move: Move) {
+            console.log("playMove")
+        },
+        runStatements(statements: Statement[], locals: Record<string, any>) {
+            console.log("run statements")
+            for (const statement of statements) {
+                const move = toMove(context!.rules, context!.state, locals, statement);
 
-    async function loadGame() {
-        let gameText = await fetch(`/game/${data.gameName}.ludi`).then(r => r.text());
-        let rules = fromString(gameText);
-        let state = initialize(rules);
+                const newState = playMove_(context!.rules, context!.state, move);
 
-        context = {
-            rules,
-            state,
-            playMove(move: Move) {
-                console.log("playMove")
-            },
-            runStatements(statements: Statement[], locals: Record<string, any>) {
-                console.log("run statements")
-                for (const statement of statements) {
-                    const move = toMove(context!.rules, context!.state, locals, statement);
-
-                    const newState = playMove_(context!.rules, context!.state, move);
-
-                    // Legal move
-                    if (!newState) {
-                        continue;
-                    }
-                    
-                    context!.state = newState;
-                    break;
+                // Legal move
+                if (!newState) {
+                    continue;
                 }
-            },            
-            reset() {
-                context!.state = initialize(context!.rules);
+                
+                context!.state = newState;
+                break;
             }
+        },            
+        reset() {
+            context!.state = initialize(context!.rules);
         }
     }
 </script>
