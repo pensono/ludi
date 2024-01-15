@@ -59,22 +59,23 @@
             }
         }
     }
+
+    function playGame() {
+        page.set("/play");
+    }
 </script>
 
 <Meta backgroundColor={backgroundColor} foregroundColor={foregroundColor} title="Edit" />
 
 <RootLayout>
     <NavbarAcross slot="nav">
-        <select slot="right" bind:value={selectedGame} on:change={loadGame}>
-            <option value="/games/number-guessing.ludi">Number Guessing</option>
-            <option value="/games/tic-tac-toe.ludi">Tic-tac-toe</option>
-            <option value="/games/checkers.ludi">Checkers</option>
-            <option value="/games/gomoku.ludi">Gomoku</option>
-        </select>
+        <nav slot="right">
+            <a on:click={playGame}><span>Play</span></a>
+        </nav>
         <nav slot="across">
-            <a href="#">Editor</a>
-            <a href="#code">Code</a>
-            <a href="#art">Art</a>
+            <a href="#" class={!hash || hash == "#" ? "selected" : ""}><span>Editor</span></a>
+            <a href="#code" class={hash == "#code" ? "selected" : ""}><span>Code</span></a>
+            <a href="#art" class={hash == "#art" ? "selected" : ""}><span>Art</span></a>
         </nav>    
     </NavbarAcross>
 
@@ -102,20 +103,33 @@
         color: #000;
 
         border-top: 1px solid  var(--color-divider);
-        // border-top: 1px solid color-mix(in rgb, var(--color-background) 50%, var(--color-foreground) 50%);
-        // border-top: 1px solid color-mix(in lch, var(--color-background) 50%, var(--color-foreground));
-        // border-top: 1px solid var(--color-foreground);
     }
 
     nav {
         margin-left: 2rem;
+        height: 100%;
+        display: flex;
     }
 
     nav a {
-        margin-right: 1.5rem;
+        padding-left: .75rem;
+        padding-right: .75rem;
 
         color: var(--color-foreground);
         text-decoration: none;
         font-size: 1.25rem;
+
+        display: flex;
+        align-items: center;
+
+        cursor: pointer;
+        
+        &.selected {
+            background-color: var(--color-divider);
+        }
+    }
+
+    nav[slot=right] {
+        margin-right: 1rem;
     }
 </style>
