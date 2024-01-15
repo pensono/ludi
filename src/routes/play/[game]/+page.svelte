@@ -26,7 +26,7 @@
     });
 
     async function loadGame() {
-        let gameText = await fetch(`/games/${data.gameName}.ludi`).then(r => r.text());
+        let gameText = await fetch(`/game/${data.gameName}.ludi`).then(r => r.text());
         let rules = fromString(gameText);
         let state = initialize(rules);
 

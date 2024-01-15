@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as live_games from "../live_games";
+import type * as rules from "../rules";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,6 +27,7 @@ import type * as live_games from "../live_games";
  */
 declare const fullApi: ApiFromModules<{
   live_games: typeof live_games;
+  rules: typeof rules;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

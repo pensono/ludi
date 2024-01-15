@@ -1,5 +1,10 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
+    import { ConvexClient } from "convex/browser";
+    import { PUBLIC_CONVEX_URL } from '$env/static/public';
+	import { api } from "$convex/_generated/api";
 	import RootView from "$lib/components/views/RootView.svelte";
 	import EditToolbox from "$lib/components/editor/EditToolbox.svelte";
 	import ViewToolbox from "$lib/components/editor/ViewToolbox.svelte";
@@ -9,7 +14,6 @@
 	import Meta from '$lib/components/util/Meta.svelte';
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import NavbarAcross from '$lib/components/layout/NavbarAcross.svelte';
-	import { page } from '$app/stores';
 	import CodeEditor from '$lib/components/ui/CodeEditor.svelte';
 
     let selectedGame = "/games/tic-tac-toe.ludi";
@@ -60,8 +64,14 @@
         }
     }
 
-    function playGame() {
-        page.set("/play");
+    async function playGame() {
+        const convex = new ConvexClient(PUBLIC_CONVEX_URL);
+        
+        const ruleId = await convex.mutation(api.rules.create, { text: ruleSource })
+
+        console.log("created", ruleId)
+        
+        goto(`/play/${ruleId}`);
     }
 </script>
 
