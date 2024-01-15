@@ -8,5 +8,5 @@ export async function GET({ params }) {
   const convex = new ConvexClient(PUBLIC_CONVEX_URL);
   const result = await convex.query(api.rules.get, { id: params.game as Id<'rules'> });
   
-  return new Response(result.text);
+  return new Response(result.source);
 }

@@ -10,6 +10,6 @@ export const load: PageLoad = async ({ params }) => {
     
     return {
         gameName: params.game,
-        rulesSource: rules.text,
+        rulesSource: rules.source,
     };
 }

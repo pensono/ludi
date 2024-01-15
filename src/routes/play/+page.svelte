@@ -28,7 +28,7 @@
     <ExpandingListItem>
         <h2 slot="header">Tic-tac-toe</h2>
         <div class="expand-body" slot="body">
-            <a href="/play/tic-tac-toe">One Device</a>
+            <a href="/play/j572y089serrjnvbmnsqyab93n6hk2t6">One Device</a>
             <a href="#" on:click={() => playLive('tic-tac-toe')}>Online</a>
         </div>
     </ExpandingListItem>    
@@ -36,7 +36,7 @@
     <ExpandingListItem>
         <h2 slot="header">Checkers</h2>
         <div class="expand-body" slot="body">
-            <a href="/play/checkers">One Device</a>
+            <a href="/play/j57cnj6df7jj97d2t0adhrbdph6hj8sk">One Device</a>
             <a href="#" on:click={() => playLive('checkers')}>Online</a>
         </div>
     </ExpandingListItem>
@@ -44,7 +44,7 @@
     <ExpandingListItem>
         <h2 slot="header">Gomoku</h2>
         <div class="expand-body" slot="body">
-            <a href="/play/gomoku">One Device</a>
+            <a href="/play/j5795qpw940dwn8ce3cjfj58zs6hkxrn">One Device</a>
             <a href="#" on:click={() => playLive('gomoku')}>Online</a>
         </div>
     </ExpandingListItem>
