@@ -77,6 +77,15 @@ export default class LudiListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by LudiParser#draw.
+	enterDraw(ctx) {
+	}
+
+	// Exit a parse tree produced by LudiParser#draw.
+	exitDraw(ctx) {
+	}
+
+
 	// Enter a parse tree produced by LudiParser#setup.
 	enterSetup(ctx) {
 	}

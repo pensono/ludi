@@ -20,6 +20,7 @@ definition
     | trigger
     | win
     | loss
+    | draw
     | kind
     | state_definition
     | view=viewElement;
@@ -33,6 +34,8 @@ trigger: 'trigger' name=identifier '(' parameterList ')' ':' conditions+=when* s
 win: 'win' name=identifier '(' parameterList ')' ('for' player=expression)? ':' conditions+=when*;
     
 loss: 'loss' name=identifier '(' parameterList ')' ('for' player=expression)? ':' conditions+=when*;
+
+draw: 'draw' name=identifier '(' parameterList ')' ':' conditions+=when*;
 
 setup: 'setup' ':' statement+;
 

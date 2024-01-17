@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom';
-import type { GameState, LudiFunction, LudiType } from './types';
-import { enumerateType, defaultValue } from './engine';
+import type { GameState, LudiFunction, LudiType, Rules } from './types';
+import { enumerateType, defaultValue, enumerateMoves } from './engine';
 
 export const functions: Record<string, LudiFunction> = {
     '=': comparison((left, right) => left === right),
@@ -17,7 +17,7 @@ export const functions: Record<string, LudiFunction> = {
             'number',
         ],
         return_type: 'number',
-        invoke: (state: GameState, args: any[]): any => {
+        invoke: (rules: Rules, state: GameState, args: any[]): any => {
             if (state.position.variables.__seed === undefined) {
                 state.position.variables.__seed = Math.floor(Math.random() * 100000);
             }
@@ -40,7 +40,7 @@ export const functions: Record<string, LudiFunction> = {
             'type'
         ],
         return_type: 'any',
-        invoke: (state: GameState, args: any[]): any => {
+        invoke: (rules: Rules, state: GameState, args: any[]): any => {
             const current = args[0];
             const type = args[1];
 
@@ -59,7 +59,7 @@ export const functions: Record<string, LudiFunction> = {
             'number'
         ],
         return_type: 'boolean',
-        invoke: (state: GameState, args: any[]): any => {
+        invoke: (rules: Rules, state: GameState, args: any[]): any => {
             const needle = args[0];
             const haystack = args[1];
             const count = args[2];
@@ -131,28 +131,13 @@ export const functions: Record<string, LudiFunction> = {
         }
     },
     
-    'IsDiagonal': {
+    'AvailableMoves': {
         parameter_types: [
-            'Grid',
-            'number',
-            'number',
-            'number',
-            'number',
         ],
         return_type: 'number',
-        invoke: (state: GameState, args: any[]): any => {
-            if (state.position.variables.__seed === undefined) {
-                state.position.variables.__seed = Math.floor(Math.random() * 100000);
-            }
-            const min = args[0];
-            const max = args[1];
-
-            var rng = seedrandom(state.position.variables.__seed.toString());
-            const result = Math.floor(rng() * (max - min + 1) + min);
-            
-            state.position.variables.__seed++;
-
-            return result;
+        invoke: (rules: Rules, state: GameState, args: any[]): any => {
+            console.log([...enumerateMoves(rules, state)].length, rules)
+            return [...enumerateMoves(rules, state)].length;
         }
     },
 }
@@ -164,7 +149,7 @@ function comparison(operator: (left: number, right: number) => boolean) {
             'number'
         ],
         return_type: 'boolean',
-        invoke: (state: GameState, args: any[]): any => {
+        invoke: (rules: Rules, state: GameState, args: any[]): any => {
             const left = args[0];
             const right = args[1];
 
@@ -180,7 +165,7 @@ function conjunction(operator: (left: boolean, right: boolean) => boolean) {
             'boolean'
         ],
         return_type: 'boolean',
-        invoke: (state: GameState, args: any[]): any => {
+        invoke: (rules: Rules, state: GameState, args: any[]): any => {
             const left = args[0];
             const right = args[1];
 

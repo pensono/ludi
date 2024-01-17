@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+	import { fade } from "svelte/transition";
 	import RootView from "$lib/components/views/RootView.svelte";
 	import { initialize, playMove as playMove_, toMove } from "$lib/ludi/engine";
     import { Variables } from "$lib/ludi/builtins";
@@ -54,11 +54,13 @@
 
 <RootLayout>
     <NavbarThirds slot="nav" logoColor={foregroundColor}>
-        <p slot="center" style:--foreground-color={foregroundColor}>
-            {#if context}
-                {context.state.position.variables[Variables.CurrentPlayer]} to play
+        <div slot="center">
+            {#if context && !context.state.position.result}
+                <p style:--foreground-color={foregroundColor} transition:fade>
+                    {context.state.position.variables[Variables.CurrentPlayer]} to play
+                </p>
             {/if}
-        </p>
+        </div>
     </NavbarThirds>
 
     <main>

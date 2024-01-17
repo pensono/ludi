@@ -13,6 +13,8 @@
     $: rootElement = context.rules.view;
     $: backgroundColor = rootElement?.attributes["background"];
     $: foregroundColor = rootElement?.attributes["foreground"];
+
+    $: console.log(context.state.position.result);
 </script>
 
 <div class="container">
@@ -25,10 +27,14 @@
         UI becomes unresponsive because the game has ended. This can be customizable,
         but showing this screen should be the default.
     -->
-    {#if position.winner}
+    {#if position.result}
         <div transition:fade class="gray-out" />
         <div transition:slide class="banner top">
-            {position.winner} Wins!
+            {#if position.result === 'draw'}
+                Tie!
+            {:else}
+                {position.result.winner} Wins!
+            {/if}
         </div>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div transition:slide class="banner bottom" on:click={context.reset}>

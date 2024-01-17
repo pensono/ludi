@@ -5,17 +5,17 @@ describe('InARow', () => {
     const inARow = functions.InARow;
 
     it(`Basic`, () => {
-        const actual = inARow.invoke(null!, [1, [[0, 0, 0], [0, 1, 0], [0, 0, 0]], 3]);
+        const actual = inARow.invoke(null!, null!, [1, [[0, 0, 0], [0, 1, 0], [0, 0, 0]], 3]);
         expect(actual).toBe(false);
     });
     
     it(`Diagonal Forward`, () => {
-        const actual = inARow.invoke(null!, [1, [[1, 0, 0], [0, 1, 0], [0, 0, 1]], 3]);
+        const actual = inARow.invoke(null!, null!, [1, [[1, 0, 0], [0, 1, 0], [0, 0, 1]], 3]);
         expect(actual).toBe(true);
     });
 
     it(`Diagonal Reverse`, () => {
-        const actual = inARow.invoke(null!, [1, [[0, 0, 1], [0, 1, 0], [1, 0, 0]], 3]);
+        const actual = inARow.invoke(null!, null!, [1, [[0, 0, 1], [0, 1, 0], [1, 0, 0]], 3]);
         expect(actual).toBe(true);
     });
 
@@ -25,7 +25,7 @@ describe('InARow', () => {
             ["Black","Empty","Empty","Empty"],
             ["Empty","Empty","Empty","Black"],
           ];
-        const actual = inARow.invoke(null!, ["Black", board, 3]);
+        const actual = inARow.invoke(null!, null!, ["Black", board, 3]);
         expect(actual).toBe(false);
     })
 });

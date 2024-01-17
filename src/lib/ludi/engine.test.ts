@@ -297,6 +297,30 @@ describe('win conditions', () => {
         state = playMove(rules, state, {actionName: "Action", args: [3], player: "A"})!;
         expect(state).not.toBeNull();
 
-        expect(state.position.winner).toEqual("A");
+        expect(state.position.result).toEqual({winner: "A"});
+    });
+});
+
+describe('draw conditions', () => {
+    it(`Basic draw`, () => {
+        const rules = ludi`
+            players A or B
+            state LastGuess a Number<1, 3>
+
+            setup:
+                set LastGuess to 1
+
+            action Action(number a Number<1, 3>) for CurrentPlayer:
+                change LastGuess to number
+            
+            draw Draw():
+                when LastGuess = 2
+        `;
+        let state = initialize(rules);
+
+        state = playMove(rules, state, {actionName: "Action", args: [2], player: "A"})!;
+        expect(state).not.toBeNull();
+
+        expect(state.position.result).toEqual('draw');
     });
 });

@@ -54,6 +54,12 @@ export default class LudiVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by LudiParser#draw.
+	visitDraw(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by LudiParser#setup.
 	visitSetup(ctx) {
 	  return this.visitChildren(ctx);

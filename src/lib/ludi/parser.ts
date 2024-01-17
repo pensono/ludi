@@ -76,7 +76,8 @@ function handleGame(ctx: any): Rules {
     let setup: Action | undefined = undefined;
     let actions: Action[] = [];
     let triggers: Action[] = [];
-    let winConditions: Record<string, Action> = {};
+    let winConditions: Action[] = [];
+    let drawConditions: Action[] = [];
     let stateVariables: StateVariable[] = [];
     let playerType: LudiType = undefined;
     let constants: Record<string, any> = {};
@@ -96,7 +97,11 @@ function handleGame(ctx: any): Rules {
             actions.push(handleBlock(action));
         } else if (definition.win()) {
             const win = definition.win();
-            winConditions[win.name.getText()] = handleBlock(win);
+            winConditions.push(handleBlock(win));
+        } else if (definition.draw()) {
+            const draw = definition.draw();
+            console.log('draw', draw, draw.when())
+            drawConditions.push(handleBlock(draw));
         } else if (definition.trigger()) {
             const trigger = definition.trigger();
             triggers.push(handleBlock(trigger));
@@ -147,6 +152,7 @@ function handleGame(ctx: any): Rules {
         actions,
         triggers,
         winConditions,
+        drawConditions,
         stateVariables,
         playerType,
         constants,
@@ -156,14 +162,13 @@ function handleGame(ctx: any): Rules {
 
 /** Can parse actions, wins, setup, triggers */
 function handleBlock(ctx: any): Action {
-    // const conditions = ctx.when().map(c => handleCondition(c));
     const player = ctx.player ? new ExpressionVisitor().visit(ctx.player) : null;
     const statements = ctx.statement ? ctx.statement().map(s => new StatementVisitor().visit(s)) : [];
     let name: string | undefined = undefined;
     let parameters: Parameter[] = [];
     let conditions: Condition[] = [];
     
-    if ([LudiParser.RULE_action, LudiParser.RULE_win, LudiParser.RULE_trigger].includes(ctx.ruleIndex)) {
+    if ([LudiParser.RULE_action, LudiParser.RULE_win, LudiParser.RULE_draw, LudiParser.RULE_trigger].includes(ctx.ruleIndex)) {
         name = ctx.name.getText();
         parameters = handleParameterList(ctx.parameterList());
         conditions = ctx.when().map(c => ({

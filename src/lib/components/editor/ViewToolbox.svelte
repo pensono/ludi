@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enumerateMoves, executeBlock, playMove, rewindTo, typeOfVariable } from "$lib/ludi/engine";
-	import type { Rules, GamePosition, GameState, Move, Context } from "$lib/ludi/types";
+	import type { Rules, GamePosition, GameState, Move, Context, GameResult } from "$lib/ludi/types";
 	import ToolboxSection from "./ToolboxSection.svelte";
 	import ToolboxItem from "./ToolboxItem.svelte";
 	import GridDisplay from "./GridDisplay.svelte";
@@ -14,6 +14,18 @@
 
     function rewindState(ply: number) {
         context.state = rewindTo(context.state, ply);
+    }
+
+    function resultText(result: GameResult | undefined) {
+        if (!result) {
+            return "None";
+        }
+
+        if (result == "draw") {
+            return "Draw";
+        }
+
+        return `${result.winner} Wins!`;
     }
 </script>
 
@@ -29,7 +41,7 @@
                 <ToolboxItem title="{key}: {value}" />
             {/if}
         {/each}
-        <ToolboxItem title="Winner: {context.state.position.winner ? context.state.position.winner : "None"}" />
+        <ToolboxItem title="Result: {resultText(context.state.position.result)}" />
     </ToolboxSection>
     
     <ToolboxSection title="Available Moves">

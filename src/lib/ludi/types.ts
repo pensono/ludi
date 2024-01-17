@@ -12,7 +12,8 @@ export interface Rules {
     actions: Action[];
     triggers: Action[];
     kinds: LudiType[];
-    winConditions: Record<string, Action>;
+    winConditions: Action[];
+    drawConditions: Action[];
     stateVariables: StateVariable[];
     constants: Record<string, any>;
     view?: View;
@@ -30,8 +31,11 @@ export interface GameState {
 
 export interface GamePosition {
     variables: Record<string, any>;
-    winner: string | null;
+    result?: GameResult;
 }
+
+/** Either there's one winner, or all players have drawn */
+export type GameResult = { winner: string } | 'draw';
 
 export interface HistoryItem {
     move: Move;
@@ -172,7 +176,7 @@ export interface LudiFunction {
     parameter_types: string[];
     return_type: string;
     /** Can have "side-effects" on the game state */
-    invoke: (state: GameState, args: any[]) => any;
+    invoke: (rules: Rules, state: GameState, args: any[]) => any;
 }
 
 export interface LudiType {

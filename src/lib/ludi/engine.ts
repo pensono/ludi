@@ -142,17 +142,24 @@ export function playMove(rules: Rules, state: GameState, move: Move): GameState 
         break;
     }
 
-    for (const winConditionName in rules.winConditions) {
-        const winCondition = rules.winConditions[winConditionName];
-
+    for (const winCondition of rules.winConditions) {
         // Just enumerate all players for now
         for (const player of enumerateType(rules.playerType)){
             if (winCondition.conditions.every(c => evaluateExpression(rules, newState, {player}, c.expression))) {
-                newState.position.winner = player;
+                newState.position.result = {winner: player};
                 break;
             }
         }
     }
+    
+    for (const drawCondition of rules.drawConditions) {
+        console.log(rules)
+        if (drawCondition.conditions.every(c => evaluateExpression(rules, newState, {}, c.expression))) {
+            newState.position.result = 'draw'
+            break;
+        }
+    }
+
 
     newState.ply++;
     newState.history.push({
@@ -169,7 +176,7 @@ export function playMove(rules: Rules, state: GameState, move: Move): GameState 
 
 /** Returns the state which follows after playing `move`, or null if no valid state exists */
 export function executeBlock(rules: Rules, state: GameState, action: Action, role: string | null, args: any[], {inPlace} = {inPlace: false}): GameState | null {
-    if (state.position.winner) {
+    if (state.position.result) {
         return null;
     }
 
@@ -444,7 +451,7 @@ export function evaluateExpression(rules: Rules, state: GameState, locals: Recor
             }
 
             const args = expression.arguments.map(arg => evaluateExpression(rules, state, locals, arg));
-            return func.invoke(state, args);
+            return func.invoke(rules, state, args);
         }
         case 'identifier': {
             const localValue = locals[expression.name];
