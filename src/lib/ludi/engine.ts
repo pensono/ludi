@@ -152,10 +152,13 @@ export function playMove(rules: Rules, state: GameState, move: Move): GameState 
         }
     }
     
-    for (const drawCondition of rules.drawConditions) {
-        if (drawCondition.conditions.every(c => evaluateExpression(rules, newState, {}, c.expression))) {
-            newState.position.result = 'draw'
-            break;
+    // Wins always happen before draws (? yes? desired behavior?)
+    if (!newState.position.result) {
+        for (const drawCondition of rules.drawConditions) {
+            if (drawCondition.conditions.every(c => evaluateExpression(rules, newState, {}, c.expression))) {
+                newState.position.result = 'draw'
+                break;
+            }
         }
     }
 
