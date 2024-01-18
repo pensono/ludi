@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fade } from "svelte/transition";
+	import { blur } from "svelte/transition";
 	import RootView from "$lib/components/views/RootView.svelte";
 	import { initialize, playMove as playMove_, toMove } from "$lib/ludi/engine";
     import { Variables } from "$lib/ludi/builtins";
@@ -8,6 +8,7 @@
 	import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import Meta from '$lib/components/util/Meta.svelte';
 	import NavbarThirds from '$lib/components/layout/NavbarThirds.svelte';
+	import HamburgerDropdown from "$lib/components/ui/HamburgerDropdown.svelte";
 
     export let data;
 
@@ -43,7 +44,7 @@
                 context!.state = newState;
                 break;
             }
-        },            
+        },
         reset() {
             context!.state = initialize(context!.rules);
         }
@@ -56,11 +57,18 @@
     <NavbarThirds slot="nav" logoColor={foregroundColor}>
         <div slot="center">
             {#if context && !context.state.position.result}
-                <p style:--foreground-color={foregroundColor} transition:fade>
+                <p style:--foreground-color={foregroundColor} transition:blur={{duration: 150}}>
                     {context.state.position.variables[Variables.CurrentPlayer]} to play
                 </p>
             {/if}
         </div>
+
+        <HamburgerDropdown slot="right">
+            <!-- <a href="" on:click={context.reset}>Undo Move</a> -->
+            <a href="" on:click={context.reset}>Restart Game</a>
+            <!-- <hr /> -->
+            <!-- <a href="edit">Game Editor</a> -->
+        </HamburgerDropdown>
     </NavbarThirds>
 
     <main>
@@ -81,7 +89,32 @@
     p {
         color: var(--foreground-color);
         margin: 0;
-        font-size: 2em;
+        font-size: 2rem;
         white-space: nowrap;
+    }
+
+    a {
+        display: block;
+        padding: .5rem;
+        font-size: 1.5rem;
+        color: var(--foreground-color);
+        text-decoration: none;
+        cursor: pointer;
+        flex-grow: 1;
+    }
+
+    a:hover {
+        background-color: var(--color-divider);
+    }
+
+    hr {
+        margin-left: .5rem;
+        margin-right: .5rem;
+        margin-top: .25rem;
+        margin-bottom: .25rem;
+        width: calc(100% - 1rem);
+        height: 1px;
+        background-color: var(--color-divider);
+        border: none;
     }
 </style>
