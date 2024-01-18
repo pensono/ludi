@@ -13,8 +13,6 @@
     $: rootElement = context.rules.view;
     $: backgroundColor = rootElement?.attributes["background"];
     $: foregroundColor = rootElement?.attributes["foreground"];
-
-    $: console.log(context.state.position.result);
 </script>
 
 <div class="container">

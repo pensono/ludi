@@ -153,7 +153,6 @@ export function playMove(rules: Rules, state: GameState, move: Move): GameState 
     }
     
     for (const drawCondition of rules.drawConditions) {
-        console.log(rules)
         if (drawCondition.conditions.every(c => evaluateExpression(rules, newState, {}, c.expression))) {
             newState.position.result = 'draw'
             break;
