@@ -100,7 +100,6 @@ function handleGame(ctx: any): Rules {
             winConditions.push(handleBlock(win));
         } else if (definition.draw()) {
             const draw = definition.draw();
-            console.log('draw', draw, draw.when())
             drawConditions.push(handleBlock(draw));
         } else if (definition.trigger()) {
             const trigger = definition.trigger();
