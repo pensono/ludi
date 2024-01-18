@@ -44,7 +44,7 @@
         top: 4rem;
         right: 1rem;
         width: 15rem;
-        background-color: var(--background-color);
+        background-color: var(--color-background);
         border: 1px solid var(--color-divider);
         z-index: 1000;
     }
