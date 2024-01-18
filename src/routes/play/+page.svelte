@@ -16,7 +16,7 @@
 
         const liveGameId = await convex.mutation(api.live_games.newGame, { rules });
 
-        goto(`/play/live/${liveGameId}`);
+        goto(`/game/${liveGameId}/live`);
     }
 </script>
 
@@ -28,7 +28,7 @@
     <ExpandingListItem>
         <h2 slot="header">Tic-tac-toe</h2>
         <div class="expand-body" slot="body">
-            <a href="/play/j572y089serrjnvbmnsqyab93n6hk2t6">One Device</a>
+            <a href="/game/j572y089serrjnvbmnsqyab93n6hk2t6/play">One Device</a>
             <a href="#" on:click={() => playLive('tic-tac-toe')}>Online</a>
         </div>
     </ExpandingListItem>    
@@ -36,7 +36,7 @@
     <ExpandingListItem>
         <h2 slot="header">Checkers</h2>
         <div class="expand-body" slot="body">
-            <a href="/play/j57cnj6df7jj97d2t0adhrbdph6hj8sk">One Device</a>
+            <a href="/game/j57cnj6df7jj97d2t0adhrbdph6hj8sk/play">One Device</a>
             <a href="#" on:click={() => playLive('checkers')}>Online</a>
         </div>
     </ExpandingListItem>
@@ -44,7 +44,7 @@
     <ExpandingListItem>
         <h2 slot="header">Gomoku</h2>
         <div class="expand-body" slot="body">
-            <a href="/play/j5795qpw940dwn8ce3cjfj58zs6hkxrn">One Device</a>
+            <a href="/game/j5795qpw940dwn8ce3cjfj58zs6hkxrn/play">One Device</a>
             <a href="#" on:click={() => playLive('gomoku')}>Online</a>
         </div>
     </ExpandingListItem>

@@ -3,6 +3,6 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params }) => {
     return {
-        gameId: params.gameId as Id<'liveGame'>,
+        gameId: params.game as Id<'liveGame'>,
     };
 }
