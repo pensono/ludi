@@ -13,6 +13,7 @@
     import RootLayout from '$lib/components/layout/RootLayout.svelte';
 	import Meta from "$lib/components/util/Meta.svelte";
 	import NavbarThirds from "$lib/components/layout/NavbarThirds.svelte";
+	import { getConvexClient } from "$lib/clients/convex";
 
     export let data;
 
@@ -32,7 +33,7 @@
     $: localParticipant = participants?.find(p => p.id === localParticipantId);
     $: remainingParticipants = context?.rules && unfilledPlayers(context.rules, (participants ?? []).map(p => p.role));
 
-    const convex = new ConvexClient(PUBLIC_CONVEX_URL);
+    const convex = getConvexClient();
 
     onDestroy(() => {
         convex.close();
