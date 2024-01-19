@@ -8,14 +8,15 @@ import "core-js/actual/structured-clone";
 export const get = query({
   args: { idOrName: v.union(v.id("rules"), v.string()) },
   handler: async (ctx, { idOrName }) => {
-    let result = ctx.db.get(idOrName as Id<"rules">)
-    if (result) {
-      return result;
+    const byName = ctx.db.query("rules")
+      .filter(q => q.eq(idOrName, q.field('name')))
+      .unique();
+    if (byName) {
+      return byName;
     }
 
-    return ctx.db.query("rules")
-      .filter(q => q.eq(idOrName, q.field('name')))
-      .unique()
+    // ID should be queried first, but it's not possible to tell if we have an ID or a name -_-
+    return ctx.db.get(idOrName as Id<"rules">);
   },
 });
 

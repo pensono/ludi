@@ -1,4 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { ConvexClient } from 'convex/browser';
+import { vi } from 'vitest';
+
+const ticTacToeSource = fetch('/games/tic-tac-toe.ludi')
+
+vi.spyOn(ConvexClient.prototype, "query")
+	.mockReturnValue(Promise.resolve({source: ticTacToeSource}))
 
 test('Can play tic-tac-toe', async ({ page }) => {
 	await page.goto('/game/tic-tac-toe/play');
