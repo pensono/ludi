@@ -5,7 +5,6 @@ import { diagonalCoordinatesBetweenExclusive } from './builtins';
 export function initialize(rules: Rules, seed?: number) : GameState {
     let state: GameState = {
         position: {
-            winner: null,
             variables: {
                 ...(seed !== undefined ? {__seed: seed} : {})
             },
@@ -37,7 +36,7 @@ export function initialize(rules: Rules, seed?: number) : GameState {
 }
 
 export function *enumerateMoves(rules: Rules, state: GameState) : IterableIterator<Move> {
-    if (state.position.winner) {
+    if (state.position.result) {
         return;
     }
 

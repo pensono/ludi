@@ -1,7 +1,7 @@
-import type { PageLoad } from './$types';
+import type { PageLoad, RouteParams } from './$types';
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async () => {
     return {
-        user: params.user,
+        user: 'placeholder',
     };
 }

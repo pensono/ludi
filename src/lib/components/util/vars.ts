@@ -1,13 +1,13 @@
-export default function vars(node, variables) {
+export default function vars(node: HTMLElement, variables: Record<string, string>) {
     setCssVariables(node, variables);
     
     return {
-        update(variables) {
+        update(variables: Record<string, string>) {
             setCssVariables(node, variables);
         }
     }
 }
-function setCssVariables(node, variables) {
+function setCssVariables(node: HTMLElement, variables: Record<string, string>) {
     for (const name in variables) {
         node.style.setProperty(`--${name}`, variables[name]);
     }

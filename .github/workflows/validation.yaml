@@ -6,6 +6,25 @@ on:
   pull_request:
 
 jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    - name: Install Deps
+      run: npm ci
+    - name: Typecheck
+      run: npm run type-check
+
   test-unit:
     name: Unit Tests
     runs-on: ubuntu-latest

@@ -1,8 +1,8 @@
 import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { initialize, nextPlayer, execute } from "../src/lib/ludi/engine";
-import { Rules } from "../src/lib/ludi/types";
-import { GameParticipant } from "../src/lib/realtime/types";
+import type { Rules } from "../src/lib/ludi/types";
+import type { GameParticipant } from "../src/lib/realtime/types";
 
 // Required since convex doesn't support structured clone
 import "core-js/actual/structured-clone";
