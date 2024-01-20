@@ -1,5 +1,11 @@
+import type { ActionReturn } from "svelte/action";
+
+interface ClickOutsideAttributes {
+    'on:clickoutside': (e: CustomEvent<any>) => void
+}
+
 /** Dispatch event on click outside of node */
-export function clickoutside(node: HTMLElement) {
+export function clickoutside(node: HTMLElement): ActionReturn<any, ClickOutsideAttributes> {
     const handleClick = (event: MouseEvent) => {
         if (node && !node.contains(event?.target as Node) && !event.defaultPrevented) {
             node.dispatchEvent(new CustomEvent('clickoutside'))
@@ -15,8 +21,12 @@ export function clickoutside(node: HTMLElement) {
     }
 }
 
+interface ClickAnywhereAttributes {
+    'on:clickanywhere': (e: CustomEvent<never>) => void
+}
+
 /** Dispatch event any time the document is clicked */
-export function clickanywhere(node: HTMLElement) {
+export function clickanywhere(node: HTMLElement): ActionReturn<any, ClickAnywhereAttributes> {
     const handleClick = (event: MouseEvent) => {
         node.dispatchEvent(new CustomEvent('clickanywhere'))
     }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { slide, fade, fly, blur } from "svelte/transition";
+	import { blur } from "svelte/transition";
 	import { clickanywhere } from "../util/custom-events";
 
     let shown: boolean = false;

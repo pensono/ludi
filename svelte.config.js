@@ -6,8 +6,8 @@ const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
-	// Disable for now- no reason to be accessible if you have no users :_)
 	onwarn: (warning, handler) => {
+		// Disable for now- no reason to be accessible if you have no users :_)
 		if (warning.code.startsWith('a11y-')) {
 			return;
 		}

@@ -175,7 +175,7 @@
         <!-- Super hacky -->
         {#if lastMoveElement && lastMoveCoordinates && `[${x},${y}]` === `[${lastMoveCoordinates[0]},${lastMoveCoordinates[1]}]`}
             <div class="overlay" style:--x={x} style:--y={y}>
-                <ViewElement previewPosition={previewPosition} element={lastMoveElement} />
+                <ViewElement bind:context previewPosition={previewPosition} element={lastMoveElement} />
             </div>
         {/if}
     {/each}

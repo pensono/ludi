@@ -7,7 +7,7 @@ on:
 
 jobs:
   typecheck:
-    name: Typecheck
+    name: Svelte Check
     runs-on: ubuntu-latest
 
     permissions:
@@ -22,8 +22,8 @@ jobs:
         node-version: 18
     - name: Install Deps
       run: npm ci
-    - name: Typecheck
-      run: npm run type-check
+    - name: Svelte Check
+      run: npm run check
 
   test-unit:
     name: Unit Tests
