@@ -9,7 +9,6 @@ describe('starting position', () => {
         const initialState = initialize(rules, 0);
 
         expect(initialState.position).toEqual({
-            winner: null,
             variables: {
                 "CurrentPlayer": "Solo",
                 "HiddenNumber": 8,
@@ -218,7 +217,6 @@ describe('triggers', () => {
         })!;
 
         expect(actual.position).toEqual({
-            winner: null,
             variables: {
                 "LastGuess": 5,
                 "CurrentPlayer": "X",
@@ -236,7 +234,6 @@ describe('execute', () => {
         const actual = execute(rules, state, "X", statements, {x: 1, y: 1})!;
 
         expect(actual.position).toEqual({
-            winner: null,
             variables: {
                 "Board": [
                     ["X", "Empty", "Empty"],
@@ -268,7 +265,6 @@ describe('execute', () => {
         const actual = execute(rules, state,  "X", statements, {})!;
 
         expect(actual.position).toEqual({
-            winner: null,
             variables: {
                 "Result": 2,
                 "CurrentPlayer": "X",
