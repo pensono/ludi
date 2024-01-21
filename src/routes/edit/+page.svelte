@@ -66,11 +66,9 @@
     async function playGame() {
         const convex = getConvexClient();
         
-        const ruleId = await convex.mutation(api.rules.create, { source: ruleSource })
-
-        console.log("created", ruleId)
+        const rulesName = await convex.mutation(api.rules.create, { source: ruleSource })
         
-        goto(`/play/${ruleId}`);
+        goto(`/game/${rulesName}/play`);
     }
 </script>
 

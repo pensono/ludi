@@ -5,7 +5,7 @@ import { getConvexClient } from '$lib/clients/convex';
 
 export const load: PageLoad = async ({ params }) => {
     const convex = getConvexClient();
-    const rules = await convex.query(api.rules.get, { idOrName: params.game });
+    const rules = await convex.query(api.rules.get, { name: params.game });
     
     return {
         gameName: params.game,
