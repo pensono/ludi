@@ -76,17 +76,17 @@
 
 <RootLayout>
     <NavbarAcross slot="nav">
+        <nav slot="across">
+            <a class={`px-3 ${!hash || hash == "#" ? "selected" : ""}`} href="#"><span>Editor</span></a>
+            <a class={`px-3 ${hash == "#code" ? "selected" : ""}`} href="#code"><span>Code</span></a>
+            <a class={`px-3 ${hash == "#art" ? "selected" : ""}`} href="#art"><span>Art</span></a>
+        </nav>
         <nav slot="right">
             <a on:click={playGame}><span>Play</span></a>
         </nav>
-        <nav slot="across">
-            <a href="#" class={!hash || hash == "#" ? "selected" : ""}><span>Editor</span></a>
-            <a href="#code" class={hash == "#code" ? "selected" : ""}><span>Code</span></a>
-            <a href="#art" class={hash == "#art" ? "selected" : ""}><span>Art</span></a>
-        </nav>    
     </NavbarAcross>
 
-    <main>
+    <main class="grow flex flex-row overflow-hidden">
         {#if hash === "#code"}
             <CodeEditor bind:value={ruleSource} />
         {:else} <!-- editor -->
@@ -96,22 +96,11 @@
                 <EditToolbox  bind:context />
             {/if}
         {/if}
+        <div class="w-20 bg-red-500"></div>
     </main>
 </RootLayout>
 
 <style lang="scss">
-    main {
-        flex-grow: 1;
-
-        display: flex;
-        flex-direction: row; 
-        overflow: hidden;
-
-        color: #000;
-
-        border-top: 1px solid  var(--color-divider);
-    }
-
     nav {
         margin-left: 2rem;
         height: 100%;
@@ -119,11 +108,6 @@
     }
 
     nav a {
-        padding-left: .75rem;
-        padding-right: .75rem;
-
-        color: var(--color-foreground);
-        text-decoration: none;
         font-size: 1.25rem;
 
         display: flex;

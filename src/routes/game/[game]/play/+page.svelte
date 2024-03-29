@@ -57,21 +57,21 @@
     <NavbarThirds slot="nav" logoColor={foregroundColor}>
         <div slot="center">
             {#if context && !context.state.position.result}
-                <p style:--foreground-color={foregroundColor} transition:blur={{duration: 150}}>
+                <p class="text-big" transition:blur={{duration: 150}}>
                     {context.state.position.variables[Variables.CurrentPlayer]} to play
                 </p>
             {/if}
         </div>
 
         <HamburgerDropdown slot="right">
-            <!-- <a href="" on:click={context.reset}>Undo Move</a> -->
-            <a href="" on:click={context.reset}>Restart Game</a>
-            <!-- <hr /> -->
-            <!-- <a href="edit">Game Editor</a> -->
+            <a class="block grow p-2 text-2xl cursor-pointer" href="" on:click={context.reset}>Undo Move</a>
+            <a class="block grow p-2 text-2xl cursor-pointer" href="" on:click={context.reset}>Restart Game</a>
+            <hr class="my-1 mx-2 h-px border-none" />
+            <a class="block grow p-2 text-2xl cursor-pointer" href="edit">Game Editor</a>
         </HamburgerDropdown>
     </NavbarThirds>
 
-    <main>
+    <main class="grow flex flex-row justify-center">
         {#if context}
             <RootView bind:context bind:backgroundColor={gameBackground} bind:foregroundColor={gameForeground} />
         {/if}
@@ -79,42 +79,12 @@
 </RootLayout>
 
 <style lang="scss">
-    main {
-        flex-grow: 1;
-
-        display: flex;
-        flex-direction: row;
-    }
-
-    p {
-        color: var(--foreground-color);
-        margin: 0;
-        font-size: 2rem;
-        white-space: nowrap;
-    }
-
-    a {
-        display: block;
-        padding: .5rem;
-        font-size: 1.5rem;
-        color: var(--foreground-color);
-        text-decoration: none;
-        cursor: pointer;
-        flex-grow: 1;
-    }
 
     a:hover {
         background-color: var(--color-divider);
     }
 
     hr {
-        margin-left: .5rem;
-        margin-right: .5rem;
-        margin-top: .25rem;
-        margin-bottom: .25rem;
-        width: calc(100% - 1rem);
-        height: 1px;
         background-color: var(--color-divider);
-        border: none;
     }
 </style>

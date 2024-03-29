@@ -14,43 +14,11 @@
 </script>
 
 {#each values as value, i}
-    <div>
-        <Input bind:value kind="string" class="input"/>
+    <div class="flex flex-row ml-[--indent] group">
+        <Input bind:value kind="string" class="grow-1 min-w-0"/>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <span on:click={() => remove(i)} class="material-symbols-outlined">close</span>
+        <span on:click={() => remove(i)} class="material-symbols-outlined pl-1 icon-16 text-transparent group-hover:text-mix-400 self-center cursor-pointer ">close</span> 
     </div>
 {/each}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="detail" on:click={addItem}>+ Add</div>
-
-<style lang="scss">
-    div {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-
-        margin-left: var(--indent);
-    }
-
-    :global(.input) {
-        flex-grow: 1;
-    }
-
-    span {
-        font-size: 16px;
-        vertical-align: bottom;
-        padding: var(--input-padding);
-        color: var(--color-detail);
-        display: none;
-    }
-
-    div:hover span {
-        display: inline;
-    }
-
-    .detail {
-        font-size: var(--detail-text-size);
-        color: var(--color-detail);
-        cursor: pointer;
-    }
-</style>
+<div class="font-small text-mix-400 cursor-pointer" on:click={addItem}>+ Add</div>

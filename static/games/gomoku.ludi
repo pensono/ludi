@@ -14,7 +14,7 @@ action PlacePiece(x a Number<1, 15>, y a Number<1, 15>) for CurrentPlayer:
 win 5InARow() for player:
     when InARow(player, Board, 5)
 
-<view background="#F0D39A" foreground="#000">
+<view background="#F0D39A" foreground="#00f">
     <board show="Board" clickSquare="play PlacePiece(x, y) for CurrentPlayer" align="Center" size="100%" middleLines="#000">
         <image useFor="Black" file="black-token.svg" align="Center" size="100%" />
         <image useFor="White" file="white-token.svg" align="Center" size="100%" />

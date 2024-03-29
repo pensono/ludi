@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    /* For material icons */
+    .icon-24 {
+        font-size: 16px;
+    }
+
+    .icon-16 {
+        font-size: 16px;
+    }
+}
+
+@layer base {
+    @font-face {
+        font-family: 'Geist';
+        font-display: swap;
+        src: url('/assets/fonts/GeistVariableVF.woff2');
+    }
+    
+    :root {
+         /* https://pigment.shapefactory.co/?a=0E7144&b=80A11D */
+        --color-brand-background: #036134;
+        --color-brand-foreground: #A3C23A;
+    }
+
+    html {
+        @apply bg-background text-foreground;
+    }
+}

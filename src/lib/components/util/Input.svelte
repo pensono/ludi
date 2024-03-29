@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { twMerge } from 'tailwind-merge';
+
     export let value: any;
     export let kind: 'string' | 'number';
 
@@ -10,36 +12,18 @@
             value = parsed;
         }
     }
+
+    let className = '';
+    export { className as class };
 </script>
 
 {#if kind === 'string'}
-    <input class={$$props.class} bind:value type='text' />
+    <input class={twMerge("box-content p-1 h-4 font-mono border-transparent hover:border-mix-800 focus:border-mix-800 border rounded outline-none", className)} bind:value type='text' />
 {:else if kind === 'number'}
-    <input class={$$props.class} on:input={onInputNumber} value={value} type='number' />
+    <input class={twMerge("box-content p-1 h-4 border-transparent hover:border-mix-800 focus:border-mix-800 border rounded outline-none", className)} on:input={onInputNumber} value={value} type='number' />
 {/if}
 
 <style>
-    input {
-        padding: var(--input-padding);
-        min-height: var(--input-height);
-        max-height: var(--input-height);
-        border: 1px solid transparent;
-        border-radius: 4px;
-        font-family: var(--mono-font);
-
-        background-color: transparent;
-    }
-
-    input:hover {
-        border: 1px solid var(--color-divider);
-        transition: border 100ms;
-    }
-
-    input:focus {
-        outline: none;
-        border: 1px solid var(--color-divider);
-    }
-
     input[type="number"] {
         appearance: textfield;
     }
